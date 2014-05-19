@@ -9,41 +9,58 @@ import java.util.function.Consumer;
 
 public class GraphProblems {
 	
-	private class Node {
-		Node(int value) {
+	private class GraphNode {
+		GraphNode(int value) {
 			this.value = value;
 		}
 		int value;
-		List<Node> neighbors = new ArrayList<Node>();
+		List<GraphNode> neighbors = new ArrayList<GraphNode>();
 	}
 	
-	private void depthFirstVisit(Node head, Consumer<Node> visit) {
-		Stack<Node> visitedNode = new Stack<Node>();
+	private class BinaryTreeNode {
+		BinaryTreeNode left;
+		BinaryTreeNode right;
+	}
+	
+	private void depthFirstVisit(GraphNode head, Consumer<GraphNode> visit) {
+		Stack<GraphNode> visitedNode = new Stack<GraphNode>();
 		visitedNode.add(head);
 		while(!visitedNode.empty()) {
-			Node current = visitedNode.pop();
+			GraphNode current = visitedNode.pop();
 			visit.accept(current);
 			visitedNode.addAll(current.neighbors);
 		}
 	}
 	
-	private void widthFirstVisit(Node head, Consumer<Node> visit) {
-		Queue<Node> queue = new LinkedList<Node>();
+	private void widthFirstVisit(GraphNode head, Consumer<GraphNode> visit) {
+		Queue<GraphNode> queue = new LinkedList<GraphNode>();
 		queue.add(head);
 		while(!queue.isEmpty()) {
-			Node current = queue.remove();
+			GraphNode current = queue.remove();
 			visit.accept(current);
 			queue.addAll(current.neighbors);
 		}
 	}
 	
-	private Node cloneGraph(Node head) {
+	private GraphNode cloneGraph(GraphNode head) {
 		if(head.neighbors.isEmpty()) {
-			return new Node(head.value);
+			return new GraphNode(head.value);
 		}
-		Node newHead = new Node(head.value);
+		GraphNode newHead = new GraphNode(head.value);
 		head.neighbors.stream().map(n -> cloneGraph(n)).forEach(sub -> newHead.
 			neighbors.add(sub));
 		return newHead;
 	}
+	
+	private BinaryTreeNode lowestCommonAncestor(BinaryTreeNode root, 
+		BinaryTreeNode node1, BinaryTreeNode node2) {
+		if(root == null) return null;
+		if(root == node1 || root == node2) return root;
+		BinaryTreeNode left = lowestCommonAncestor(root.left, node1, node2);
+		BinaryTreeNode right = lowestCommonAncestor(root.right, node1, node2);
+		if(left != null && right != null) return root;
+		return left == null ? right : left;
+	}
+	
+	
 }

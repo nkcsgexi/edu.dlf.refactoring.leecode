@@ -23,7 +23,7 @@ public class BinaryProblems {
 	}
 	
 	private static void xorIsNegate() {
-		for(int i = 0; i< 1000; i ++) {
+		for(int i = 0; i < 1000; i ++) {
 			if((i^-1) != ~i) {
 				System.out.println("Not right");
 				return;
