@@ -2,6 +2,15 @@ package edu.dlf.refactoring.leecode;
 
 public class SortingAlgorithms {
 	
+	private static class HeapNode {
+		HeapNode left;
+		HeapNode right;
+		int value;
+		public HeapNode(int value) {
+			this.value = value;
+		}
+	}
+	
 	
 	public static int[] insertionSort(int[] input) {
 		for(int i = 1; i < input.length; i ++) {
@@ -80,14 +89,38 @@ public class SortingAlgorithms {
 		return results;
 	}
 	
-	public static int[] heapSort(int[] input) {
+	public static HeapNode insertHeap(HeapNode heap, int value) {
+		return mergeHeap(heap, new HeapNode(value));
+	}
+	
+	public static HeapNode removeHeap(HeapNode heap) {
+		return mergeHeap(heap.left, heap.right);
+	}
+	
+	public static HeapNode mergeHeap(HeapNode heap1, HeapNode heap2) {
+		if(heap1 == null) return heap2;
+		if(heap2 == null) return heap1;
+		HeapNode heapMin = heap1.value < heap2.value ? heap1 : heap2;
+		HeapNode heapMax = heapMin == heap1 ? heap2 : heap1;
+		heapMin.right = mergeHeap(heapMin.right, heapMax);
+		return heapMin;
+	}
 		
-		return null;
+	public static int[] heapSort(int[] input) {
+		HeapNode root = new HeapNode(input[0]);
+		for(int i = 1; i < input.length; i ++){
+			root = insertHeap(root, input[i]);
+		}
+		for(int i = 0; i < input.length; i ++) {
+			input[i] = root.value;
+			root = removeHeap(root);
+		}
+		return input;
 	}
 	
 	public static void main(String args[]) {
 		int[] input = {2, 1, 3, 5, 4};
-		input = mergeSort(input, 0, input.length - 1);
+		input = heapSort(input);
 		for(int i = 0; i < input.length; i ++) {
 			System.out.println(input[i]);
 		}
