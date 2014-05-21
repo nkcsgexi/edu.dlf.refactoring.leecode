@@ -1,5 +1,6 @@
 package edu.dlf.refactoring.leecode;
 
+
 public class StringProblems {
 
 	private static String findTheLongestCommonString(String s1, String s2) {
@@ -57,10 +58,37 @@ public class StringProblems {
 		return maxString;
 	}
 	
+	private static String findLongestNonrepetitiveSubString(String input) {
+		int[] charCounts = new int[26];
+		for(int i = 0; i < 26; i ++) {
+			charCounts[i] = 0;
+		}
+		int max = Integer.MIN_VALUE;
+		int maxStart = 0;
+		int maxEnd = 0;
+		for(int start = 0, end = 0; end < input.length(); end ++) {
+			char c = input.charAt(end);
+			charCounts[c - 'a'] ++;
+			if(charCounts[c - 'a'] == 1) continue;
+			while(charCounts[c - 'a'] != 1) {
+				charCounts[input.charAt(start) - 'a'] --;
+				start ++;
+			}
+			if(max < end - start + 1) {
+				max = end - start + 1;
+				maxStart = start;
+				maxEnd = end;
+			}
+		}
+		return input.substring(maxStart, maxEnd + 1);
+	}
+	
+	
 	
 	public static void main(String[] args) {
 		System.out.println(findTheLongestCommonString("ABABC", "BABCA"));
 		System.out.println(findLongestPalindromic("abacdfgdcaba"));
+		System.out.println(findLongestNonrepetitiveSubString("abdaabd"));
 	}
 	
 	
