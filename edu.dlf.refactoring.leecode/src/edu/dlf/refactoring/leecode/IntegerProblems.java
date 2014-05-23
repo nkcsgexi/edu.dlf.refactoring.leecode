@@ -8,7 +8,8 @@ public class IntegerProblems {
 		return (num/base) % 10;
 	}
 	
-	private static boolean determinePalindromeRecursive(int num, int high, int low) {
+	private static boolean determinePalindromeRecursive(int num, int high, 
+			int low) {
 		if(low == high) 
 			return true;
 		if(low > high)
@@ -82,7 +83,6 @@ public class IntegerProblems {
 	 * Find the median of the two sorted arrays. The overall run time complexity 
 	 * should be O(log (m+n)).
 	 * */
-	
 	private static double getTheMedianOfTwoSortedArrays(int[] input1, int[] input2) {
 		if(input1.length == 0)
 			return getMedian(input2);
@@ -136,7 +136,7 @@ public class IntegerProblems {
 
 	private static int[] getSubarray(int[] input, int start, int end) {
 		int[] results = new int[end - start];
-		for(int i = 0; i< results.length; i ++)
+		for(int i = 0; i < results.length; i ++)
 			results[i] = input[start + i];
 		return results;
 	}
@@ -153,12 +153,57 @@ public class IntegerProblems {
 		return input.length % 2 == 1 ? input[input.length/2] * 2 : 
 			input[input.length/2 - 1] + input[input.length/2];
 	}
+
+	/*
+	 * Given two sorted arrays A, B of size m and n respectively. Find the k-th 
+	 * smallest element in the union of A and B. You can assume that there are 
+	 * no duplicate elements.
+	 * */
+	private static int getKthSmallestNumber(int[] m, int[] n, int k) {
+		if(m.length == 0) 
+			return n[k - 1];
+		if(n.length == 0)
+			return m[k - 1];
+		if(k == 1) {
+			return Math.min(m[0], n[0]);
+		}
+		int middleM = m[m.length/2];
+		int position = - binarySearch(n, middleM, 0, n.length - 1);
+		int split;
+		if(n[position] < middleM) {
+			position ++;
+		}	
+		split = m.length/2 + position + 1;
+		if(split == k)
+			return m[m.length/2];
+		if(split < k)
+			return getKthSmallestNumber(getSubarray(m, m.length/2 + 1, m.length), 
+				getSubarray(n, position, n.length), k - split);
+		else 
+			return getKthSmallestNumber(getSubarray(m, 0, m.length/2), 
+				getSubarray(n, 0, position), k); 
+	}
+	
+	private static int binarySearch(int[] input, int target, int start, int end) {
+		if(start == end) {
+			return input[start] == target ? start : - start;
+		}
+		int middle = (start + end)/2;
+		if(target == input[middle]) return middle;
+		if(target > input[middle]) {
+			return binarySearch(input, target, middle + 1, end);
+		} else {
+			return binarySearch(input, target, start, middle - 1);
+		}
+	}
 	
 	public static void main(String args[]) {
 		System.out.println(isPalindrome(0));
 		System.out.println(isPalindrome(101));
 		System.out.println(isPalindrome(101101));
-		System.out.println(getTheMedianOfTwoSortedArrays(new int[]{1, 2, 4, 8, 
-			9, 10}, new int[]{3, 5, 6, 7}));
+		int[] m = new int[]{1, 2, 4, 8, 9, 10};
+		int[] n = new int[]{3, 5, 6, 7};
+		System.out.println(getTheMedianOfTwoSortedArrays(m, n));
+		System.out.println(getKthSmallestNumber(m, n, 10));
 	}
 }
