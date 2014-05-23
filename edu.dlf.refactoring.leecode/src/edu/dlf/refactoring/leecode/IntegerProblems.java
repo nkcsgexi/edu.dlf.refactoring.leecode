@@ -50,9 +50,32 @@ public class IntegerProblems {
 		return true;
 	}
 	
-	
-	
-	
+	/*
+		Given an array of non-negative integers A and a positive integer k, 
+		we want to: Divide A into k or fewer partitions,
+		such that the maximum sum over all the partitions is minimized.
+	*/
+	private static int decideSchedule(int[] tasks, int workers) {
+		int[][] matrix = new int[workers][tasks.length];
+		for(int i = 0; i < workers; i ++) {
+			matrix[i][0] = tasks[0];
+		}
+		for(int i = 1; i < tasks.length; i ++) {
+			matrix[0][i] = matrix[0][i - 1] + tasks[i];
+		}
+		
+		for(int i = 1; i < workers; i++) {
+			for(int j = 1; j < tasks.length; j ++) {
+				int best = Integer.MAX_VALUE;
+				for(int middle = 0; middle < j; middle ++) {
+					best = Math.min(best, Math.max(matrix[i - 1][middle], 
+						(matrix[0][j] - matrix[0][middle])));
+				}
+				matrix[i][j] = best;
+			}
+		}
+		return matrix[workers - 1][tasks.length - 1];
+	}
 	
 	public static void main(String args[]) {
 		System.out.println(isPalindrome(0));
