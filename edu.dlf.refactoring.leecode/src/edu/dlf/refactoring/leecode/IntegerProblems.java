@@ -197,13 +197,96 @@ public class IntegerProblems {
 		}
 	}
 	
+	/*
+	 * A long array A[] is given to you. There is a sliding window of size w 
+	 * which is moving from the very left of the array to the very right. You 
+	 * can only see the w numbers in the window. Each time the sliding window 
+	 * moves rightwards by one position.
+	 * */
+	public static int[] getMaximumInSlidingWindow(int[] input, int window) {
+		int[] results = new int[input.length - window + 1];
+		DoubleQueue queue = new DoubleQueue(window);
+		for(int i = 0; i < window; i ++) {
+			while(!queue.empty() && input[queue.getTail()] < input[i] ) {
+				queue.removeTail();
+			}
+			queue.insertTail(i);
+		}
+		for(int end = window; end < input.length; end ++) {
+			results[end - window] = input[queue.getHead()];
+			while(!queue.empty() && input[queue.getTail()] < input[end]) {
+				queue.removeTail();
+			}
+			queue.insertTail(end);
+			while(!queue.empty() && queue.getHead() <= end - window)
+				queue.removeHead();
+		}
+		results[input.length - window] = input[queue.getHead()];
+		return results;
+	}
+	
+	private static class DoubleQueue{
+		
+		private final int[] element;
+		private int head;
+		private int tail;
+
+		public DoubleQueue(int size) {
+			this.element = new int[size];
+			this.head = 0;
+			this.tail = 0;
+		}		
+		public boolean empty() {
+			return size() == 0;
+		}
+		public int size() {
+			return tail >= head ? tail - head : tail + (element.length - head);
+		}		
+		public int getHead() {
+			assert size() > 0;
+			return element[head];
+		}		
+		public int getTail() {
+			assert size() > 0;
+			return element[tail - 1];
+		}		
+		public void insertHead(int value) {
+			assert size() < element.length;
+			int index = head > 0 ? head - 1 : element.length - 1;
+			element[index] = value;
+			this.head = index;
+		}
+		public void insertTail(int value) {
+			assert size() < element.length;
+			int index = tail < element.length ? tail : 0;
+			element[index] = value;
+			this.tail = index + 1;
+		}
+		public void removeHead() {
+			assert size() > 0;
+			this.head = (this.head + 1) % element.length;
+		}
+		public void removeTail() {
+			assert size() > 0;
+			this.tail = tail > 0 ? tail - 1 : element.length;
+		}
+	}
+	
+	private static void printArray(int input[]) {
+		for(int i : input) {
+			System.out.println(i);
+		}
+	}
+	
 	public static void main(String args[]) {
 		System.out.println(isPalindrome(0));
 		System.out.println(isPalindrome(101));
 		System.out.println(isPalindrome(101101));
 		int[] m = new int[]{1, 2, 4, 8, 9, 10};
 		int[] n = new int[]{3, 5, 6, 7};
+		int[] a = new int[]{1, 3, -1, -3, 5, 3, 6, 7};
 		System.out.println(getTheMedianOfTwoSortedArrays(m, n));
 		System.out.println(getKthSmallestNumber(m, n, 10));
+		printArray(getMaximumInSlidingWindow(a, 3));
 	}
 }
