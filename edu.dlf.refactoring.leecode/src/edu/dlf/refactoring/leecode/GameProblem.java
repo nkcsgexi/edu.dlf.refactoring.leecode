@@ -9,7 +9,7 @@ public class GameProblem {
 	 * first or second? Does it matter? Assume that you go first, describe an 
 	 * algorithm to compute the maximum amount of money you can win.
 	 * */
-	private static int winMax(int[] input) {
+	private static int winCoinMax(int[] input) {
 		int matrix[][] = new int[input.length][input.length];
 		for(int i = 0; i< input.length; i ++) {
 			matrix[i][i] = input[i];
@@ -39,7 +39,7 @@ public class GameProblem {
 	
 	public static void main(String[] args) {
 		int[] input = new int[]{3, 2, 2, 3, 1, 2};
-		int result = winMax(input);
+		int result = winCoinMax(input);
 		System.out.println(result);
 	}
 	
