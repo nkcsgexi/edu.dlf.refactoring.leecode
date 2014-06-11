@@ -1,5 +1,7 @@
 package edu.dlf.refactoring.leecode;
 
+import java.util.HashSet;
+
 
 public class StringProblems {
 
@@ -182,6 +184,45 @@ public class StringProblems {
 			}	
 		}
 		return matrix;
+	}
+	/* 
+	 * Write an algorithm such that if an element in an MxN matrix is 0, its 
+	 * entire row and column is set to 0
+	 * */
+	private static int[][] setZero(int[][] matrix, int weight, int height) {
+		HashSet<Integer> zeroRows = new HashSet<Integer>();
+		HashSet<Integer> zeroColumns = new HashSet<Integer>();
+		for(int row = 0; row < height; row ++) {
+			for(int column = 0; column < height; column ++) {
+				if(matrix[row][column] == 0) {
+					zeroRows.add(row);
+					zeroColumns.add(column);
+				}
+			}
+		}
+		for(int row : zeroRows) {
+			for(int column = 0; column < weight; column ++) {
+				matrix[row][column] = 0;
+			}
+		}
+		for(int column : zeroColumns) {
+			for(int row = 0; row < height; row ++) {
+				matrix[row][column] = 0;
+			}
+		}
+		return matrix;
+	}
+	
+	/* 
+	 * Assume you have a method isSubstring which checks if one word is a 
+	 * substring of another. Given two strings, s1 and s2, write code to check 
+	 * if s2 is a rotation of s1 using only one call to isSubstring (i.e., 
+	 * “waterbottle” is a rotation of “erbottlewat”).
+	 * */
+	private static boolean checkeRotation(String s1, String s2) {
+		if(s1.length() != s2.length())
+			return false;
+		return (s1+s1).contains(s2);
 	}
 	
 	public static void main(String[] args) {
