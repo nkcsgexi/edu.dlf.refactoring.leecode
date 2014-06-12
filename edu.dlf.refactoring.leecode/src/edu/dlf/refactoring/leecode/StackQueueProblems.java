@@ -1,10 +1,18 @@
 package edu.dlf.refactoring.leecode;
 
+import java.util.Stack;
+
 public class StackQueueProblems {
 	
 	private interface IStack {
 		int pop();
 		void push(int value);
+	}
+	
+	private interface IQueue {
+		void add(int value);
+		int remove();
+		int peek();
 	}
 	
 	/* Describe how can you implement three stacks using an array*/
@@ -65,24 +73,121 @@ public class StackQueueProblems {
 	 * */
 	private static class MinStack implements IStack {
 		private final int size = 100;
-		int[] elements = new int[size];
-		int[] mins = new int[size];
-		int pointer = -1;
+		private int[] elements = new int[size];
+		private int pointer = -1;
+		private Stack<Integer> minValues = new Stack<Integer>();
 		
 		@Override
 		public int pop() {
-			return elements[pointer--];
+			int value = elements[pointer--];
+			if(value == minValues.peek()) {
+				minValues.pop();
+			}
+			return value;
 		}
 
 		@Override
 		public void push(int value) {
 			pointer ++;
 			elements[pointer] = value;
-			mins[pointer] = Math.min(mins[pointer - 1], value);
+			if(minValues.peek() <= value)
+				minValues.push(value);
 		}
 		
 		public int min() {
-			return mins[pointer];
+			return minValues.peek();
 		}
 	}
+	
+	/* 
+	 * In the classic problem of the Towers of Hanoi, you have 3 rods and N disks 
+	 * of different sizes which can slide onto any tower. The puzzle starts with 
+	 * disks sorted in ascending order of size from top to bottom (e.g., each 
+	 * disk sits on top of an even larger one). You have the following constraints:
+	 * (A) Only one disk can be moved at a time. (B) A disk is slid off the top 
+	 * of one rod onto the next rod. (C) A disk can only be placed on top of a 
+	 * larger disk. Write a program to move the disks from the first rod to the 
+	 * last using Stacks.
+	 * */
+	private static void printHanoiMovements(int plateCount) {
+		printHanoiMovementsInternal(plateCount, 1, 1, 3);
+	}
+	
+	private static void printHanoiMovementsInternal(int plateCount, int startId, 
+			int fromPod, int toPod) {
+		if(plateCount == 1) {
+			System.out.println("move " + startId + " from " + fromPod + 
+				" to " + toPod);
+			return;
+		}
+		int borrowPod = 6 - fromPod - toPod;
+		printHanoiMovementsInternal(plateCount - 1, startId, fromPod, borrowPod);
+		System.out.println("move " + (startId + plateCount - 1) + " from " + 
+				fromPod + " to " + toPod);
+		printHanoiMovementsInternal(plateCount - 1, startId, borrowPod, toPod);
+	}
+	
+	public static void main(String args[]) {
+		printHanoiMovements(3);
+		Stack<Integer> stack = new Stack<Integer>();
+		stack.push(1);
+		stack.push(0);
+		stack.push(3);
+		stack = sortStack(stack);
+		stack.forEach(i -> System.out.println(i));
+	}
+	
+	/* Implement a MyQueue class which implements a queue using two stacks.*/
+	private class TwoStackQueue implements IQueue{
+		private final Stack<Integer> stack1 = new Stack<Integer>();
+		private final Stack<Integer> stack2 = new Stack<Integer>();
+		
+		@Override
+		public void add(int value) {
+			stack1.push(value);
+		}
+		
+		@Override
+		public int remove() {
+			if(stack2.size() > 0)
+				return stack2.pop();
+			while(!stack1.empty()) 
+				stack2.push(stack1.pop());
+			return stack2.pop();
+		}
+
+		@Override
+		public int peek() {
+			if(stack2.size() > 0)
+				return stack2.peek();
+			while(!stack1.empty()) 
+				stack2.push(stack1.pop());
+			return stack2.peek();
+		}
+	}
+	
+	/* 
+	 * Write a program to sort a stack in ascending order. You should not make 
+	 * any assumptions about how the stack is implemented. The following are 
+	 * the only functions that should be used to write this program: push | pop 
+	 * | peek | isEmpty
+	 * */
+	private static Stack<Integer> sortStack(Stack<Integer> stack) {
+		Stack<Integer> result = new Stack<Integer>();
+		Stack<Integer> temp = new Stack<Integer>();
+		while(!stack.empty()) {
+			int current = stack.pop();
+			while(!result.empty() && result.peek() > current) {
+				temp.push(result.pop());
+			}
+			result.push(current);
+			while(!temp.empty()) {
+				result.push(temp.pop());
+			}
+		}
+		return result;
+	}
+	
+	
+	
 }
