@@ -242,6 +242,28 @@ public class GraphProblems {
 		return current;
 	}
 	
+	/* find the most recent common ancestor.*/
+	private static BinaryTreeNode findCommonAncestor(BinaryTreeNode root, 
+			BinaryTreeNode node1, BinaryTreeNode node2) {
+		int left = coveredCount(root.left, node1, node2);
+		if(left == 2)
+			return findCommonAncestor(root.left, node1, node2);
+		int right = coveredCount(root.right, node1, node2);
+		if(right == 2)
+			return findCommonAncestor(root.right, node1, node2);
+		return root;
+	}
+	
+	private static int coveredCount(BinaryTreeNode root, BinaryTreeNode node1, 
+			BinaryTreeNode node2) {
+		return (covers(root, node1) ? 1 : 0) + (covers(root, node2) ? 1 : 0);
+	}
+	
+	private static boolean covers(BinaryTreeNode root, BinaryTreeNode node) {
+		if(root == null) return false;
+		if(root == node) return true;
+		return covers(root.left, node) || covers(root.right, node);
+	}
 	
 	public static void main(String[] args) {
 		List<Integer> preorder = toList(new int[]{7,10,4,3,1,2,8,11});
