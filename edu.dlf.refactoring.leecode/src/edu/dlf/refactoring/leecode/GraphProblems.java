@@ -130,6 +130,26 @@ public class GraphProblems {
 		return list;
 	}
 	
+	/* 
+	 * Implement a function to check if a tree is balanced. For the purposes of 
+	 * this question, a balanced tree is defined to be a tree such that no two 
+	 * leaf nodes differ in distance from the root by more than one.
+	 * */
+	private static boolean isBalanced(BinaryTreeNode root) {
+		int[] depths = getShortAndLongDistance(root);
+		return depths[1] - depths[0] <= 1;
+	}
+	
+	private static int[] getShortAndLongDistance(BinaryTreeNode root) {
+		if(root == null) 
+			return new int[]{-1 , -1};
+		int[] left = getShortAndLongDistance(root.left);
+		int[] right = getShortAndLongDistance(root.right);
+		int max = Math.max(left[1], right[1]);
+		int min = Math.min(left[0], right[0]);
+		return new int[]{min + 1, max + 1};
+	}
+	
 	public static void main(String[] args) {
 		List<Integer> preorder = toList(new int[]{7,10,4,3,1,2,8,11});
 		List<Integer> inorder = toList(new int[]{4,10,3,1,7,11,8,2});
