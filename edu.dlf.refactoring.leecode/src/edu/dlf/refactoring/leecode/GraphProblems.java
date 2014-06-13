@@ -21,10 +21,12 @@ public class GraphProblems {
 		int value;
 		BinaryTreeNode left;
 		BinaryTreeNode right;
+		BinaryTreeNode parent;
 		BinaryTreeNode(int value) {
 			this.value = value;
 		}
 	}
+	
 	
 	private static void previstTree(BinaryTreeNode root, Consumer<BinaryTreeNode> visit) {
 		visit.accept(root);
@@ -149,6 +151,97 @@ public class GraphProblems {
 		int min = Math.min(left[0], right[0]);
 		return new int[]{min + 1, max + 1};
 	}
+	
+	/* 
+	 * Given a directed graph, design an algorithm to find out whether there 
+	 * is a route between two nodes.
+	 * */
+	private static boolean isConnected(GraphNode node1, GraphNode node2) {
+		Stack<GraphNode> stack = new Stack<GraphNode>();
+		stack.push(node1);
+		while(!stack.isEmpty()) {
+			GraphNode current = stack.pop();
+			if(current == node2)
+				return true;
+			current.neighbors.forEach(n -> stack.push(n));
+		}
+		return false;
+	}
+	
+	/* 
+	 * Given a sorted (increasing order) array, write an algorithm to create a 
+	 * binary tree with minimal height.
+	 * */
+	private static BinaryTreeNode createTreeWithMinimumHeight(int[] numbers, 
+			int start, int end) {
+		int middle = (start + end) / 2;
+		BinaryTreeNode node = new BinaryTreeNode(numbers[middle]);
+		BinaryTreeNode left = null, right = null;
+		if(middle > start)
+			left = createTreeWithMinimumHeight(numbers, start, middle - 1);
+		if(middle < end)
+			right = createTreeWithMinimumHeight(numbers, middle + 1, end);
+		node.left = left;
+		node.right = right;
+		return node;
+	}
+	
+	/* 
+	 * Given a binary search tree, design an algorithm which creates a linked 
+	 * list of all the nodes at each depth (eg, if you have a tree with depth D, 
+	 * you’ll have D linked lists).
+	 * */
+	private static LinkedList<LinkedList<BinaryTreeNode>>
+			createLinkedListsFromTree(BinaryTreeNode root) {
+		if(root == null) return null;
+		LinkedList<LinkedList<BinaryTreeNode>> result = new 
+				LinkedList<LinkedList<BinaryTreeNode>>();
+		LinkedList<BinaryTreeNode> current = new LinkedList<BinaryTreeNode>();
+		current.add(root);
+		LinkedList<LinkedList<BinaryTreeNode>> left = null, right = null;
+		if(root.left != null) left  = createLinkedListsFromTree(root.left); 
+		if(root.right != null) right = createLinkedListsFromTree(root.right);
+		result.add(current);
+		if(left == null && right == null){
+			return result;
+		}
+		if(left != null && right != null) {
+			for(int i = 0; i < Math.max(left.size(), right.size()); i++) {
+				if(i < left.size() && i < right.size()) {
+					LinkedList<BinaryTreeNode> list = new 
+						LinkedList<BinaryTreeNode>();
+					list.addAll(left.get(i));
+					list.addAll(right.get(i));
+					result.add(list);
+					continue;
+				}
+				result.add((i < left.size() ? left : right).get(i));
+			}
+			return result;
+		}
+		result.addAll(left != null ? left : right);
+		return result;
+	}
+	/* 
+	 * Write an algorithm to find the ‘next’ node (e.g., in-order successor) of 
+	 * a given node in a binary search tree where each node has a link to its 
+	 * parent.
+	 * */
+	private static BinaryTreeNode findNextInorder(BinaryTreeNode node) {
+		if(node.right != null) {
+			return getLeftMostChild(node);
+		}
+		while(node.parent != null && node.parent.right == node) node = node.parent;
+		if(node.parent == null) return null;
+		return node.parent;
+	}
+
+	private static BinaryTreeNode getLeftMostChild(BinaryTreeNode node) {
+		BinaryTreeNode current;
+		for(current = node.right; current.left != null; current = current.left);
+		return current;
+	}
+	
 	
 	public static void main(String[] args) {
 		List<Integer> preorder = toList(new int[]{7,10,4,3,1,2,8,11});
