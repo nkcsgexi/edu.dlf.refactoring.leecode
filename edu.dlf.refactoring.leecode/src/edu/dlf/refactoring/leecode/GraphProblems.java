@@ -265,6 +265,65 @@ public class GraphProblems {
 		return covers(root.left, node) || covers(root.right, node);
 	}
 	
+	/*
+	 * You have two very large binary trees: T1, with millions of nodes, and T2, 
+	 * with hundreds of nodes. Create an algorithm to decide if T2 is a 
+	 * subtree of T1.
+	 * */
+	private static boolean isSubTree(BinaryTreeNode rootMillion, BinaryTreeNode 
+			rootHundred) {
+		if(isTreeMatch(rootMillion, rootHundred))
+			return true;
+		return isSubTree(rootMillion.left, rootHundred) || isSubTree(rootMillion.
+			right, rootHundred);
+	}
+	private static boolean isTreeMatch(BinaryTreeNode node1, BinaryTreeNode node2) {
+		if(node2 == null)
+			return true;
+		if(node1 == null)
+			return false;
+		if(node1.value == node2.value) {
+			return isTreeMatch(node1.left, node2.left);
+		}
+		else return false;
+	}
+	
+	/* 
+	 * You are given a binary tree in which each node contains a value. Design 
+	 * an algorithm to print all paths which sum up to that value. Note that it 
+	 * can be any path in the tree - it does not have to start at the root.
+	 * */
+	private static void findPath(BinaryTreeNode root, int sum) {
+		if(root == null) 
+			return;
+		ArrayList<ArrayList<BinaryTreeNode>> paths = findPathStartingAt(root, sum);
+		paths.forEach(p -> {
+			System.out.print("Path:");
+			p.forEach(n -> System.out.print(" " + n.value));
+			System.out.println();
+		});
+		findPath(root.left, sum);
+		findPath(root.right, sum);
+	}
+	
+	private static ArrayList<ArrayList<BinaryTreeNode>> findPathStartingAt
+			(BinaryTreeNode node, int num) {
+		ArrayList<ArrayList<BinaryTreeNode>> result = 
+			new ArrayList<ArrayList<BinaryTreeNode>>();
+		if(node == null || node.value > num)
+			return result;
+		if(node.value == num) {
+			ArrayList<BinaryTreeNode> path = new ArrayList<BinaryTreeNode>();
+			path.add(node);
+			result.add(path);
+			return result;
+		}
+		result.addAll(findPathStartingAt(node.left, num - node.value));
+		result.addAll(findPathStartingAt(node.right, num - node.value));
+		result.forEach(p -> p.add(0, node));
+		return result;
+	}
+	
 	public static void main(String[] args) {
 		List<Integer> preorder = toList(new int[]{7,10,4,3,1,2,8,11});
 		List<Integer> inorder = toList(new int[]{4,10,3,1,7,11,8,2});
