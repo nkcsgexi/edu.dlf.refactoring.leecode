@@ -22,6 +22,10 @@ public class BinaryProblems {
 		return false;
 	}
 	
+	private static boolean isPowTwo(int num){
+		return (num & (num-1)) == 0;
+	}
+	
 	private static void xorIsNegate() {
 		for(int i = 0; i < 1000; i ++) {
 			if((i^-1) != ~i) {
@@ -171,9 +175,30 @@ public class BinaryProblems {
 		return num;
 	}
 	
+	/*
+	 * Write a function to determine the number of bits required to convert 
+	 * integer A to integer B. Input: 31, 14 Output: 2
+	 * */
+	private static int getConvertBit(int num1, int num2) {
+		int count = 0;
+		for(int i = num1 ^ num2; i != 0; i = i>>1) {
+			if((i &1) == 1) {
+				count ++;
+			}
+		}
+		return count;
+	}
+	
+	/*
+	 * Write a program to swap odd and even bits in an integer with as few 
+	 * instructions as possible (e.g., bit 0 and bit 1 are swapped, bit 2 and 
+	 * bit 3 are swapped, etc).*/
+	private static int swap(int num) {
+		return ((0x55555555 & num) << 1) | ((0xaaaaaaaa & num) >> 1);
+	}
 	
 	public static void main(String[] args) {
-		
+		System.out.println(getConvertBit(31, 14));
 	}
 
 	private static void printDoubleInBinary(double value) {
