@@ -197,8 +197,59 @@ public class BinaryProblems {
 		return ((0x55555555 & num) << 1) | ((0xaaaaaaaa & num) >> 1);
 	}
 	
+	/*
+	 * An array A[1...n] contains all the integers from 0 to n except for one 
+	 * number which is missing. In this problem, we cannot access an entire 
+	 * integer in A with a single operation. The elements of A are represented 
+	 * in binary, and the only operation we can use to access them is “fetch the 
+	 * jth bit of A[i]”, which takes constant time. Write code to find the 
+	 * missing integer. Can you do it in O(n) time?
+	 * */
+	private static int getMissingNumber(int n) {
+		int highest, num;
+		for(highest = 0, num = n; num != 0; num = num >> 1, highest ++);
+		int result = 0;
+		for(int bit = 0; bit <= highest; bit ++) {
+			if(getCountOneOneBitAtTheList(n, bit) != getCountOfOneAtBit(n + 1, 
+					bit)) {
+				result += 1 << bit;
+			}
+		}
+		return result;
+	}
+	
+	private static int getCountOfOneAtBit(int n, int bit) {
+		int base = (1 << bit);
+		int count = 0;
+		boolean flagZero = true;
+		while(n - base >= 0) {
+			if(!flagZero)
+				count += base;
+			flagZero = !flagZero;
+			n -= base;
+		}
+		if(!flagZero)
+			count += n;
+		return count;
+	}
+	private static int getCountOneOneBitAtTheList(int n, int bit) {
+		int count = 0;
+		for(int i = 0; i < n; i ++) {
+			if(getJBitOfNumI(i, bit) == 1)
+				count ++;
+		}
+		return count;
+	}
+	
+	private static int getJBitOfNumI(int i, int j) {
+		int[] numbers = new int[] {1, 3, 2, 4, 5, 7, 0};
+		int num = numbers[i];
+		return (num >> j) & 1;
+	}
+	
+	
 	public static void main(String[] args) {
-		System.out.println(getConvertBit(31, 14));
+		System.out.println(getMissingNumber(7));
 	}
 
 	private static void printDoubleInBinary(double value) {
