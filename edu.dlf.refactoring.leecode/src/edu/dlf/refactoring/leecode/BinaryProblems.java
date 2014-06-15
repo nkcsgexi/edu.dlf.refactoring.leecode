@@ -68,6 +68,54 @@ public class BinaryProblems {
 		return s;
 	}
 	
+	private static void printIntegerInBinary(int num) {
+		StringBuilder sb = new StringBuilder();
+		while(num != 0) {
+			sb.insert(0, num & 1);
+			num = num >> 1;
+		}
+		System.out.println(sb.toString());
+	}
+	
+	/*
+	 * You are given two 32-bit numbers, N and M, and two bit positions, i and j. 
+	 * Write a method to set all bits between i and j in N equal to M (e.g., M 
+	 * becomes a substring of N located at i and starting at j). EXAMPLE: 
+	 * Input: N = 10000000000, M = 10101, i = 2, j = 6 Output: N = 10001010100
+	 * */
+	private static int setBits(int M, int N, int i, int j ) {
+		int mask = 1;
+		for(int k = 0; k < j - i; k ++ ){
+			mask = (mask << 1 | 1);
+		}
+		mask = mask << i;
+		int setter = M << i;
+		return (N & (~mask) | setter);
+	}
+	
+	/* Given a (decimal - e.g. 3.72) number that is passed in as a string, print 
+	 * the binary representation. If the number can not be represented accurately 
+	 * in binary, print “ERROR"*/
+	private static void printNumber(String s) {
+		double remain = Double.parseDouble("0." + s.substring(s.indexOf('.') + 1));	
+		StringBuilder sb = new StringBuilder();
+		while(remain > 0) {
+			if(remain >= 0.5) {
+				sb.append(1);
+				remain = (remain - 0.5) * 2;
+			}
+			else {
+				sb.append(0);
+				remain *= 2;
+			}
+		}
+		if(remain < 0) {
+			System.out.println("error");
+			return;
+		}
+		System.out.println(sb.toString());
+	}
+	
 	public static void main(String[] args) {
 		//System.out.println(countOneBit(1));
 		//System.out.println(countOneBit(13)); //1100
@@ -81,8 +129,15 @@ public class BinaryProblems {
 		System.out.println(testIfPow4(8));
 		System.out.println(testIfPow4(17));
 		System.out.println(testIfPow4(256));
-		
 		reserseBitsTest();
+		printIntegerInBinary(setBits(Integer.parseInt("10101", 2), Integer.
+			parseInt("10000000000", 2), 2, 6));
+
+		printNumber("0.75");
+	}
+
+	private static void printDoubleInBinary(double value) {
+		System.out.println(Long.toBinaryString(Double.doubleToRawLongBits(value)));
 	}
 	
 }

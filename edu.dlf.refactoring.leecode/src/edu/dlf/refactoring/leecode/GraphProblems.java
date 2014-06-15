@@ -27,7 +27,6 @@ public class GraphProblems {
 		}
 	}
 	
-	
 	private static void previstTree(BinaryTreeNode root, Consumer<BinaryTreeNode> visit) {
 		visit.accept(root);
 		if(root.left != null) previstTree(root.left, visit);
