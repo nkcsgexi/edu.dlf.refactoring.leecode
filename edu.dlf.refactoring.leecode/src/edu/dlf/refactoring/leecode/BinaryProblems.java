@@ -115,25 +115,65 @@ public class BinaryProblems {
 		}
 		System.out.println(sb.toString());
 	}
+	/*
+	 * Given an integer, print the next smallest and next largest number that have 
+	 * the same number of 1 bits in their binary representation
+	 * */
+	private static void printNextNumbers(final int num) {
+		int[] index = findFirstZeroWithTailingOnes(num);
+		int nextSmallest = setMask(num, index[0], index[1]);
+		System.out.println(Integer.toBinaryString(num));
+		System.out.println(Integer.toBinaryString(nextSmallest));
+		index = findFirstOneWithTailingZero(num);
+		int nextLargest = setMask(num, index[1], index[0]);
+		System.out.println(Integer.toBinaryString(nextLargest));
+	}
+	
+	private static int[] findFirstZeroWithTailingOnes (int num) {
+		boolean hasOne = false;
+		int oneIndex =0;
+		int i = 0;
+		while(num != 0) {
+			if((num & 1) == 1) {
+				hasOne = true;
+				oneIndex = i;
+			} else if(hasOne) {
+				return new int[]{i, oneIndex};
+			}
+			num = num >> 1;
+			i ++;
+		}
+		return new int[] {i, i - 1};
+	}
+	
+	private static int[] findFirstOneWithTailingZero(int num) {
+		boolean hasZero = false;
+		int zeroIndex = 0;
+		int i = 0;
+		while(num != 0) {
+			if((num & 1) == 0) {
+				hasZero = true;
+				zeroIndex = i;
+			} else if (hasZero) {
+				return new int[]{i, zeroIndex};
+			}
+			num = num >> 1;
+			i ++;
+		}
+		return null;
+	}
+	
+	private static int setMask(int num, int zero2One, int one2Zero) {
+		int mask = 1 << zero2One;
+		num = num | mask;
+		mask = ~(1 << one2Zero);
+		num = num & mask;
+		return num;
+	}
+	
 	
 	public static void main(String[] args) {
-		//System.out.println(countOneBit(1));
-		//System.out.println(countOneBit(13)); //1100
-		xorIsNegate();
-		System.out.println(Integer.toBinaryString(-1));
-		System.out.println(countZeroBit(1));
-		System.out.println(countZeroBit(13));
-		System.out.println(testIfPow4(1));
-		System.out.println(testIfPow4(4));
-		System.out.println(testIfPow4(16));
-		System.out.println(testIfPow4(8));
-		System.out.println(testIfPow4(17));
-		System.out.println(testIfPow4(256));
-		reserseBitsTest();
-		printIntegerInBinary(setBits(Integer.parseInt("10101", 2), Integer.
-			parseInt("10000000000", 2), 2, 6));
-
-		printNumber("0.75");
+		
 	}
 
 	private static void printDoubleInBinary(double value) {
