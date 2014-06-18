@@ -155,6 +155,19 @@ public class SortingAlgorithms {
 				middle - 1, target);
 	}
 	
+	private static void smartMerge(int[] A, int[] B, int AinitialSize) {
+		int endA = AinitialSize - 1;
+		int endB = B.length - 1;
+		int insertPosition = A.length + B.length - 1;
+		while(endA >= 0 && endB >= 0) {
+			if(A[endA] > B[endB]) {
+				A[insertPosition--] = A[endA --];
+			}else {
+				A[insertPosition--] = B[endB --];		
+			}
+		}
+	}
+	
 	
 	public static void main(String args[]) {
 		int[] A = {1, 3, 5, 7, 0, 0, 0};
