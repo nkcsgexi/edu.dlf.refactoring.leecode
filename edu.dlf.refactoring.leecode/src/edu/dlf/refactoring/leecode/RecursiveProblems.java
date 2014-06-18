@@ -156,6 +156,49 @@ public class RecursiveProblems {
 		return result;
 	}
 	
+	/*
+	 * Write an algorithm to print all ways of arranging eight queens on a chess 
+	 * board so that none of them share the same row, column or diagonal
+	 * */
+	private static void printAllQueenArrangement() {
+		internalPrint(0, new ArrayList<Integer>());
+	}
+	private static void internalPrint(int row, List<Integer> columnsBefore) {
+		List<Integer> columns = getColumns(row, columnsBefore);
+		if(row == 7) {
+			for(int col : columns) {
+				for(int c : columnsBefore) {
+					System.out.print(c + " ");
+				}
+				System.out.println(col);
+			}
+		}
+		for(int col : columns) {
+			ArrayList<Integer> newColumns = new ArrayList<Integer>();
+			newColumns.addAll(columnsBefore);
+			newColumns.add(col);
+			internalPrint(row + 1, newColumns);
+		}
+	}
+	
+	private static List<Integer> getColumns(int row, List<Integer> columnsBefore) {
+		List<Integer> result = new ArrayList<Integer>();
+		for(int column = 0; column < 8; column ++) {
+			boolean isColumnOk = true;
+			if(columnsBefore.contains(column))
+				isColumnOk = false;
+			for(int i = 0; i < columnsBefore.size(); i ++) {
+				int rowDiff = Math.abs(row - i);
+				int columnDiff = Math.abs(columnsBefore.get(i) - column);
+				if(rowDiff - columnDiff == 0) {
+					isColumnOk = false;
+				}
+			}
+			if(isColumnOk)
+				result.add(column);
+		}
+		return result;
+	}
 	
 	public static void main(String[] args) throws Exception {
 	
