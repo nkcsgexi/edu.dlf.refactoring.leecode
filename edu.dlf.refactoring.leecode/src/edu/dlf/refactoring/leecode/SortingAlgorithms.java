@@ -1,5 +1,6 @@
 package edu.dlf.refactoring.leecode;
 
+
 public class SortingAlgorithms {
 	
 	private static class HeapNode {
@@ -118,13 +119,50 @@ public class SortingAlgorithms {
 		return input;
 	}
 	
-	public static void main(String args[]) {
-		int[] input = {2, 1, 3, 5, 4};
-		input = heapSort(input);
-		for(int i = 0; i < input.length; i ++) {
-			System.out.println(input[i]);
+	/* 
+	 * You are given two sorted arrays, A and B, and A has a large enough 
+	 * buffer at the end to hold B. Write a method to merge B into A in sorted 
+	 * order.
+	 * */
+	private static void mergeArrays(int[] A, int[] B, int AInitialSize) {
+		int ALength = AInitialSize;
+		for(int i = 0; i < B.length; i ++) {
+			int b = B[i];
+			int position = binarySearch(A, 0, ALength - 1, b);
+			for(int j = ALength; j > position; j --) {
+				A[j] = A[j-1];
+			}
+			A[position] = b;
+			ALength += 1;
 		}
-		
+	}
+	
+	private static int binarySearch(int[] array, int start, int end, int target) {
+		if(start == end) {
+			if(array[start] >= target)
+				return start;
+			else 
+				return start + 1;
+		} 
+		int middle = (start + end)/2;
+		if(target == array[middle])
+			return middle;
+		if(target > array[middle])
+			return binarySearch(array, middle + 1 > end ? end : middle + 1, end, 
+				target);
+		else
+			return binarySearch(array, start, middle - 1 < start ? start : 
+				middle - 1, target);
+	}
+	
+	
+	public static void main(String args[]) {
+		int[] A = {1, 3, 5, 7, 0, 0, 0};
+		int[] B = {2, 4, 8};
+		mergeArrays(A, B, 4);
+		for(int a : A) {
+			System.out.print(a + " ");
+		}
 	}
 
 }
