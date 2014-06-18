@@ -167,15 +167,94 @@ public class SortingAlgorithms {
 			}
 		}
 	}
-	
-	
-	public static void main(String args[]) {
-		int[] A = {1, 3, 5, 7, 0, 0, 0};
-		int[] B = {2, 4, 8};
-		mergeArrays(A, B, 4);
-		for(int a : A) {
-			System.out.print(a + " ");
+	/* 
+	 * Given a sorted array of n integers that has been rotated an unknown 
+	 * number of times, give an O(log n) algorithm that finds an element in the 
+	 * array. You may assume that the array was originally sorted in increasing 
+	 * order. EXAMPLE: Input: find 5 in array (15 16 19 20 25 1 3 4 5 7 10 14) 
+	 * Output: 8 (the index of 5 in the array).
+	 * */
+	private static int searchAnomalyArray(int[] array, int target, int start, int end) {
+		int anomalyIndex = findAnomaly(array, start, end);
+		int in1 = binarySearch(array, start, anomalyIndex, target);
+		int in2 = binarySearch(array, anomalyIndex + 1, end, target);
+		return array[in1] == target ? in1 : in2;
+	}
+	private static int findAnomaly(int[] array, int start, int end) {
+		if(end - start == 1) {
+			if(array[end] < array[start])
+				return start;
+			else
+				return -1;
 		}
+		int middle = (start + end)/2;
+		if(array[middle] < array[end])
+			return findAnomaly(array, start, middle);
+		else
+			return findAnomaly(array, middle, end);
+		
+	}
+	
+	/* 
+	 * Given a sorted array of strings which is interspersed with empty strings, 
+	 * write a method to find the location of a given string. Example: find 
+	 * “ball” in [“at”, “”, “”, “”, “ball”, “”, “”, “car”, “”, “”, “dad”, “”, “”] 
+	 * will return 4 Example: find “ballcar” in [“at”, “”, “”, “”, “”, “ball”, 
+	 * “car”, “”, “”, “dad”, “”, “”] will return -1*/
+	private static int searchString(String[] allStrings, String target, 
+			int start, int end) {
+		if(start == end) {
+			return allStrings[start].equals(target) ? start : - 1; 
+		}
+		int premiddle = (start + end) /2;
+		int postmiddle = premiddle;
+		while(postmiddle < end && allStrings[postmiddle].isEmpty()) postmiddle++;
+		while(premiddle > start && allStrings[premiddle].isEmpty()) premiddle--;
+		if(allStrings[premiddle].equals(target)) return premiddle;
+		if(allStrings[postmiddle].equals(target)) return postmiddle;
+		boolean isNotPre = allStrings[premiddle].isEmpty() || allStrings[premiddle].
+			compareTo(target) < 0;
+		boolean isNotPost = allStrings[postmiddle].isEmpty() || allStrings
+			[postmiddle].compareTo(target) > 0;
+		if(!isNotPre) {
+			return searchString(allStrings, target, start, premiddle - 1 < 
+				start ? start : premiddle - 1);
+		} else if (!isNotPost) {
+			return searchString(allStrings, target, postmiddle + 1 > end ?
+				end : postmiddle + 1, end);
+		}else
+			return -1;
+	}
+		
+	public static void main(String args[]) {
+		
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
