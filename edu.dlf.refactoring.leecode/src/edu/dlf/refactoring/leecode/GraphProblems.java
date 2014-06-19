@@ -3,18 +3,25 @@ package edu.dlf.refactoring.leecode;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Stack;
 import java.util.function.Consumer;
 
 public class GraphProblems {
 	
-	private static class GraphNode {
+	private static class GraphNode implements Comparable<GraphNode> {
 		GraphNode(int value) {
 			this.value = value;
 		}
 		int value;
+		int distance;
 		List<GraphNode> neighbors = new ArrayList<GraphNode>();
+		
+		@Override
+		public int compareTo(GraphNode o) {
+			return this.distance - o.distance;
+		}
 	}
 	
 	private static class BinaryTreeNode {
@@ -323,6 +330,35 @@ public class GraphProblems {
 		return result;
 	}
 	
+	private static void dijkstraAlgorithm(GraphNode startNode, List<GraphNode> 
+			allNodes) {
+		PriorityQueue<GraphNode> queue = new PriorityQueue<GraphNode>();
+		for(GraphNode n : allNodes) {
+			n.distance = Integer.MAX_VALUE;
+		}
+		startNode.distance = 0;
+		queue.addAll(allNodes);
+		while(queue.size() != 0) {
+			GraphNode current = queue.remove();
+			for(GraphNode nei : current.neighbors) {
+				nei.distance = Math.min(nei.distance, nei.value + 
+					current.distance);
+			}
+		}
+	}
+	
+	private static void testPriorityQueue() {
+		PriorityQueue<GraphNode> queue = new PriorityQueue<GraphNode> ();
+		GraphNode[] nodes = new GraphNode[]{new GraphNode(1), new GraphNode(2), 
+			new GraphNode(3)}; 
+		for(GraphNode n : nodes) {
+			queue.add(n);
+		}
+		System.out.println(queue.remove().value);
+		nodes[2].value = -3;
+		System.out.println(queue.remove().value);
+	}
+	
 	public static void main(String[] args) {
 		List<Integer> preorder = toList(new int[]{7,10,4,3,1,2,8,11});
 		List<Integer> inorder = toList(new int[]{4,10,3,1,7,11,8,2});
@@ -330,6 +366,9 @@ public class GraphProblems {
 			preorder);
 		previstTree(root, r -> System.out.println(r.value));
 		invisitTree(root, r -> System.out.println(r.value));
+		testPriorityQueue();
+		
+		
 	}
 	
 	

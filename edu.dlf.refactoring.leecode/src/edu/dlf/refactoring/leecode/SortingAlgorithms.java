@@ -197,10 +197,7 @@ public class SortingAlgorithms {
 	
 	/* 
 	 * Given a sorted array of strings which is interspersed with empty strings, 
-	 * write a method to find the location of a given string. Example: find 
-	 * “ball” in [“at”, “”, “”, “”, “ball”, “”, “”, “car”, “”, “”, “dad”, “”, “”] 
-	 * will return 4 Example: find “ballcar” in [“at”, “”, “”, “”, “”, “ball”, 
-	 * “car”, “”, “”, “dad”, “”, “”] will return -1*/
+	 * write a method to find the location of a given string.*/
 	private static int searchString(String[] allStrings, String target, 
 			int start, int end) {
 		if(start == end) {
@@ -225,6 +222,8 @@ public class SortingAlgorithms {
 		}else
 			return -1;
 	}
+	
+
 		
 	public static void main(String args[]) {
 		
