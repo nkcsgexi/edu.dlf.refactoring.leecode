@@ -1,7 +1,9 @@
 package edu.dlf.refactoring.leecode;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class MathProblems {
 	/* 
@@ -9,18 +11,30 @@ public class MathProblems {
 	 * factors are 3, 5, and 7
 	 * */
 	private static int getKthNumber(int k) {
-		int count = 1;
-		for(; k > 0; k -= getPow(count ++, 3));
-		count --;
-		k += getPow(count, 3);
-		int[] index = new int[]{count, 0, 0};
+		Queue<Integer> q3 = new LinkedList<Integer>();
+		Queue<Integer> q5 = new LinkedList<Integer>();
+		Queue<Integer> q7 = new LinkedList<Integer>();
+		q3.add(3);
+		q5.add(5);
+		q7.add(7);
+		int value = 0;
 		for(int i = 0; i < k; i ++) {
-			int source = index[1] > 0 ? 1 : 0;
-			int dest = source + 1;
-			index[source] --;
-			index[dest] ++;
+			value = Math.min(q3.peek(), Math.min(q5.peek(), q7.peek()));
+			if(value == q3.peek()) {
+				q3.remove();
+				q3.add(value * 3);
+				q5.add(value * 5);
+				q7.add(value * 7);	
+			}else if(value == q5.peek()) {
+				q5.remove();
+				q5.add(value * 5);
+				q7.add(value * 7);
+			} else {
+				q7.remove();
+				q7.add(value * 7);
+			}
 		}
-		return 0;
+		return value;
 	}
 	
 	private static int getPow(int index, int base) {
@@ -38,7 +52,7 @@ public class MathProblems {
 			results.add(previous);
 			return;
 		}
-		for(int current = addition; current >=0; current --) {
+		for(int current = addition; current >= 0; current --) {
 			List<Integer> list = cloneList(previous);
 			list.add(current);
 			getAllCombination(addition - current, count - 1, results, list);
@@ -61,6 +75,10 @@ public class MathProblems {
 				System.out.print(i + " ");
 			}
 			System.out.println();
+		}
+
+		for(int i = 1; i < 100; i ++) {
+			System.out.println(getKthNumber(i));
 		}
 	}
 	 
