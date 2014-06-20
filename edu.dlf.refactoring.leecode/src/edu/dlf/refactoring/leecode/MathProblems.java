@@ -66,6 +66,23 @@ public class MathProblems {
 		}
 		return result;
 	}
+	private static List<Integer> getAllPrimeNumbersBefore(int N) {
+		List<Integer> result = new ArrayList<Integer>();
+		for(int i = 2; i < N; i ++) {
+			boolean flag = true;
+			for(int factor = 2; factor < N/2; factor ++) {
+				if(i % factor == 0) {
+					flag = false;
+					break;
+				}
+			}
+			if(flag){
+				result.add(i);
+			}
+		}
+		return result;
+	}
+
 	
 	public static void main(String[] args) {
 		ArrayList<List<Integer>> results = new ArrayList<List<Integer>>();

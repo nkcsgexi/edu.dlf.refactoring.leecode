@@ -201,8 +201,8 @@ public class BinaryProblems {
 	 * An array A[1...n] contains all the integers from 0 to n except for one 
 	 * number which is missing. In this problem, we cannot access an entire 
 	 * integer in A with a single operation. The elements of A are represented 
-	 * in binary, and the only operation we can use to access them is “fetch the 
-	 * jth bit of A[i]”, which takes constant time. Write code to find the 
+	 * in binary, and the only operation we can use to access them is ï¿½fetch the 
+	 * jth bit of A[i]ï¿½, which takes constant time. Write code to find the 
 	 * missing integer. Can you do it in O(n) time?
 	 * */
 	private static int getMissingNumber(int n) {
@@ -247,13 +247,21 @@ public class BinaryProblems {
 		return (num >> j) & 1;
 	}
 	
-	
+	/*Implement a ? b : c without using any conditions.*/ 
+	private static int implementCondition (boolean a, int b, int c) {
+		int[] pool = new int[]{b, c};
+		int index = Boolean.toString(a).indexOf("false") + 1;
+		return pool[index];
+	}	
+
 	public static void main(String[] args) {
 		System.out.println(getMissingNumber(7));
+		System.out.println(implementCondition(true, 1, 2));
 	}
 
 	private static void printDoubleInBinary(double value) {
 		System.out.println(Long.toBinaryString(Double.doubleToRawLongBits(value)));
+		
 	}
 	
 }
