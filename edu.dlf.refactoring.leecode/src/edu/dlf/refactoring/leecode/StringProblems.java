@@ -217,13 +217,53 @@ public class StringProblems {
 	 * Assume you have a method isSubstring which checks if one word is a 
 	 * substring of another. Given two strings, s1 and s2, write code to check 
 	 * if s2 is a rotation of s1 using only one call to isSubstring (i.e., 
-	 * “waterbottle” is a rotation of “erbottlewat”).
+	 * "waterbottle" is a rotation of "erbottlewat").
 	 * */
 	private static boolean checkeRotation(String s1, String s2) {
 		if(s1.length() != s2.length())
 			return false;
 		return (s1+s1).contains(s2);
 	}
+
+	/* 
+	 * Match an input string to a pattern. The pattern only shows the sequence
+	 * of characters. And the input who matches the pattern shall have the characters
+	 * in the right order according to the given pattern. For instance, "abbccd" 
+	 * matches with "abc" and "abcd".
+	 * */
+	private static boolean matchString(String input, String pattern) {
+		if(pattern.isEmpty()) return true;
+		String nextPattern = pattern.substring(1);
+		char startingChar = pattern.charAt(0);
+		for(int index = input.indexOf(startingChar); 
+				index != -1 && !input.isEmpty();
+				index = input.indexOf(startingChar)) {
+			String nextInput = input.substring(index + 1);
+			if(matchString(nextInput, nextPattern)) {
+				return true;
+			}	
+			input = nextInput;
+		}
+		return false;
+	}
+	
+	private static boolean isSubString(String input, String search) {
+		char[] inputChars = input.toCharArray();
+		char[] patternChars = search.toCharArray();
+		for(int i = 0; i < inputChars.length; i ++) {
+			int k = i;
+			int j = 0;
+			for(; j < patternChars.length; j++) {
+				if(inputChars[k] != patternChars[j]) {
+					break;
+				}
+			}
+			if(j == patternChars.length)
+				return true;
+		}	
+		return false;
+	}
+
 	
 	public static void main(String[] args) {
 		System.out.println(findTheLongestCommonString("ABABC", "BABCA"));
@@ -236,6 +276,7 @@ public class StringProblems {
 		System.out.println(checkPermutation("dpg", "god"));
 		System.out.println(replaceSpaces("dafd "));
 		System.out.println(simpleCompress("aabbccc"));
+		System.out.println(matchString("abccde", "ace"));
 	}
 	
 	

@@ -1,5 +1,8 @@
 package edu.dlf.refactoring.leecode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class IntegerProblems {
 
 	private static int getDigitAt(int num, int pos) {
@@ -278,6 +281,91 @@ public class IntegerProblems {
 		}
 	}
 	
+	private static void calculateAllSquareAdd(int number, List<Integer> previous) {
+		if(number == 0) {
+			for(int factor : previous) {
+				System.out.print(factor + " ");
+			}
+			System.out.println();
+			return;
+		}
+		int base = 1;
+		for(; base * base <= number; base ++);
+		for(int start = base - 1; start > 0; start --) {
+			previous.add(start);
+			calculateAllSquareAdd(number - start * start, previous);
+			previous.remove(previous.size() - 1);
+		}
+	}
+	
+	private static void printTwoSquareAdd(int number) {
+		int base = 1;
+		for(; base * base < number; base ++)
+		for(int first = base - 1; first > 0; first --) {
+			int second = number - first * first;
+			for(int i = 1; i < second - 1; i ++) {
+				if(i * i == second){
+					System.out.println(first + " " + i);
+					break;
+				}
+			}
+		}
+	}
+
+	private static int printMaxNumberOfA(int count, int remainSteps) {
+		int max = 0;
+		for(int inputPart = 1; inputPart < remainSteps; inputPart ++) {
+			int current = copyPastePart(inputPart, remainSteps - inputPart);
+			max = current > max ? max : current;
+		}	
+		return max;
+	}
+
+	private static int copyPastePart(int count, int steps) {
+		int maxCount = 0;
+		for(int current = 4; current <= steps; current ++) {
+			int times = current - 3;
+			int max = Math.max(times * current, copyPastePart(current * times,
+				steps - current));
+			maxCount = max > maxCount ? max : maxCount;
+		}
+		return maxCount;
+	}
+	/* 
+	 * print all the way that multiple integer can be added up to get the given result
+	 * do not print duplicate. For instance: 7 = 2 + 2 +3. The duplicate of 3 + 2 + 2 is
+	 * not allowed.
+	 */
+	private static void printAllAddsUp(int target, List<Integer> candidates, 
+			List<Integer> previous) {
+		if(target == 0)	{
+			for(int i : previous) {
+				System.out.print(i + " ");
+			}
+			System.out.println();
+			return;
+		}
+		if(candidates.size() == 0)
+			return;
+		int value = candidates.get(0);
+		for(int current = 0; value * current <= target; current ++) {
+			int newTarget = target - value * current;
+			int candidate = candidates.remove(0);
+			previous.add(current);
+			printAllAddsUp(newTarget, candidates, previous);
+			previous.remove(previous.size() - 1);
+			candidates.add(0, candidate);
+		}
+	}
+	
+	private static List<Integer> convertArray2List(int[] array) {
+		List<Integer> result = new ArrayList<Integer>();
+		for(int i : array) {
+			result.add(i);
+		}
+		return result;
+	}
+
 	public static void main(String args[]) {
 		System.out.println(isPalindrome(0));
 		System.out.println(isPalindrome(101));
@@ -285,8 +373,12 @@ public class IntegerProblems {
 		int[] m = new int[]{1, 2, 4, 8, 9, 10};
 		int[] n = new int[]{3, 5, 6, 7};
 		int[] a = new int[]{1, 3, -1, -3, 5, 3, 6, 7};
-		System.out.println(getTheMedianOfTwoSortedArrays(m, n));
-		System.out.println(getKthSmallestNumber(m, n, 10));
-		printArray(getMaximumInSlidingWindow(a, 3));
+		// System.out.println(getTheMedianOfTwoSortedArrays(m, n));
+		// System.out.println(getKthSmallestNumber(m, n, 10));
+		// printArray(getMaximumInSlidingWindow(a, 3));
+		// calculateAllSquareAdd(100, new ArrayList<Integer>());
+		// System.out.println(printMaxNumberOfA(10, 10));
+		printAllAddsUp(7, convertArray2List(new int[]{2, 3, 6, 7}), 
+			new ArrayList<Integer>());
 	}
 }
