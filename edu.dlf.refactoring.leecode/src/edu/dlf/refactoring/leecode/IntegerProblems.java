@@ -1,6 +1,9 @@
 package edu.dlf.refactoring.leecode;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 
 public class IntegerProblems {
@@ -366,8 +369,92 @@ public class IntegerProblems {
 		return result;
 	}
 
+	private static class IntegerPair{
+		Integer first;
+		Integer second;
+		public IntegerPair(Integer first, Integer second) {
+			this.first = first;
+			this.second = second;
+		}
+	}
+
+	/* Find the arithmetic number list in a given set of numbers.*/
+	private static List<Integer> getLongestArithmicList(List<Integer> allNumbers) {
+		Hashtable<Integer, List<IntegerPair>> table = new Hashtable<Integer,
+			List<IntegerPair>>();
+		for(int i = 0; i < allNumbers.size() - 1; i++) {
+			int first = allNumbers.get(i);
+			for(int j = i + 1; j < allNumbers.size(); j ++) {
+				int second = allNumbers.get(j);
+				int gap = second - first;
+				IntegerPair pair = new IntegerPair(i, j);
+				List<IntegerPair> list = table.get(gap);
+				if(list == null){
+					list = new ArrayList<IntegerPair>();
+					table.put(gap, list);
+				}
+				list.add(pair);
+			}
+		}
+		Collection<List<IntegerPair>> allLists = table.values();
+		int maxLength = Integer.MIN_VALUE;
+		List<Integer> maxIndexList = new ArrayList<Integer>();
+		List<Integer> index = new ArrayList<Integer>();
+		for(List<IntegerPair> list : allLists) {
+			int length = 2;
+			index.clear();
+			for(int i = 0; i < list.size() - 1; i ++) {
+				if(list.get(i).second == list.get(i+1).first) {
+					length ++;
+					if(index.size() == 0) {
+						index.add(list.get(i).first);
+						index.add(list.get(i).second);
+					}
+					index.add(list.get(i + 1).second);
+				} else {
+					length = 2;
+					index.clear();
+					index.add(list.get(i).first);
+					index.add(list.get(i).second);
+				}
+				if(length > maxLength) {
+					maxLength = length;
+					maxIndexList.clear();
+					maxIndexList.addAll(index);
+				}
+			}
+		}
+		return maxIndexList;
+	}
+
+	/* Find the longest consecutive number list in a given set of numbers.*/
+	private static int getLongestConsecutiveNumbers(List<Integer> numbers) {
+		Hashtable<Integer, Integer> set = new Hashtable<Integer, Integer>();
+		for(int num : numbers)
+			set.put(num, num);
+		int longest = Integer.MIN_VALUE;
+		while(set.size() != 0) {
+			int length = 1;
+			int head = set.keys().nextElement();
+			set.remove(head);
+			int before = head - 1;
+			while(set.remove(before) != null) {
+				before --;
+				length ++;
+			}
+			int after = head + 1;
+			while(set.remove(after) != null) {
+				after ++;
+				length ++;
+			}
+			if(length > longest) {
+				longest = length;
+			}
+		}
+		return longest;
+	}
 	public static void main(String args[]) {
-		System.out.println(isPalindrome(0));
+/*		System.out.println(isPalindrome(0));
 		System.out.println(isPalindrome(101));
 		System.out.println(isPalindrome(101101));
 		int[] m = new int[]{1, 2, 4, 8, 9, 10};
@@ -380,5 +467,9 @@ public class IntegerProblems {
 		// System.out.println(printMaxNumberOfA(10, 10));
 		printAllAddsUp(7, convertArray2List(new int[]{2, 3, 6, 7}), 
 			new ArrayList<Integer>());
+		getLongestArithmicList(convertArray2List(new int[]{1,6,3,5,9,7})).
+			forEach(i -> System.out.print(i + " "));*/
+		System.out.println(getLongestConsecutiveNumbers(convertArray2List(
+			new int[]{1, 6, 3, 5, 9, 7})));
 	}
 }
