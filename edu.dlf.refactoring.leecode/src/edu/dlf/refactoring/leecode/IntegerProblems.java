@@ -2,9 +2,10 @@ package edu.dlf.refactoring.leecode;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 public class IntegerProblems {
 
@@ -453,6 +454,74 @@ public class IntegerProblems {
 		}
 		return longest;
 	}
+
+	private static class PositionValuePair implements Comparable<PositionValuePair>{
+		int position;
+		int value;
+		public PositionValuePair(int position, int value) {
+			this.position = position;
+			this.value = value;
+		}
+		@Override
+		public int compareTo(PositionValuePair o) {
+			return value - o.value;
+		}
+	}
+	private static int getNextNumberByRearrangingDigits(int number) {
+		int originalNumber = number;
+		int result = 0;
+		Queue<PositionValuePair> previousDigits = new PriorityQueue
+			<PositionValuePair>();
+		int smallest = Integer.MIN_VALUE;
+		int position = 0;
+		int highPosition = 0;
+		int highDigit = 1;
+		while(number != 0) {
+			int digit = number % 10;
+			if(digit >= smallest) {
+				smallest = digit;
+				PositionValuePair pair = new PositionValuePair(position, digit);
+				previousDigits.add(pair);
+			} else {
+				highPosition = position;
+				highDigit = digit;
+				break;
+			}
+			number = number / 10;
+			position ++;
+		}
+		while(previousDigits.peek().value <= highDigit) 
+			previousDigits.poll();
+		int lowPosition = previousDigits.peek().position;
+		int lowDigit = previousDigits.peek().value;
+		number = originalNumber;
+		position = 0;
+		while(number != 0) {
+			int base = getIntPow(10, position);
+			if(position == lowPosition) {
+				result += highDigit * base;
+			}
+			else if(position == highPosition) {
+				result += lowDigit * base;
+			}
+			else 
+				result += (number % 10) * base;
+			number = number/10;	
+			position ++;
+		}
+		return result;
+	}
+	
+	private static int getIntPow(int base, int pow) {
+		int result = 1;
+		for(int i = 0; i < pow; i ++) {
+			result *= base;
+		}
+		return result;
+	}
+		
+				
+
 	public static void main(String args[]) {
 /*		System.out.println(isPalindrome(0));
 		System.out.println(isPalindrome(101));
@@ -468,8 +537,9 @@ public class IntegerProblems {
 		printAllAddsUp(7, convertArray2List(new int[]{2, 3, 6, 7}), 
 			new ArrayList<Integer>());
 		getLongestArithmicList(convertArray2List(new int[]{1,6,3,5,9,7})).
-			forEach(i -> System.out.print(i + " "));*/
+			forEach(i -> System.out.print(i + " "));
 		System.out.println(getLongestConsecutiveNumbers(convertArray2List(
-			new int[]{1, 6, 3, 5, 9, 7})));
+			new int[]{1, 6, 3, 5, 9, 7})));*/
+		System.out.println(getNextNumberByRearrangingDigits(543126432));
 	}
 }
