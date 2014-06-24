@@ -317,9 +317,42 @@ public class StringProblems {
 		}
 		return result;
 	}
+	
+	private static String getLongestSubstringWithoutDuplicates(String input) {
+		int[] counts = new int[26];
+		for(int i = 0; i< 26; i ++)
+			counts[i] = 0;
+		char[] chs = input.toCharArray();
+		int longestStart = 0;
+		int longestEnd = 0;
+		int maxLength = Integer.MIN_VALUE;
+		int start = 0;
+		for(int end = 0; end < chs.length; end ++) {
+			int index = chs[end] - 'a';
+			counts[index] ++;
+			if(counts[index] == 1) {
+				continue;
+			} 
+			if(end - start > maxLength) {
+					maxLength = end - start;
+					longestStart = start;
+					longestEnd = end - 1;
+			}
+			for(;chs[start] != chs[end]; start ++){
+				counts[chs[start] - 'a'] --;
+			}
+			counts[index] --;
+			start ++;
+		}
+		String remain = input.substring(start);
+		String middle = input.substring(longestStart, longestEnd + 1);
+		return remain.length() > middle.length() ? remain : middle;
+	}
+
+	
 
 	public static void main(String[] args) {
-		/*
+/*		
 		 * System.out.println(findTheLongestCommonString("ABABC", "BABCA"));
 		 * System.out.println(findLongestPalindromic("abacdfgdcaba"));
 		 * System.out.println(findLongestNonrepetitiveSubString("abdaabd"));
@@ -331,9 +364,10 @@ public class StringProblems {
 		 * System.out.println(replaceSpaces("dafd "));
 		 * System.out.println(simpleCompress("aabbccc"));
 		 * System.out.println(matchString("abccde", "ace"));
-		 */
+		 
 		System.out.println(getMinimumWindow("ADOBECODEBANC".toLowerCase(),
-				"ABC".toLowerCase()));
+				"ABC".toLowerCase()));*/
+		System.out.println(getLongestSubstringWithoutDuplicates("dfeanfdouiv"));
 
 	}
 

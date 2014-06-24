@@ -519,8 +519,19 @@ public class IntegerProblems {
 		}
 		return result;
 	}
-		
-				
+	
+	private static int getNumberAppearingOnce(int[] numbers) {
+		int result = 0;
+		for(int position = 0; position < 32; position ++) {
+			int count = 0;
+			for(int num : numbers) {
+				count += ((num >> position) & 1);
+			}
+			result |= (count % 3) << position;
+		}
+		return result;
+	}
+	
 
 	public static void main(String args[]) {
 /*		System.out.println(isPalindrome(0));
@@ -539,7 +550,10 @@ public class IntegerProblems {
 		getLongestArithmicList(convertArray2List(new int[]{1,6,3,5,9,7})).
 			forEach(i -> System.out.print(i + " "));
 		System.out.println(getLongestConsecutiveNumbers(convertArray2List(
-			new int[]{1, 6, 3, 5, 9, 7})));*/
-		System.out.println(getNextNumberByRearrangingDigits(543126432));
+			new int[]{1, 6, 3, 5, 9, 7})));
+		System.out.println(getNextNumberByRearrangingDigits(543126432));*/
+		System.out.println(getNumberAppearingOnce(new int[]{2, 2, 2, 3, 3, 3, 
+			1,1,1,11}));
+		
 	}
 }
