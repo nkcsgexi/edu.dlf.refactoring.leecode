@@ -1,6 +1,8 @@
 package edu.dlf.refactoring.leecode;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class StringProblems {
 
@@ -348,6 +350,38 @@ public class StringProblems {
 		String middle = input.substring(longestStart, longestEnd + 1);
 		return remain.length() > middle.length() ? remain : middle;
 	}
+	
+	private static int getIntFromDigits(List<Integer> digit) {
+		int result = 0;
+		int base = 1;
+		for(int i = digit.size() - 1; i >= 0; i --) {
+			result += digit.get(i) * base;
+			base *= 10;
+		}
+		return result;
+	}
+
+	private static int getLeastNumberAfterRemovingKDigit(int number, int k) {
+		if(k == 0)
+			return number;
+		List<Integer> digitList = new ArrayList<Integer>();
+		while(number != 0) {
+			int digit = number % 10;
+			number = number / 10;
+			digitList.add(0, digit);
+		}
+		int selectedPosition = -1;
+		for(int i = 0; i < digitList.size() - 1; i ++) {
+			if(digitList.get(i) > digitList.get(i + 1)) {
+				selectedPosition = i;
+				break;	
+			}
+		}
+		if(selectedPosition == -1) selectedPosition = digitList.size() - 1;
+		digitList.remove(selectedPosition);
+		return getLeastNumberAfterRemovingKDigit(getIntFromDigits
+			(digitList), k - 1);
+	}
 
 	
 
@@ -368,6 +402,7 @@ public class StringProblems {
 		System.out.println(getMinimumWindow("ADOBECODEBANC".toLowerCase(),
 				"ABC".toLowerCase()));*/
 		System.out.println(getLongestSubstringWithoutDuplicates("dfeanfdouiv"));
+		System.out.println(getLeastNumberAfterRemovingKDigit(231346, 3));
 
 	}
 
