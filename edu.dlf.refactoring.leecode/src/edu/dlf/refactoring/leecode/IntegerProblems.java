@@ -531,7 +531,44 @@ public class IntegerProblems {
 		}
 		return result;
 	}
-	
+
+	private static int[] getThreeIncrementalElementsInArray(int[] input) {
+		int[] minFromLeft = new int[input.length];
+		int[] maxFromRight = new int[input.length];
+		int min = Integer.MAX_VALUE;
+		int max = Integer.MIN_VALUE;
+		for(int i = 0; i < input.length; i ++) {
+			if(input[i] < min) {
+				min = input[i];
+			}
+			minFromLeft[i] = min;
+			if(input[input.length - i - 1] > max) {
+				max = input[input.length - i -1];
+			}
+			maxFromRight[input.length - i - 1] = max;
+		}
+		int middle = -1;
+		for(int i = 1; i < input.length - 1; i ++) {
+			if(minFromLeft[i - 1] < input[i] && input[i] < 
+					maxFromRight[i + 1]) {
+				middle = i;
+			}
+		}
+		if(middle == -1) return null;
+		int before = 0;
+		int after = 0;
+		for(int i= 0; i < middle; i ++) {
+			if(input[i] < input[middle]) {
+				before = i;
+			}
+		}
+		for(int i = middle +1 ; i < input.length; i++) {
+			if(input[i] > input[middle]) {
+				after = i;
+			}
+		}
+		return new int[]{before, middle, after};
+	}
 
 	public static void main(String args[]) {
 /*		System.out.println(isPalindrome(0));
@@ -551,9 +588,12 @@ public class IntegerProblems {
 			forEach(i -> System.out.print(i + " "));
 		System.out.println(getLongestConsecutiveNumbers(convertArray2List(
 			new int[]{1, 6, 3, 5, 9, 7})));
-		System.out.println(getNextNumberByRearrangingDigits(543126432));*/
+		System.out.println(getNextNumberByRearrangingDigits(543126432));
 		System.out.println(getNumberAppearingOnce(new int[]{2, 2, 2, 3, 3, 3, 
-			1,1,1,11}));
+			1,1,1,11}));*/
+/*		int[] result = getThreeIncrementalElementsInArray(new int[]{2, 5, 6,4,3,5});
+		for(int i : result)
+			System.out.println(i);*/
 		
 	}
 }
