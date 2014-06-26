@@ -569,6 +569,33 @@ public class IntegerProblems {
 		}
 		return new int[]{before, middle, after};
 	}
+	
+ 	/*
+ 	 * Problem: Numbers are serialized increasingly into a sequence in the 
+ 	 * format of 0123456789101112131415..., which each digit occupies a position 
+ 	 * in the sequence. For instance, the digit in the position 5 is 5, in the 
+ 	 * position 13 is 1, in the position 19 is 4, and so on.
+ 	 * */
+	private static int getDigitAtPosition(int position) {
+		int base = 10;
+		int count = 1;
+		int p = position;
+		for(; p > 0; base *= 10, count ++) {
+			p = p - base * count;
+		}
+		base /= 10;
+		count -= 1;
+		p = p + base * count;
+		int number = base / 10 + p / count;
+		int digit = count - (p % count) - 1;
+		while(digit != 0) {
+			number /= 10;
+			digit --;
+		}
+		return number % 10;
+	}
+
+
 
 	public static void main(String args[]) {
 /*		System.out.println(isPalindrome(0));
@@ -594,6 +621,6 @@ public class IntegerProblems {
 /*		int[] result = getThreeIncrementalElementsInArray(new int[]{2, 5, 6,4,3,5});
 		for(int i : result)
 			System.out.println(i);*/
-		
+	 	System.out.println(getDigitAtPosition(5));		
 	}
 }
