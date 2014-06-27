@@ -455,29 +455,39 @@ public class StringProblems {
 		else 
 			return false;
 	}
-	
+
+	/* http://www.careercup.com/question?id=19300678 */
+	private static List<String> getAllLetters(String s) {
+		List<String> results = new ArrayList<String>();
+		if(s.length() == 0) {
+			results.add("");
+			return results;
+		}
+		char c = convertInt2char(s.substring(0, 1));
+		List<String> remains = getAllLetters(s.substring(1));
+		for(String r : remains) {
+			results.add(c + r);
+		}
+		if(s.length() > 1 && checkIntegerBound(s.substring(0, 2))) {
+			c = convertInt2char(s.substring(0, 2));
+			remains = getAllLetters(s.substring(2));
+			for(String r : remains)
+				results.add(c + r);
+		}
+		return results;
+	}
+
+	private static char convertInt2char(String num) {
+		int i = Integer.parseInt(num);
+		return (char)(i + 'a' -1);
+	}
+	private static boolean checkIntegerBound(String num) {
+		int i = Integer.parseInt(num);
+		return i > 0 && i < 27;
+	}	
 
 	public static void main(String[] args) {
-/*		
-		 * System.out.println(findTheLongestCommonString("ABABC", "BABCA"));
-		 * System.out.println(findLongestPalindromic("abacdfgdcaba"));
-		 * System.out.println(findLongestNonrepetitiveSubString("abdaabd"));
-		 * System.out.println(testDuplicate("abb"));
-		 * System.out.println(testDuplicate("abc"));
-		 * System.out.println(reverseString("fadfasfd"));
-		 * System.out.println(checkPermutation("dog", "god"));
-		 * System.out.println(checkPermutation("dpg", "god"));
-		 * System.out.println(replaceSpaces("dafd "));
-		 * System.out.println(simpleCompress("aabbccc"));
-		 * System.out.println(matchString("abccde", "ace"));
-		 
-		System.out.println(getMinimumWindow("ADOBECODEBANC".toLowerCase(),
-				"ABC".toLowerCase()));
-		System.out.println(getLongestSubstringWithoutDuplicates("dfeanfdouiv"));
-		System.out.println(getLeastNumberAfterRemovingKDigit(231346, 3));
-		printAllPermutation("abcd");*/
-		
-		System.out.println(ifPermutationExist("gas", "fdafdsagdsag"));
+		getAllLetters("1123").forEach(s -> System.out.println(s));
 	}
 
 }
