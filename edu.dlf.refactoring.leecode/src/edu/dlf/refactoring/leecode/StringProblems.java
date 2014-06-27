@@ -1,6 +1,7 @@
 package edu.dlf.refactoring.leecode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -382,7 +383,32 @@ public class StringProblems {
 		return getLeastNumberAfterRemovingKDigit(getIntFromDigits
 			(digitList), k - 1);
 	}
-
+ 	
+	private static List<String> getAllPermutations(
+			String input) {
+		List<String> results = new ArrayList<String>();
+		if(input.length() == 1 || input.length() == 0) {
+			results.add(input);
+			return results;
+		}
+		String head = input.substring(0, 1);
+		String remain = input.substring(1);
+		for(String s : getAllPermutations(remain)) {
+			for(int i = 0; i <= s.length(); i ++) {
+				String prefix = s.substring(0, i);
+				String postfix = s.substring(i);
+				results.add(prefix + head + postfix); 
+			}
+		}
+		return results;
+	}
+	private static void printAllPermutation(String input) {
+		List<String> list = getAllPermutations(input);
+		Collections.sort(list);
+		for(String s : list) {
+			System.out.println(s);
+		}
+	}
 	
 
 	public static void main(String[] args) {
@@ -403,7 +429,7 @@ public class StringProblems {
 				"ABC".toLowerCase()));*/
 		System.out.println(getLongestSubstringWithoutDuplicates("dfeanfdouiv"));
 		System.out.println(getLeastNumberAfterRemovingKDigit(231346, 3));
-
+		printAllPermutation("abcd");
 	}
 
 }
