@@ -1,4 +1,4 @@
-package edu.dlf.refactoring.leecode;
+﻿package edu.dlf.refactoring.leecode;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -409,6 +409,52 @@ public class StringProblems {
 			System.out.println(s);
 		}
 	}
+
+	private static boolean ifPermutationExist(String s1, String s2) {
+		int[] counts = new int[26];
+		int[] actualCounts = new int[26];
+		int length = s1.length();
+		
+		for(int i = 0; i < 26; i ++) {
+			counts[i] = 0;
+			actualCounts[i] = 0;	
+		}
+		for(char c : s1.toCharArray()) {
+			counts[c - 'a'] ++;
+		}	
+		for(int start = 0; start < s2.length() - length + 1; start ++) {
+			if(start == 0) {
+				String sub = s2.substring(start, length);
+				for(char c : sub.toCharArray()) {
+					actualCounts[c - 'a'] ++;
+				}
+				if(checkArrayEq(counts, actualCounts))
+					return true;
+			
+			}else {
+				actualCounts[s2.charAt(start + length - 1) - 'a'] ++;
+				actualCounts[s2.charAt(start - 1) - 'a'] --;
+				if(checkArrayEq(actualCounts, counts))
+					return true;
+			}			
+		}
+		return false;
+	}
+
+	private static boolean checkArrayEq(int[] array1, int[] array2) {
+		if(array1.length != array2.length)
+			return false;
+		int index = 0;
+		for(;index < array1.length; index++) {
+			if(array1[index] != array2[index]) {
+				break;
+			}
+		}
+		if(index == array1.length)
+			return true;
+		else 
+			return false;
+	}
 	
 
 	public static void main(String[] args) {
@@ -426,10 +472,12 @@ public class StringProblems {
 		 * System.out.println(matchString("abccde", "ace"));
 		 
 		System.out.println(getMinimumWindow("ADOBECODEBANC".toLowerCase(),
-				"ABC".toLowerCase()));*/
+				"ABC".toLowerCase()));
 		System.out.println(getLongestSubstringWithoutDuplicates("dfeanfdouiv"));
 		System.out.println(getLeastNumberAfterRemovingKDigit(231346, 3));
-		printAllPermutation("abcd");
+		printAllPermutation("abcd");*/
+		
+		System.out.println(ifPermutationExist("gas", "fdafdsagdsag"));
 	}
 
 }
