@@ -2,6 +2,8 @@ package edu.dlf.refactoring.leecode;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -594,33 +596,62 @@ public class IntegerProblems {
 		}
 		return number % 10;
 	}
+	/* Find the integer of the max repetition in the given array.*/
+	private static int getMaxRepeat(int[] input) {
+		HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+		for(int i : input) {
+			if(map.get(i) != null){
+				int count = map.remove(i);
+				map.put(i, count + 1);
+			}
+			else 
+				map.put(i, 1);
+		}
+		int maxRepeat = Integer.MIN_VALUE;
+		int result = 0;
+		for(int key : map.keySet()) {
+			int value = map.get(key);
+			if(value > maxRepeat) {
+				maxRepeat = value;
+				result = key;
+			}
+		}
+		return result;
+	}
+
+	/* 
+	 * Get a range that every element in the range appear in the given input
+	 * array.
+	 * */
+	private static int[] getRangeIncludingMost(int[] input) {
+		HashSet<Integer> set = new HashSet<Integer>();
+		for(int i : input)
+			set.add(i);
+		int rangeStart = 0, rangeEnd = 0;
+		int rangeLength = Integer.MIN_VALUE;
+		while(set.size() != 0) {
+			int seed = set.stream().findFirst().get();
+			set.remove(seed);
+			int start = seed - 1;
+			int end = seed + 1;
+			for(; set.contains(start); start --);
+			for(; set.contains(end); end++);
+			start ++;
+			end --;
+			if(end - start + 1> rangeLength) {
+				rangeLength = end - start + 1;
+				rangeStart = start;
+				rangeEnd = end;
+			}
+		}
+		return new int[]{rangeStart, rangeEnd};
+	}
 
 
 
 	public static void main(String args[]) {
-/*		System.out.println(isPalindrome(0));
-		System.out.println(isPalindrome(101));
-		System.out.println(isPalindrome(101101));
-		int[] m = new int[]{1, 2, 4, 8, 9, 10};
-		int[] n = new int[]{3, 5, 6, 7};
-		int[] a = new int[]{1, 3, -1, -3, 5, 3, 6, 7};
-		// System.out.println(getTheMedianOfTwoSortedArrays(m, n));
-		// System.out.println(getKthSmallestNumber(m, n, 10));
-		// printArray(getMaximumInSlidingWindow(a, 3));
-		// calculateAllSquareAdd(100, new ArrayList<Integer>());
-		// System.out.println(printMaxNumberOfA(10, 10));
-		printAllAddsUp(7, convertArray2List(new int[]{2, 3, 6, 7}), 
-			new ArrayList<Integer>());
-		getLongestArithmicList(convertArray2List(new int[]{1,6,3,5,9,7})).
-			forEach(i -> System.out.print(i + " "));
-		System.out.println(getLongestConsecutiveNumbers(convertArray2List(
-			new int[]{1, 6, 3, 5, 9, 7})));
-		System.out.println(getNextNumberByRearrangingDigits(543126432));
-		System.out.println(getNumberAppearingOnce(new int[]{2, 2, 2, 3, 3, 3, 
-			1,1,1,11}));*/
-/*		int[] result = getThreeIncrementalElementsInArray(new int[]{2, 5, 6,4,3,5});
-		for(int i : result)
-			System.out.println(i);*/
-	 	System.out.println(getDigitAtPosition(5));		
+		System.out.println(getMaxRepeat(new int[]{2,3,4,5,2,3,2}));
+		System.out.println(getRangeIncludingMost(new int[]{1, 7, 4, 6, 3, 10, 2})[0]);
+		System.out.println(getRangeIncludingMost(new int[]{1, 7, 4, 6, 3, 10, 2})[1]);
 	}
 }
