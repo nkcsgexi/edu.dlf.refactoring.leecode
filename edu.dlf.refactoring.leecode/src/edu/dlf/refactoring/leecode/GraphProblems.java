@@ -1,6 +1,7 @@
 package edu.dlf.refactoring.leecode;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -358,6 +359,56 @@ public class GraphProblems {
 		nodes[2].value = -3;
 		System.out.println(queue.remove().value);
 	}
+
+	private static class AStarNode implements Comparable<AStarNode>{
+		List<AStarNode> neighbors;
+		List<Integer> distances;
+		int gScore;
+		int fScore;
+		public int compareTo(AStarNode another) {
+			return fScore - another.fScore;
+		}
+	}
+
+	private static int estimateDistance(AStarNode node) {
+		return 0;
+	}
+
+	private static int AStarSearch(AStarNode start, AStarNode goal) {
+		Queue<AStarNode> openSet = new PriorityQueue<AStarNode>();
+		HashSet<AStarNode> closeSet = new HashSet<AStarNode>();
+		openSet.add(start);
+		start.gScore = 0;
+		start.fScore = estimateDistance(start);
+		while(openSet.size() != 0) {
+			AStarNode current = openSet.peek();
+			if(current == goal) {
+				return current.gScore;
+			}
+			openSet.remove(current);
+			closeSet.add(current);
+			for(int i = 0; i < current.neighbors.size(); i ++) {
+				AStarNode nei = current.neighbors.get(i);
+				if(closeSet.contains(nei)) {
+					continue;
+				}
+				int tentativeGscore = current.gScore + current.
+					distances.get(i);
+				if(openSet.contains(nei) || tentativeGscore <
+						nei.gScore) {
+					nei.gScore = tentativeGscore;
+					nei.fScore = estimateDistance(nei) +
+						nei.gScore;
+					if(!openSet.contains(nei))
+						openSet.add(nei);
+				}
+			}
+		}
+		return Integer.MAX_VALUE;
+	}
+
+				
+			
 	
 	public static void main(String[] args) {
 		List<Integer> preorder = toList(new int[]{7,10,4,3,1,2,8,11});

@@ -49,7 +49,7 @@ public class LinkedListProblems {
 	
 	/*
 	* Implement an algorithm to delete a node in the middle of a single linked list, 
-	* given only access to that node. EXAMPLE Input: the node ‘c’ from the linked 
+	* given only access to that node. EXAMPLE Input: the node ï¿½cï¿½ from the linked 
 	* list a->b->c->d->e Result: nothing is returned, but the new linked list looks 
 	* like a->b->d->e
 	*/
@@ -65,7 +65,7 @@ public class LinkedListProblems {
 	
 	/*
 	* You have two numbers represented by a linked list, where each node contains a 
-	* single digit. The digits are stored in reverse order, such that the 1’s digit 
+	* single digit. The digits are stored in reverse order, such that the 1ï¿½s digit 
 	* is at the head of the list. Write a function that adds the two numbers and 
 	* returns the sum as a linked list. EXAMPLE Input: (3 -> 1 -> 5), (5 -> 9 -> 2) 
 	* Output: 8 -> 0 -> 8 
@@ -94,7 +94,7 @@ public class LinkedListProblems {
 	/* 
 	 * Given a circular linked list, implement an algorithm which returns node 
 	 * at the beginning of the loop. DEFINITION Circular linked list: A 
-	 * (corrupt) linked list in which a node’s next pointer points to an earlier 
+	 * (corrupt) linked list in which a nodeï¿½s next pointer points to an earlier 
 	 * node, so as to make a loop in the linked list. EXAMPLE Input: A -> B -> 
 	 * C -> D -> E -> C [the same C as earlier] Output: C
 	 * */
@@ -111,4 +111,57 @@ public class LinkedListProblems {
 		}
 		return slow;
 	}
+
+	private static void swapKthFromStartAndFromEnd(LinkedNode head, int k) {
+		LinkedNode fastPointer = head;
+		for(int i = 1; i < k; i ++) {
+			fastPointer = fastPointer.next;
+			if(fastPointer == null) {
+				return;
+			}
+		}
+		LinkedNode before = fastPointer;
+		LinkedNode slowPointer = head;
+		while(fastPointer.next != null) {
+			slowPointer = slowPointer.next;
+			fastPointer = fastPointer.next;
+		}
+		LinkedNode after = slowPointer;
+		int temp = after.value;
+		after.value = before.value;
+		before.value = temp;
+	}
+
+	private static LinkedNode constructLinkedList(int[] numbers) {
+		if(numbers.length == 0)
+			return null;
+		LinkedNode head = new LinkedNode();
+		head.value = numbers[0];
+		LinkedNode before = head;
+		for(int i = 1; i < numbers.length; i++) {
+			LinkedNode node = new LinkedNode();
+			node.value = numbers[i];
+			before.next = node;
+			before = node;
+		}
+		return head;
+	}
+	
+	private static void printLinkedList(LinkedNode node) {
+		for(LinkedNode n = node; n != null; n = n.next) {
+			System.out.print(n.value + "->");
+		}
+		System.out.println();
+	}
+
+	public static void main(String[] args) {
+		int[] nums = new int[]{1,2,3,4,5,6,7,8};
+		LinkedNode head = constructLinkedList(nums);
+		printLinkedList(head);
+		swapKthFromStartAndFromEnd(head, 3);
+		printLinkedList(head);
+	}
+
+	
+
 }
