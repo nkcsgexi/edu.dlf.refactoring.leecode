@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
@@ -647,11 +648,146 @@ public class IntegerProblems {
 		return new int[]{rangeStart, rangeEnd};
 	}
 
+	private static List<List<Integer>> waysToCollect(int total, List<Integer> options) {
+			List<List<Integer>> results = new ArrayList<List<Integer>>();
+			if(options.size() == 1 && options.get(0) == 1) {
+				List<Integer> l = new ArrayList<Integer>();
+				l.add(total);
+				results.add(l);
+				return results;
+			}
+			int option = options.get(0);
+			List<Integer> restOptions = options.subList(1, options.size());
+			int num = 0;
+			for (int value = total; value >=0; value -= option) {
+				List<List<Integer>> list = waysToCollect(value, restOptions);
+				for(List<Integer> l : list) {
+					l.add(0, num);
+					results.add(l);
+				}
+				num ++;
+			}
+			return results;
+	}
 
+	private static List<Integer> convertArrayToList(int[] array) {
+		List<Integer> results = new ArrayList<Integer>();
+		for(int i : array) {
+			results.add(i);
+		}
+		return results;
+	}
+	
+	private static void printList(List<List<Integer>> lists) {
+		for(List<Integer> list : lists) {
+			for(int i : list) {
+				System.out.print(i + " ");
+			}
+			System.out.println();
+		}
+	}
+	
+	private static class SetElement{
+		int value;
+		int count;
+		SetElement(int value, int count) {
+			this.value = value;
+			this.count = count;
+		}
+	}
 
+	private static List<SetElement> convertToSetElement(List<Integer> numbers) {
+		List<SetElement> results = new ArrayList<SetElement>();
+		HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+		for(int i : numbers) {
+			if(map.containsKey(i)) {
+				int value = map.get(i) + 1;
+				map.remove(i);
+				map.put(i, value);
+			} else 
+				map.put(i, 1);
+		}
+		for(Entry<Integer, Integer> pair : map.entrySet()) {
+			results.add(new SetElement(pair.getKey(), pair.getValue()));
+		}
+		return results;
+	}
+
+	/*
+	 * We are given a set of integers with repeated occurences of elements. 
+	 * For Example, S={1,2,2}. We need to print the power set of S ensuring that 
+	 * the repeated elements of the power set are printed only once. For the 
+	 * above S, the power set will be {NULL, {1}, {2}, {2}, {1,2}, {1,2}, {2,2}, 
+	 * {1,2,2}}. So, as per the question requirements, we need to print {NULL, 
+	 * {1}, {2}, {1,2}, {2,2}, {1,2,2}}
+	 * */
+	private static List<List<Integer>> getAllSubset(List<SetElement> numbers) {
+		List<List<Integer>> results = new ArrayList<List<Integer>>();
+		if(numbers.size() == 0) {
+			List<Integer> l =  new ArrayList<Integer>();
+			results.add(l);
+			return results;
+		}
+		List<List<Integer>> rest = getAllSubset(numbers.subList(1, numbers.size()));
+		int value = numbers.get(0).value;
+		int count = numbers.get(0).count;
+		results.addAll(rest);
+		for(int c = 1; c <= count; c ++) {
+			for(List<Integer> r: rest) {
+				List<Integer> l = new ArrayList<Integer>();
+				l.addAll(r);
+				for(int k = 0; k < c; k ++) {
+					l.add(0, value);
+				}
+				results.add(l);
+			}
+		}
+		return results;
+	}
+
+	private static void printSubSets(int[] numbers) {
+		printList(getAllSubset(convertToSetElement(convertArrayToList(numbers))));
+	}
+	
+	/*
+	 * Print all valid phone numbers of length n subject to following constraints: 
+	 * 1.If a number contains a 4, it should start with 4  
+	 * 2.No two consecutive digits can be same 
+	 * 3.Three digits (e.g. 7,2,9) will be entirely disallowed, take as input
+	 * */
+	private static void printAllPhoneNumbers(int n, List<Integer> prefix) {
+		List<Integer> allowed = getAllowedDigit(prefix);
+		for(int allow : allowed) {
+			List<Integer> newPrefix = new ArrayList<Integer>();
+			newPrefix.addAll(prefix);
+			newPrefix.add(allow);
+			if(newPrefix.size() == n) {
+				for(int p : newPrefix) {
+					System.out.print(p);
+				}
+				System.out.println();
+			} else {
+				printAllPhoneNumbers(n, newPrefix);
+			}
+		}
+	}
+	
+	private static List<Integer> getAllowedDigit(List<Integer> prefix) {
+		List<Integer> results = new ArrayList<Integer>();
+		if(prefix.size() == 0) {
+			results.addAll(digits);
+			return results;
+		}
+		results.addAll(digits);
+		results.removeIf(d -> prefix.get(prefix.size() -1) == d);
+		results.removeIf(d -> d == 4);
+		return results;
+	}
+	
+	private final static List<Integer> digits = convertArrayToList(
+		new int[]{0, 1, 3, 4, 5, 6, 8});
+	
 	public static void main(String args[]) {
-		System.out.println(getMaxRepeat(new int[]{2,3,4,5,2,3,2}));
-		System.out.println(getRangeIncludingMost(new int[]{1, 7, 4, 6, 3, 10, 2})[0]);
-		System.out.println(getRangeIncludingMost(new int[]{1, 7, 4, 6, 3, 10, 2})[1]);
+		printAllPhoneNumbers(7, new ArrayList<Integer>());
 	}
 }
