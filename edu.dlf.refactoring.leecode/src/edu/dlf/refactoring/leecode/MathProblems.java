@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Random;
 
 public class MathProblems {
 	/* 
@@ -81,6 +82,33 @@ public class MathProblems {
 			}
 		}
 		return result;
+	}
+	
+	/* Generate random number by weight. */
+	private static int calcualteRandomNumber(int[] weight) {
+		int total = 0;
+		for(int w : weight) {
+			total += w;
+		}
+		Random random = new Random();
+		int raw = random.nextInt(total);
+		int i = 0;
+		while(raw >= 0) {
+			raw -= weight[i++];
+		}
+		return i - 1;
+	}
+
+	/* How many ways to filing a board of 2*N with brickes of 2*1.*/
+	private static int calcualteWaysToFillBoard(int N) {
+		int pre = 2;
+		int prepre = 1;
+		for(int length = 3; length != N; length ++) {
+			int current = pre + prepre;
+			prepre = pre;
+			pre = current;
+		}
+		return pre + prepre;
 	}
 
 	
