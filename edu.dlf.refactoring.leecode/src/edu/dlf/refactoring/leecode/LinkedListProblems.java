@@ -1,5 +1,9 @@
 package edu.dlf.refactoring.leecode;
 
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
+
 
 public class LinkedListProblems {
 
@@ -153,12 +157,44 @@ public class LinkedListProblems {
 		}
 		System.out.println();
 	}
+	
+	/*
+	 * Given a linked list: 5 -> 4 -> 3 -> 2 -> 1, produce the following output: 
+	 * 4 -> 2 -> 0 -> 2 -> 1 by substracting the 1st node with nth node, the 2nd 
+	 * with nth -1 node, etc... Only apply the stated action on the first half 
+	 * of the list
+	 * */
+	private static void subtract(LinkedNode head) {
+		int length =0;	
+		for(LinkedNode temp = head; temp != null; temp = temp.next, length ++);
+		LinkedNode fast = head;
+		LinkedNode slow = head;
+		int count = length / 2;
+		for(int i = 0; i < count; fast = fast.next, i ++); 
+		if(length % 2 == 1)  {
+			fast.value = 0;
+			fast = fast.next;
+		}
+		Stack<LinkedNode> first = new Stack<LinkedNode>();
+		Queue<LinkedNode> second = new LinkedList<LinkedNode>();
+		for(int i =0; i < count; i ++) {
+			first.push(fast);
+			second.add(slow);
+			fast = fast.next;
+			slow = slow.next;
+		}
+		while(first.size() != 0) {
+			LinkedNode f = first.pop();
+			LinkedNode s = second.remove();
+			s.value = s.value - f.value;
+		}
+	}
+
 
 	public static void main(String[] args) {
-		int[] nums = new int[]{1,2,3,4,5,6,7,8};
+		int[] nums = new int[]{1,2,3,4,5,6,7,8,9};
 		LinkedNode head = constructLinkedList(nums);
-		printLinkedList(head);
-		swapKthFromStartAndFromEnd(head, 3);
+		subtract(head);
 		printLinkedList(head);
 	}
 
