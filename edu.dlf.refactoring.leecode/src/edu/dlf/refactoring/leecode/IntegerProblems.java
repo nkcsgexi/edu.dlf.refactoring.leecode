@@ -836,8 +836,28 @@ public class IntegerProblems {
 			System.out.println(stream.getMedian());
 		}
 	}
+	
+	/* Print all subsets. */
+	private static void printAllSubset(List<Integer> prefix, List<Integer> remains) {
+		if(remains.size() == 0) {
+			System.out.print("{");
+			for(int i : prefix) {
+				System.out.print(i + ",");
+			}
+			System.out.println("}");
+			return;
+		}
+		int next = remains.get(0);
+		List<Integer> nextRemains = remains.subList(1, remains.size());
+		printAllSubset(prefix, nextRemains);
+		List<Integer> contained = new ArrayList<Integer>();
+		contained.addAll(prefix);
+		contained.add(next);
+		printAllSubset(contained, nextRemains);
+	}	
 
 	public static void main(String args[]) {
-		MedianStream.testMedianStream();
+		printAllSubset(new ArrayList<Integer>(), convertArrayToList(
+			new int[]{1, 2, 3}));
 	}
 }
