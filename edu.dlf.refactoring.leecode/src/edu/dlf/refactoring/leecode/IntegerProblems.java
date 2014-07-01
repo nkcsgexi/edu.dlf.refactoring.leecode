@@ -2,6 +2,8 @@ package edu.dlf.refactoring.leecode;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -786,8 +788,56 @@ public class IntegerProblems {
 	
 	private final static List<Integer> digits = convertArrayToList(
 		new int[]{0, 1, 3, 4, 5, 6, 8});
+
 	
+	private static class MedianStream {
+		private final Queue<Integer> minQueue = new PriorityQueue<Integer>();
+
+		private final Queue<Integer> maxQueue = new PriorityQueue<Integer>(10, 
+				Collections.reverseOrder());
+
+		public MedianStream() {
+			minQueue.add(Integer.MAX_VALUE);
+			maxQueue.add(Integer.MIN_VALUE);
+		}
+		void insertValue(int value) {
+			if(value > maxQueue.peek()) {
+				minQueue.add(value);
+			} else {
+				maxQueue.add(value);
+			}
+			Queue<Integer> from = maxQueue.size() > minQueue.size() 
+				? maxQueue : minQueue;
+			Queue<Integer> to = from == maxQueue ? minQueue : maxQueue;
+			while(from.size() > to.size()) {
+				to.add(from.remove());
+			}
+		}
+
+		int getMedian() {
+			int mip = minQueue.peek();
+			int map = maxQueue.peek();
+			if(minQueue.size() == maxQueue.size()) {
+				return (minQueue.peek() + maxQueue.peek())/2; 
+			}
+			return minQueue.size() > maxQueue.size() ? minQueue.peek() 
+				: maxQueue.peek();
+		}
+		public static void testMedianStream() {
+			MedianStream stream = new MedianStream();
+			stream.insertValue(0);
+			stream.insertValue(1);
+			stream.insertValue(2);
+			stream.insertValue(3);
+			System.out.println(stream.getMedian());
+			stream.insertValue(5);
+			System.out.println(stream.getMedian());
+			stream.insertValue(7);
+			System.out.println(stream.getMedian());
+		}
+	}
+
 	public static void main(String args[]) {
-		printAllPhoneNumbers(7, new ArrayList<Integer>());
+		MedianStream.testMedianStream();
 	}
 }
