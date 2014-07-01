@@ -935,7 +935,34 @@ public class IntegerProblems {
 			System.out.println(r);
 	}
 
+	
+	private static void printAllPasswords(List<Integer> prefix, int N) {
+		if (prefix.size() == N) {
+			for (int i : prefix) {
+				System.out.print(i);
+			}
+			System.out.println();
+			return;
+		}
+		int M = N - prefix.size() - 1;
+		int pre = prefix.size() != 0 ? prefix.get(prefix.size() - 1) : 0;
+		List<Integer> options = getPossibleDigit(pre, M);
+		for (int o : options) {
+			List<Integer> l = new ArrayList<Integer>();
+			l.addAll(prefix);
+			l.add(o);
+			printAllPasswords(l, N);
+		}
+	}
+
+	private static List<Integer> getPossibleDigit(int pre, int M) {
+		int max = 9 - M;
+		List<Integer> results = new ArrayList<Integer>();
+		for (int i = pre + 1; i <= max; i++)
+			results.add(i);
+		return results;
+	}
+
 	public static void main(String args[]) {
-		testMatrix();
 	}
 }
