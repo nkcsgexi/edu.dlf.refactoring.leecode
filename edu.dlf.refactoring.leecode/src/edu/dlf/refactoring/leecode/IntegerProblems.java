@@ -962,7 +962,36 @@ public class IntegerProblems {
 			results.add(i);
 		return results;
 	}
+	
+	private static HashSet<Integer> getAllowedDigit(int d) {
+		HashSet<Integer> l = new HashSet<Integer>();
+		int row = (d - 1) / 3;
+		int column = (d - 1) % 3;
+		int rowStart = row * 3 + 1;
+		int columnStart = column + 1;
+		for(int i = 0; i < 3; i ++) {
+			l.add(rowStart + i);
+			l.add(columnStart +3 * i);
+		}
+		l.remove(d);
+		return l;
+	}		
+	
+	private static boolean isPassworkAllowed(int[] real, int[] input) {
+		boolean chanceUsed = false;
+		for(int i = 0; i < real.length; i++) {
+			if(real[i] != input[i]) {
+				if(!chanceUsed && getAllowedDigit(input[i]).
+						contains(real[i])) {
+					chanceUsed = true;
+				}else
+					return false;
+			}
+		}
+		return true;
+	}
 
+				
 	public static void main(String args[]) {
 	}
 }
