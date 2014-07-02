@@ -484,10 +484,32 @@ public class StringProblems {
 	private static boolean checkIntegerBound(String num) {
 		int i = Integer.parseInt(num);
 		return i > 0 && i < 27;
-	}	
+	}
 
+	private static boolean determineInterleaving(String s1, String s2, 
+			String target) {
+		boolean match1 = false;
+		boolean match2 = false;
+		if(target.length() == 0)
+			return true;
+		if(s1.length() > 0 && target.charAt(0) == s1.charAt(0))
+		{	
+			match1 = determineInterleaving(s1.substring(1), s2,
+				target.substring(1));
+			if(match1)
+				return true;
+		}
+		if(s2.length() > 0 && target.charAt(0) == s2.charAt(0)) {
+			match2 = determineInterleaving(s1, s2.substring(1),
+				target.substring(1));
+			if(match2)
+				return match2;
+		}
+		return false;
+	}
 	public static void main(String[] args) {
-		getAllLetters("1123").forEach(s -> System.out.println(s));
+		System.out.println(determineInterleaving("aabccabc", "dbbabc", 
+				"aabdbbccababcc"));
 	}
 
 }
