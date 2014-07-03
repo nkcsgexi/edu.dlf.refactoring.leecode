@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Random;
+import java.util.Stack;
 
 public class IntegerProblems {
 
@@ -990,8 +992,95 @@ public class IntegerProblems {
 		}
 		return true;
 	}
+	
+	/* 
+	 * Given a set of digits, randomly get a number that can be represented 
+	 * by those digits.
+	 */
+	private static void getNumberRandomly(int[] digits) {
+		Random seed = new Random();
+		for(int i = 0; i < digits.length; i ++) {
+			int j = seed.nextInt(digits.length - 1 - i);
+			int swap = digits[i];
+			digits[i] = digits[j];
+			digits[j] = swap;
+		}
+	}
 
-				
+	/* 
+	 * Given a list of numbers, rearrange the positions of numbers so that
+	 * the even numbers are on even positions or the odd numbers are on odd 
+	 * positions.
+	 */
+	private static void rearrangeNumbers(int[] nums) {
+		int length = nums.length;
+		Stack<Integer> oddPositions = new Stack<Integer>();
+		Stack<Integer> evenPositions = new Stack<Integer>();
+		for(int i = 0; i < length; i ++) {
+			if(i%2 == nums[i]%2) {
+				continue;	
+			} 
+			if(i%2 == 1) {
+				evenPositions.push(i);
+			}else
+				oddPositions.push(i);
+		}
+		while(evenPositions.size() != 0 || oddPositions.size() != 0) {
+			int e = evenPositions.pop();
+			int o = oddPositions.pop();
+			int temp = nums[e];
+			nums[e] = nums[o];
+			nums[o] = temp;
+		}
+	}
+	
+	private static String printPreviousLine(String pl) {
+		HashMap<Character, Integer> map = new HashMap<Character, Integer>();
+		for(char c : pl.toCharArray()) {
+			if(c >= '0' && c <= '9') {
+				int value = 1;
+				if(map.containsKey(c)){
+					value = map.get(c) + 1;
+					map.remove(c);
+				}
+				map.put(c, value);
+			}
+		}
+		StringBuilder sb = new StringBuilder();
+		for(Entry<Character, Integer> entry : map.entrySet()) {
+			sb.append(entry.getValue() + "" + entry.getKey());
+		}
+		return sb.toString();
+	}
+	
+	private static void printNLines(int N) {
+		String preLine = "1";
+		for(int i = 0; i < N; i ++) {
+			System.out.println(preLine);
+			preLine = printPreviousLine(preLine);
+		}
+	}
+
+						
 	public static void main(String args[]) {
+		printNLines(100);
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

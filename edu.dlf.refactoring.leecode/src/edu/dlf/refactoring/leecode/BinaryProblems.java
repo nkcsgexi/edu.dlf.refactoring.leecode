@@ -253,10 +253,53 @@ public class BinaryProblems {
 		int index = Boolean.toString(a).indexOf("false") + 1;
 		return pool[index];
 	}	
+	
+	private static int[] conver2GrayBinary(int[] digits) {
+		int num = 0;
+		for(int i = digits.length - 1, base = 1; i >= 0; i --, base *= 2) {
+			num += digits[i] * base;
+		}
+		int[] newDs = new int[digits.length];
+		for(int i = newDs.length - 1, unitLength = 4; i >= 0; i--, 
+				unitLength *= 2) {
+			int position = num % unitLength;
+			if(position >= unitLength/4 && position < unitLength/4*3)
+				newDs[i] = 1;
+			else 
+				newDs[i] = 0;
+		}
+		return newDs;
+	}
+	private static void testGray() {
+		printDigits(conver2GrayBinary(new int[]{0, 0, 0, 0}));
+		printDigits(conver2GrayBinary(new int[]{0, 0, 0, 1}));
+		printDigits(conver2GrayBinary(new int[]{0, 0, 1, 0}));
+		printDigits(conver2GrayBinary(new int[]{0, 0, 1, 1}));
+		printDigits(conver2GrayBinary(new int[]{0, 1, 0, 0}));
+		printDigits(conver2GrayBinary(new int[]{0, 1, 0, 1}));
+		printDigits(conver2GrayBinary(new int[]{0, 1, 1, 0}));
+		printDigits(conver2GrayBinary(new int[]{0, 1, 1, 1}));
+		printDigits(conver2GrayBinary(new int[]{1, 0, 0, 0}));
+		printDigits(conver2GrayBinary(new int[]{1, 0, 0, 1}));
+		printDigits(conver2GrayBinary(new int[]{1, 0, 1, 0}));
+		printDigits(conver2GrayBinary(new int[]{1, 0, 1, 1}));
+		printDigits(conver2GrayBinary(new int[]{1, 1, 0, 0}));
+		printDigits(conver2GrayBinary(new int[]{1, 1, 0, 1}));
+		printDigits(conver2GrayBinary(new int[]{1, 1, 1, 0}));
+		printDigits(conver2GrayBinary(new int[]{1, 1, 1, 1}));
+	}
+	
+	
+	private static void printDigits(int[] digits) {
+		for(int d : digits)
+			System.out.print(d);
+		System.out.println();
+	}
+	
+
 
 	public static void main(String[] args) {
-		System.out.println(getMissingNumber(7));
-		System.out.println(implementCondition(true, 1, 2));
+		testGray();
 	}
 
 	private static void printDoubleInBinary(double value) {

@@ -507,9 +507,32 @@ public class StringProblems {
 		}
 		return false;
 	}
+	
+	private static boolean simpleRegularExpressionMatching(String pattern, 
+			String match) {
+		if(pattern.length() == 0 && match.length() == 0)
+			return true;
+		if(pattern.length() == 0 || match.length() == 0)
+			return false;
+		if(pattern.charAt(pattern.length()-1) != '*')
+			return pattern.charAt(pattern.length() - 1) == match.charAt
+				(match.length()-1) && simpleRegularExpressionMatching
+					(pattern.substring(0, pattern.length() - 1),
+					 	match.substring(0, match.length() - 1));
+		char expected = pattern.charAt(pattern.length() - 2);
+		String newPattern = pattern.substring(0, pattern.length() - 2);
+		int end = match.length() - 1;
+		for(; match.charAt(end) == expected;end --) {
+			String newMatch = match.substring(0, end);
+			if(simpleRegularExpressionMatching(newPattern, newMatch))
+				return true;
+		}
+		String newMatch = match.substring(0, end + 1);
+		return simpleRegularExpressionMatching(newPattern, newMatch);
+	}
+
 	public static void main(String[] args) {
-		System.out.println(determineInterleaving("aabccabc", "dbbabc", 
-				"aabdbbccababcc"));
+		
 	}
 
 }
