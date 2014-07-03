@@ -907,7 +907,8 @@ public class IntegerProblems {
 
 	private static int[][] convertToMatrix(int[] nums) {
 		int dimension = 1;
-		for (; dimension * dimension <= nums.length; dimension++);
+		for (; dimension * dimension <= nums.length; dimension++)
+			;
 		dimension--;
 		int i = 0;
 		int[][] matrix = new int[dimension][dimension];
@@ -918,24 +919,23 @@ public class IntegerProblems {
 		}
 		return matrix;
 	}
-	
+
 	private static void testMatrix() {
 		int dimension = 6;
 		int[] nums = new int[dimension * dimension];
-		for(int i = 1; i < dimension * dimension; i ++)
+		for (int i = 1; i < dimension * dimension; i++)
 			nums[i] = i;
 		int[][] matrix = convertToMatrix(nums);
-		for(int i = 0; i < dimension; i ++) {
-			for(int j =0; j < dimension; j ++)
+		for (int i = 0; i < dimension; i++) {
+			for (int j = 0; j < dimension; j++)
 				System.out.print(matrix[i][j]);
 			System.out.println();
 		}
 		List<Integer> results = spiralTraversal(matrix, dimension);
-		for(int r : results) 
+		for (int r : results)
 			System.out.println(r);
 	}
 
-	
 	private static void printAllPasswords(List<Integer> prefix, int N) {
 		if (prefix.size() == N) {
 			for (int i : prefix) {
@@ -962,36 +962,131 @@ public class IntegerProblems {
 			results.add(i);
 		return results;
 	}
-	
+
 	private static HashSet<Integer> getAllowedDigit(int d) {
 		HashSet<Integer> l = new HashSet<Integer>();
 		int row = (d - 1) / 3;
 		int column = (d - 1) % 3;
 		int rowStart = row * 3 + 1;
 		int columnStart = column + 1;
-		for(int i = 0; i < 3; i ++) {
+		for (int i = 0; i < 3; i++) {
 			l.add(rowStart + i);
-			l.add(columnStart +3 * i);
+			l.add(columnStart + 3 * i);
 		}
 		l.remove(d);
 		return l;
-	}		
-	
+	}
+
 	private static boolean isPassworkAllowed(int[] real, int[] input) {
 		boolean chanceUsed = false;
-		for(int i = 0; i < real.length; i++) {
-			if(real[i] != input[i]) {
-				if(!chanceUsed && getAllowedDigit(input[i]).
-						contains(real[i])) {
+		for (int i = 0; i < real.length; i++) {
+			if (real[i] != input[i]) {
+				if (!chanceUsed && getAllowedDigit(input[i]).contains(real[i])) {
 					chanceUsed = true;
-				}else
+				} else
 					return false;
 			}
 		}
 		return true;
 	}
 
+	private static void printNumbersAddingToValue(int value, int[] input) {
+		List<Integer> list = convertArrayToList(input);
+		Collections.sort(list);
+		printNumbersInternal(value, new ArrayList<Integer>(), list);
+	}
+
+	private static void printNumbersInternal(int total, List<Integer> prefix,
+			List<Integer> options) {
+		if (total == 0) {
+			for (int i : prefix) {
+				System.out.print(i + " ");
+			}
+			System.out.println();
+			return;
+		}
+		if (options.size() == 0)
+			return;
+		int option = options.get(0);
+		if (option > total)
+			return;
+		List<Integer> newPrefix = new ArrayList<Integer>();
+		newPrefix.addAll(prefix);
+		newPrefix.add(option);
+		options.remove(0);
+		List<Integer> newOptions = new ArrayList<Integer>();
+		newOptions.addAll(options);
+		printNumbersInternal(total, prefix, options);
+		printNumbersInternal(total - option, newPrefix, newOptions);
+	}
+
+	private static void printProduct(int[] input) {
+		int total = 1;
+		for (int i : input) {
+			total *= i;
+		}
+		for (int i : input) {
+			System.out.print(total / i + " ");
+		}
+	}
+
+	private static int splitArraysWithSameAverage(int[] nums) {
+		int average = 0;
+		for (int n : nums) {
+			average += n;
+		}
+		average /= nums.length;
+		int currentSum = 0;
+		for (int i = 0; i < nums.length; i++) {
+			currentSum += nums[i];
+			if (currentSum / (i + 1) == average) {
+				return i;
+			}
+		}
+		return nums.length - 1;
+	}
+
+	private static void printNumbers() {
+		int[] digits = new int[]{1, 2, 3, 4,5,6};
+		while(getNextNumber(digits)) {
+			for(int i : digits) 
+				System.out.print(i);
+			System.out.println();
+		}
+	}
+	
+	private static boolean getNextNumber(int[] digits) {
+		boolean found = false;
+		for (int index = digits.length - 1; index > 0; index--) {
+			if (digits[index] > digits[index - 1]) {
+				int swap = digits.length - 1 ;
+				for(; swap >= index; swap --) {
+					if(digits[swap] > digits[index - 1]) {
+						break;
+					}
+				}
+				int temp = digits[swap];
+				digits[swap] = digits[index - 1];
+				digits[index - 1] = temp;
+				found = true;
 				
+				List<Integer> l = new ArrayList<Integer>();
+				for(int i = digits.length - 1; i >= index; i --) {
+					l.add(digits[i]);
+				}
+				Collections.sort(l);
+				int k = l.size() - 1;
+				for(int i = digits.length - 1; i >= index; i --) {
+					digits[i] = l.get(k--);
+				}
+				
+				break;
+			}
+		}
+		return found;
+	}
+
 	public static void main(String args[]) {
+		printNumbers();
 	}
 }
