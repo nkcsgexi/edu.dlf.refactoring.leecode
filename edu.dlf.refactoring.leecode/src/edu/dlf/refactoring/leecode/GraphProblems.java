@@ -488,13 +488,45 @@ public class GraphProblems {
 		}
 		return root;
 	}
+	
+	private static class DoubleLinkedListNode {
+		int value;
+		DoubleLinkedListNode before;
+		DoubleLinkedListNode after;
+	}
 
-
-	public static void main(String[] args) {
-		BinaryTreeNode root = constructBinarySearchTree(new int[] { 7, 10, 4, 3, 1, 2, 8, 11 });
-		for (int i = 1; i <= 8; i++) {
-			System.out.println(getKthElementInBinarySearchTree(root, i));
+	private static DoubleLinkedListNode[] convertBinarySearchTreeToSortedDoubleLinkedList(BinaryTreeNode
+			node) {
+		if(node == null)
+			return new DoubleLinkedListNode[]{null, null};
+		DoubleLinkedListNode[] before = convertBinarySearchTreeToSortedDoubleLinkedList(node.left);
+		DoubleLinkedListNode current = new DoubleLinkedListNode();
+		current.value = node.value;
+		if(before[1] != null) {
+			before[1].after = current;
+			current.before = before[1];
 		}
+		DoubleLinkedListNode[] after = convertBinarySearchTreeToSortedDoubleLinkedList(node.right);
+		if(after[0] != null) {
+			after[0].before = current;
+			current.after = after[0];
+		}
+		return new DoubleLinkedListNode[]{before[0] == null ? current :
+			before[0], after[1] == null ? current : after[1]};
+	}	
+	
+	private static void testConvertToLinkedList() {
+		BinaryTreeNode root = constructBinarySearchTree(new int[] { 7, 10, 4, 3, 1, 2, 8, 11 });
+		DoubleLinkedListNode start = convertBinarySearchTreeToSortedDoubleLinkedList(root)[0];
+		while(start != null) {
+			System.out.print(start.value + "<->");
+			start = start.after;
+		}
+	}
+
+		
+	public static void main(String[] args) {
+		testConvertToLinkedList();
 	}
 
 }
