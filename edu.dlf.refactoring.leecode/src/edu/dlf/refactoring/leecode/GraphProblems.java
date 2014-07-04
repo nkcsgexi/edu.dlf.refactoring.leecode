@@ -524,9 +524,56 @@ public class GraphProblems {
 		}
 	}
 
-		
+	private static BinaryTreeNode convertSortedListToBalancedSearchTree(List<Integer> list) {
+		if(list.size() == 0)
+			return null;
+		int index = list.size()/2;
+		int middle = list.get(index);
+		BinaryTreeNode current = new BinaryTreeNode(middle);
+		current.left = convertSortedListToBalancedSearchTree(list.subList(0, 
+				index));
+		current.right = convertSortedListToBalancedSearchTree(list.subList(
+				index + 1, list.size()));
+		return current;
+	}
+
+	private static int[] checkIfBinaryTreeBalancedHelper(BinaryTreeNode root) {
+		if(root == null) {
+			return new int[]{0,0};
+		}
+		int[] left = checkIfBinaryTreeBalancedHelper(root.left);
+		int[] right = checkIfBinaryTreeBalancedHelper(root.right);
+		int min = Math.min(left[0], right[0]) + 1;
+		int max = Math.max(left[1], right[1]) + 1;
+		return new int[]{min, max};
+	}
+	
+	private static boolean checkIfBalanced(BinaryTreeNode node) {
+		int[] depth = checkIfBinaryTreeBalancedHelper(node);
+		return depth[1] - depth[0] < 2;
+	}
+
+	private static void testConvertToBalanceTree() {
+		List<Integer> list = new ArrayList<Integer>();
+		list.add(1);
+		list.add(2);
+		list.add(3);
+		BinaryTreeNode node = convertSortedListToBalancedSearchTree(list);
+		System.out.println(checkIfBalanced(node));
+		list.add(4);
+		node = convertSortedListToBalancedSearchTree(list);
+		System.out.println(checkIfBalanced(node));
+		for(int i = 5; i < 100; i ++) {
+			list.add(i);
+			node = convertSortedListToBalancedSearchTree(list);
+			System.out.println(checkIfBalanced(node));
+		}
+	}
+
+
 	public static void main(String[] args) {
-		testConvertToLinkedList();
+		//testConvertToLinkedList();
+		testConvertToBalanceTree();
 	}
 
 }
