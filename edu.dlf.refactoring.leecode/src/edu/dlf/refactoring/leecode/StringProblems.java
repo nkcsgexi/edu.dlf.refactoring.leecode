@@ -530,9 +530,54 @@ public class StringProblems {
 		String newMatch = match.substring(0, end + 1);
 		return simpleRegularExpressionMatching(newPattern, newMatch);
 	}
+	
+	public static class WordMember implements Comparable<WordMember> {
+		String self;
+		String appendix;
+		public WordMember(String self, String appendix) {
+			this.self = self;
+			this.appendix = appendix;
+		}
+		
+		@Override
+		public int compareTo(WordMember other) {
+			return (self + appendix).compareTo(other.self + other.appendix);
+		}
+	}
+
+	
+	private static String combineStringsToMinimum(List<String> words) {
+		Collections.sort(words);
+		List<WordMember> members = new ArrayList<WordMember>();
+		for(int i = 0; i < words.size() - 1; i ++) {
+			String current = words.get(i);
+			String next = words.get(i + 1);
+			if(!next.startsWith(current)) {
+				members.add(new WordMember(current, ""));
+			}else {
+				members.add(new WordMember(current, next));
+			}
+		}
+		members.add(new WordMember(words.get(words.size()-1), ""));
+		Collections.sort(members);
+		StringBuilder sb = new StringBuilder();
+		for(WordMember m : members) {
+			sb.append(m.self);
+		}
+		return sb.toString();
+	}
+	private static void testCombineStrings() {
+		List<String> list = new ArrayList<String>();
+		list.add("jibw");
+		list.add("ji");
+		list.add("jp");
+		list.add("bw");
+		list.add("jibw");
+		System.out.println(combineStringsToMinimum(list));
+	}
 
 	public static void main(String[] args) {
-		
+		testCombineStrings();	
 	}
 
 }
