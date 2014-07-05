@@ -575,9 +575,48 @@ public class StringProblems {
 		list.add("jibw");
 		System.out.println(combineStringsToMinimum(list));
 	}
+	private static boolean checkNonZeroPosition(int[] a, int[] b) {
+		if(a.length != b.length) return false;
+		for(int i = 0; i < a.length; i ++) {
+			if(a[i] == 0 && b[i] == 0)
+				continue;
+			if(a[i] != 0 && b[i] != 0)
+				continue;
+			return false;
+		}
+		return true;
+	}
+
+	private static String getMinimumSubstringContainsAllChars(String s) {
+		int[] current = new int[26];
+		int[] required = new int[26];
+		for(char c : s.toCharArray()) {
+			required[c - 'a'] = 1;
+		}
+		int maxLength = Integer.MIN_VALUE;
+		int maxStart = 0;
+		for(int start = 0, end = 0; end < s.length(); end ++) {
+			current[s.charAt(end) - 'a'] ++;
+			boolean found = false;
+			for(; checkNonZeroPosition(current, required); start++) {
+				current[s.charAt(start) - 'a'] --;
+				found = true;
+			}
+			if(found && end - start > maxLength) {
+				maxLength = end - start + 2 ;
+				maxStart = start - 1;
+			}
+		}
+		return s.substring(maxStart, maxStart + maxLength);
+	}
+	
+	private static void testMinimumSubstringContainsAllCharacters() {
+		System.out.println(getMinimumSubstringContainsAllChars("ADOBECODEBANC".
+			toLowerCase()));
+	}
 
 	public static void main(String[] args) {
-		testCombineStrings();	
+		testMinimumSubstringContainsAllCharacters();	
 	}
 
 }
