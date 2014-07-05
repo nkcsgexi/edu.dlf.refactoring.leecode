@@ -1,6 +1,7 @@
 package edu.dlf.refactoring.leecode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -569,10 +570,121 @@ public class GraphProblems {
 			System.out.println(checkIfBalanced(node));
 		}
 	}
+	
+	private static class Edge {
+		int parent;
+		int son;
+		boolean left;
+		public Edge(int parent, int son, boolean left) {
+			this.parent = parent;
+			this.son = son;
+			this.left = left;
+		}
+	}
+
+	private static BinaryTreeNode createBinaryTree(List<Edge> edges) {
+		HashMap<Integer, BinaryTreeNode> map = new HashMap<Integer, 
+			BinaryTreeNode>();
+		HashSet<BinaryTreeNode> sons = new HashSet<BinaryTreeNode>();
+		for(Edge e : edges) {
+			BinaryTreeNode p = null, s = null;
+			if(map.containsKey(e.parent)) {
+				p = map.get(e.parent);
+			}else {
+				p = new BinaryTreeNode(e.parent);
+				map.put(e.parent, p);
+			}
+
+			if(map.containsKey(e.son)) {
+				s = map.get(e.son);
+			}else {
+				s = new BinaryTreeNode(e.son);
+				map.put(e.son, s);
+			}
+			if(e.left) {
+				p.left = s;
+			} else {
+				p.right = s;
+			}
+			sons.add(s);
+		}
+		for(BinaryTreeNode n : map.values()) {
+			if(!sons.contains(n)) {
+				return n;
+			}
+		}
+		return null;	
+	}
+	private static void testGetLargestBinarySearchTree() {
+		List<Edge> edges = new ArrayList<Edge>();
+		edges.add(new Edge(10, 5, true));
+		edges.add(new Edge(10, 15, false));
+		edges.add(new Edge(5, 1, true));
+		edges.add(new Edge(5, 8, false));
+		edges.add(new Edge(15, 7, false));
+		getLargestBST2(createBinaryTree(edges));		
+		System.out.println(TreeInfo.globalMax);
+	}
+
+	private static int[] getLargestBinarySearchTree(BinaryTreeNode root) {
+		//[0] means the largest rooted at the current node
+		//[1] means the largest overall
+		if(root == null) {
+			return new int[]{0,0};
+		}
+		int[] left = getLargestBinarySearchTree(root.left);
+		int[] right = getLargestBinarySearchTree(root.right);
+		int leftV = root.left == null ? Integer.MAX_VALUE : root.left.value;
+		int rightV = root.right == null ? Integer.MIN_VALUE : root.right.value;
+		int maxRootAtCurrent = root.value > leftV ? left[0] + 1 : 1;
+		maxRootAtCurrent = root.value < rightV ? right[0] + maxRootAtCurrent :
+			maxRootAtCurrent;
+		int maxOverall = Math.max(maxRootAtCurrent, Math.max(left[1], right[1]));
+		return new int[] {maxRootAtCurrent, maxOverall};
+	}
+	
+	private static class TreeInfo {
+		static int globalMax = Integer.MIN_VALUE;
+		final int size;
+		final int max;
+		final int min;
+		public TreeInfo(int size, int max, int min) {
+			this.size = size;
+			this.max = max;
+			this.min = min;
+			globalMax = Math.max(globalMax, this.size);
+		}
+		
+	}
+
+	private static TreeInfo getLargestBST2(BinaryTreeNode root) {
+		if(root == null) {
+			return new TreeInfo(0, Integer.MIN_VALUE, 
+				Integer.MAX_VALUE);
+		}
+		TreeInfo leftInfo = getLargestBST2(root.left);
+		TreeInfo rightInfo = getLargestBST2(root.right);
+		int max = root.value;
+		int min = root.value;
+		int size = 1;
+		if(leftInfo.size > 0 && leftInfo.max < root.value) {
+			max = Math.max(max, leftInfo.max);
+			min = Math.min(min, leftInfo.min);
+			size += leftInfo.size;
+		}
+		if(rightInfo.size > 0 && rightInfo.min > root.value) {
+			max = Math.max(max, rightInfo.max);
+			min = Math.min(min, rightInfo.min);
+			size += rightInfo.size;
+		}
+		return new TreeInfo(size, max, min);
+	}
+
 
 	public static void main(String[] args) {
 		//testConvertToLinkedList();
-		testConvertToBalanceTree();
+		//testConvertToBalanceTree();
+		testGetLargestBinarySearchTree();
 	}
 
 }
