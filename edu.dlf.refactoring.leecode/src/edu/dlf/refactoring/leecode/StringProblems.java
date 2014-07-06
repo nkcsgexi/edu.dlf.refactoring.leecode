@@ -615,8 +615,48 @@ public class StringProblems {
 			toLowerCase()));
 	}
 
+	private static boolean internalMatch(char[] s, char[] p, int fast) {	
+		for(int offset = 0; offset < p.length; offset ++) {
+			if(fast + offset >= s.length || s[fast + offset] != p[offset])
+				return false;
+		}
+		return true;
+	}
+
+	private static String replaceStringPattern(char[] s, char[] p, String r) {
+		StringBuilder sb = new StringBuilder();
+		for(int fast = 0, slow = 0; slow != s.length; ) {
+			boolean matched = false;
+			while(internalMatch(s, p, fast)) { 
+				fast = fast + p.length;
+				slow = fast;
+				matched = true;
+			}
+			if(matched) {
+				sb.append(r);
+			}else {
+				sb.append(s[slow]);
+				slow ++;
+				fast ++;
+			}
+		}
+		return sb.toString();
+	}
+
+	private static void internalTestReplacingString(String s, String p) {
+		System.out.println(replaceStringPattern(s.toCharArray(),
+			p.toCharArray(), "X"));
+	}
+
+	private static void testReplacingString() {
+		internalTestReplacingString("aabbaabbaaabbbaaabc", "aaabb");
+		internalTestReplacingString("abcdeffdfegabcabcab", "abc");
+		
+	}
+
 	public static void main(String[] args) {
-		testMinimumSubstringContainsAllCharacters();	
+		//testMinimumSubstringContainsAllCharacters();	
+		testReplacingString();
 	}
 
 }
