@@ -1156,6 +1156,21 @@ public class IntegerProblems {
 		}
 		return found;
 	}
+	private static boolean binarySearch(int[] row, int start, int end, int target) {
+		if(end < start)
+			return false;
+		int middle = (start + end) / 2;
+		if(row[middle] == target)
+			return true;
+		if(row[middle] > target)
+			return binarySearch(row, start, middle - 1, target);
+		else
+			return binarySearch(row, middle + 1, end, target);
+	}
+
+
+
+
 
 	public static void main(String args[]) {
 	}
