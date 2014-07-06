@@ -991,9 +991,9 @@ public class IntegerProblems {
 		}
 		return true;
 	}
-	
-	/* 
-	 * Given a set of digits, randomly get a number that can be represented 
+
+	/*
+	 * Given a set of digits, randomly get a number that can be represented
 	 * by those digits.
 	 */
 	private static void getNumberRandomly(int[] digits) {
@@ -1006,9 +1006,9 @@ public class IntegerProblems {
 		}
 	}
 
-	/* 
+	/*
 	 * Given a list of numbers, rearrange the positions of numbers so that
-	 * the even numbers are on even positions or the odd numbers are on odd 
+	 * the even numbers are on even positions or the odd numbers are on odd
 	 * positions.
 	 */
 	private static void rearrangeNumbers(int[] nums) {
@@ -1017,8 +1017,8 @@ public class IntegerProblems {
 		Stack<Integer> evenPositions = new Stack<Integer>();
 		for(int i = 0; i < length; i ++) {
 			if(i%2 == nums[i]%2) {
-				continue;	
-			} 
+				continue;
+			}
 			if(i%2 == 1) {
 				evenPositions.push(i);
 			}else
@@ -1032,7 +1032,7 @@ public class IntegerProblems {
 			nums[o] = temp;
 		}
 	}
-	
+
 	private static String printPreviousLine(String pl) {
 		HashMap<Character, Integer> map = new HashMap<Character, Integer>();
 		for(char c : pl.toCharArray()) {
@@ -1051,7 +1051,7 @@ public class IntegerProblems {
 		}
 		return sb.toString();
 	}
-	
+
 	private static void printNLines(int N) {
 		String preLine = "1";
 		for(int i = 0; i < N; i ++) {
@@ -1120,12 +1120,12 @@ public class IntegerProblems {
 	private static void printNumbers() {
 		int[] digits = new int[]{1, 2, 3, 4,5,6};
 		while(getNextNumber(digits)) {
-			for(int i : digits) 
+			for(int i : digits)
 				System.out.print(i);
 			System.out.println();
 		}
 	}
-	
+
 	private static boolean getNextNumber(int[] digits) {
 		boolean found = false;
 		for (int index = digits.length - 1; index > 0; index--) {
@@ -1140,7 +1140,7 @@ public class IntegerProblems {
 				digits[swap] = digits[index - 1];
 				digits[index - 1] = temp;
 				found = true;
-				
+
 				List<Integer> l = new ArrayList<Integer>();
 				for(int i = digits.length - 1; i >= index; i --) {
 					l.add(digits[i]);
@@ -1150,7 +1150,7 @@ public class IntegerProblems {
 				for(int i = digits.length - 1; i >= index; i --) {
 					digits[i] = l.get(k--);
 				}
-				
+
 				break;
 			}
 		}

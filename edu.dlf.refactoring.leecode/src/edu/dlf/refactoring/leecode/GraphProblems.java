@@ -457,7 +457,7 @@ public class GraphProblems {
 		BinaryTreeNode node = InorderVisit(root, k);
 		return node != null ? node.value : -1;
 	}
-	
+
 	private static BinaryTreeNode constructBinarySearchTree(int[] nums) {
 		if(nums.length == 0)
 			return null;
@@ -483,13 +483,13 @@ public class GraphProblems {
 			if(!found) {
 				if(left)
 					parent.left = new BinaryTreeNode(value);
-				else 
+				else
 					parent.right = new BinaryTreeNode(value);
-			}		
+			}
 		}
 		return root;
 	}
-	
+
 	private static class DoubleLinkedListNode {
 		int value;
 		DoubleLinkedListNode before;
@@ -514,8 +514,8 @@ public class GraphProblems {
 		}
 		return new DoubleLinkedListNode[]{before[0] == null ? current :
 			before[0], after[1] == null ? current : after[1]};
-	}	
-	
+	}
+
 	private static void testConvertToLinkedList() {
 		BinaryTreeNode root = constructBinarySearchTree(new int[] { 7, 10, 4, 3, 1, 2, 8, 11 });
 		DoubleLinkedListNode start = convertBinarySearchTreeToSortedDoubleLinkedList(root)[0];
@@ -531,7 +531,7 @@ public class GraphProblems {
 		int index = list.size()/2;
 		int middle = list.get(index);
 		BinaryTreeNode current = new BinaryTreeNode(middle);
-		current.left = convertSortedListToBalancedSearchTree(list.subList(0, 
+		current.left = convertSortedListToBalancedSearchTree(list.subList(0,
 				index));
 		current.right = convertSortedListToBalancedSearchTree(list.subList(
 				index + 1, list.size()));
@@ -548,7 +548,7 @@ public class GraphProblems {
 		int max = Math.max(left[1], right[1]) + 1;
 		return new int[]{min, max};
 	}
-	
+
 	private static boolean checkIfBalanced(BinaryTreeNode node) {
 		int[] depth = checkIfBinaryTreeBalancedHelper(node);
 		return depth[1] - depth[0] < 2;
@@ -570,7 +570,7 @@ public class GraphProblems {
 			System.out.println(checkIfBalanced(node));
 		}
 	}
-	
+
 	private static class Edge {
 		int parent;
 		int son;
@@ -583,7 +583,7 @@ public class GraphProblems {
 	}
 
 	private static BinaryTreeNode createBinaryTree(List<Edge> edges) {
-		HashMap<Integer, BinaryTreeNode> map = new HashMap<Integer, 
+		HashMap<Integer, BinaryTreeNode> map = new HashMap<Integer,
 			BinaryTreeNode>();
 		HashSet<BinaryTreeNode> sons = new HashSet<BinaryTreeNode>();
 		for(Edge e : edges) {
@@ -613,17 +613,22 @@ public class GraphProblems {
 				return n;
 			}
 		}
-		return null;	
+		return null;
 	}
 	private static void testGetLargestBinarySearchTree() {
+		BinaryTreeNode root = createTree();
+		getLargestBST2(root);
+		System.out.println(TreeInfo.globalMax);
+	}
+
+	private static BinaryTreeNode createTree() {
 		List<Edge> edges = new ArrayList<Edge>();
 		edges.add(new Edge(10, 5, true));
 		edges.add(new Edge(10, 15, false));
 		edges.add(new Edge(5, 1, true));
 		edges.add(new Edge(5, 8, false));
 		edges.add(new Edge(15, 7, false));
-		getLargestBST2(createBinaryTree(edges));		
-		System.out.println(TreeInfo.globalMax);
+		return createBinaryTree(edges);
 	}
 
 	private static int[] getLargestBinarySearchTree(BinaryTreeNode root) {
@@ -642,7 +647,7 @@ public class GraphProblems {
 		int maxOverall = Math.max(maxRootAtCurrent, Math.max(left[1], right[1]));
 		return new int[] {maxRootAtCurrent, maxOverall};
 	}
-	
+
 	private static class TreeInfo {
 		static int globalMax = Integer.MIN_VALUE;
 		final int size;
@@ -654,12 +659,12 @@ public class GraphProblems {
 			this.min = min;
 			globalMax = Math.max(globalMax, this.size);
 		}
-		
+
 	}
 
 	private static TreeInfo getLargestBST2(BinaryTreeNode root) {
 		if(root == null) {
-			return new TreeInfo(0, Integer.MIN_VALUE, 
+			return new TreeInfo(0, Integer.MIN_VALUE,
 				Integer.MAX_VALUE);
 		}
 		TreeInfo leftInfo = getLargestBST2(root.left);
@@ -680,11 +685,46 @@ public class GraphProblems {
 		return new TreeInfo(size, max, min);
 	}
 
+	private static List<Integer> printPostOrderTraversalWithoutUsingRecursion(
+			BinaryTreeNode root) {
+		List<Integer> results = new ArrayList<Integer>();
+		HashSet<BinaryTreeNode> closedNodes = new HashSet<BinaryTreeNode>();
+		Stack<BinaryTreeNode> openNodes = new Stack<BinaryTreeNode>();
+		openNodes.add(root);
+		while(openNodes.size() != 0) {
+			BinaryTreeNode head = openNodes.peek();
+			boolean leftOk = true;
+			boolean rightOk = true;
+			if(head.left != null && !closedNodes.contains(head.left)) {
+				openNodes.push(head.left);
+				leftOk = false;
+			}
+			if(head.right != null && !closedNodes.contains(head.right)) {
+				openNodes.push(head.right);
+				leftOk = false;
+			}
+			if(leftOk && rightOk) {
+				openNodes.pop();
+				results.add(head.value);
+				closedNodes.add(head);
+			}
+		}
+		return results;
+	}
+
+	private static void testPostOrderTraversal() {
+		List<Integer> list = printPostOrderTraversalWithoutUsingRecursion
+				(createTree());
+		for(int i : list) {
+			System.out.print(i + " ");
+		}
+	}
 
 	public static void main(String[] args) {
 		//testConvertToLinkedList();
 		//testConvertToBalanceTree();
-		testGetLargestBinarySearchTree();
+		//testGetLargestBinarySearchTree();
+		testPostOrderTraversal();
 	}
 
 }
