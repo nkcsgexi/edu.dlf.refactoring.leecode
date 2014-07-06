@@ -720,11 +720,89 @@ public class GraphProblems {
 		}
 	}
 
+	private static List<BinaryTreeNode> getAllLeafNode(BinaryTreeNode root) {
+		Stack<BinaryTreeNode> openList = new Stack<BinaryTreeNode>();
+		HashSet<BinaryTreeNode> closeList = new HashSet<BinaryTreeNode>();
+		openList.push(root);
+		List<BinaryTreeNode> leaves = new ArrayList<BinaryTreeNode>();
+		while(openList.size() != 0) {
+			BinaryTreeNode current = openList.peek();
+			boolean leftOk = true, rightOk = true;
+			if(current.right != null && !closeList.contains(current.right)) {
+				openList.push(current.right);
+				rightOk = false;
+			}
+
+			if(current.left != null && !closeList.contains(current.left)) {
+				openList.push(current.left);
+				leftOk = false;
+			}
+			if(leftOk && rightOk) {
+				openList.pop();
+				closeList.add(current);
+				if(current.left == null && current.right == null) {
+					leaves.add(current);
+				}
+			}
+		}
+		return leaves;
+	}
+
+	private static List<BinaryTreeNode> getLeftEdge(BinaryTreeNode root) {
+		List<BinaryTreeNode> results = new ArrayList<BinaryTreeNode>();
+		for(BinaryTreeNode current = root; current.left != null ||
+			current.right != null; current = current.left != null?
+				current.left : current.right){
+			results.add(current);
+		}
+		return results;
+	}
+
+	private static List<BinaryTreeNode> getRightEdge(BinaryTreeNode root) {
+		List<BinaryTreeNode> results = new ArrayList<BinaryTreeNode>();
+		for(BinaryTreeNode current = root; current.left != null ||
+			current.right != null; current = current.right == null ?
+				current.left : current.right) {
+			results.add(current);
+		}
+		return results;
+	}
+
+	private static List<Integer> printEdgesOfBinaryTree(BinaryTreeNode root) {
+		List<BinaryTreeNode> list = getLeftEdge(root);
+		for(BinaryTreeNode r : getAllLeafNode(root)) {
+			if(!list.contains(r))
+				list.add(r);
+		}
+		List<BinaryTreeNode> right =  getRightEdge(root);
+		for(int i = right.size() - 1; i >= 0; i --) {
+			BinaryTreeNode r = right.get(i);
+			if(!list.contains(r))
+				list.add(r);
+		}
+		List<Integer> results = new ArrayList<Integer>();
+		for(BinaryTreeNode n : list) {
+			results.add(n.value);
+		}
+		return results;
+	}
+
+	private static void testPrintEdgeOfTree() {
+		BinaryTreeNode root = createTree();
+		List<Integer> nodes = printEdgesOfBinaryTree(root);
+		for(int i : nodes) {
+			System.out.print(i + " ");
+		}
+	}
+
+
+
 	public static void main(String[] args) {
 		//testConvertToLinkedList();
 		//testConvertToBalanceTree();
 		//testGetLargestBinarySearchTree();
-		testPostOrderTraversal();
+		//testPostOrderTraversal();
+		testPrintEdgeOfTree();
 	}
 
 }
