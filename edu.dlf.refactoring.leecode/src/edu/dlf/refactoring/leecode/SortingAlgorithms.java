@@ -226,6 +226,7 @@ public class SortingAlgorithms {
 			return -1;
 	}
 
+	/* Binary-based radix sort.*/
 	private static List<Integer> radixSort(List<Integer> nums) {
 		List<Integer> zeroList = new ArrayList<Integer>();
 		List<Integer> oneList = new ArrayList<Integer>();
