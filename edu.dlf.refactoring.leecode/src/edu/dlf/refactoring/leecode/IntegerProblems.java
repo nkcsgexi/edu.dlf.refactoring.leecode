@@ -1156,23 +1156,35 @@ public class IntegerProblems {
 		}
 		return found;
 	}
-	private static boolean binarySearch(int[] row, int start, int end, int target) {
+	private static boolean binarySearch2(int[] row, int start, int end, int target) {
 		if(end < start)
 			return false;
 		int middle = (start + end) / 2;
 		if(row[middle] == target)
 			return true;
 		if(row[middle] > target)
-			return binarySearch(row, start, middle - 1, target);
+			return binarySearch2(row, start, middle - 1, target);
 		else
-			return binarySearch(row, middle + 1, end, target);
+			return binarySearch2(row, middle + 1, end, target);
 	}
 
+	private static int convertExcelRowNumberToRealNumber(String s) {
+		int sum = 0;
+		for(int i = s.length() - 1, base = 1; i >= 0; i --, base *= 26) {
+			int n = s.charAt(i) - 'a' + 1;
+			sum += n * base;
+		}
+		return sum - 1;
+	}
 
-
-
+	private static void testExcelRow() {
+		System.out.println(convertExcelRowNumberToRealNumber("a"));
+		System.out.println(convertExcelRowNumberToRealNumber("ab"));
+		System.out.println(convertExcelRowNumberToRealNumber("abc"));
+	}
 
 	public static void main(String args[]) {
+		testExcelRow();
 	}
 }
 
