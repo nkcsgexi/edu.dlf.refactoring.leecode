@@ -794,6 +794,19 @@ public class GraphProblems {
 			System.out.print(i + " ");
 		}
 	}
+	private static List<Integer> visitNodeByLayer(BinaryTreeNode root) {
+		List<Integer> nums = new ArrayList<Integer>();
+		Queue<BinaryTreeNode> queue = new LinkedList<BinaryTreeNode>();
+		queue.add(root);
+		while(queue.size() != 0) {
+			BinaryTreeNode current = queue.remove();
+			queue.add(current.left);
+			queue.add(current.right);
+			nums.add(current.value);
+		}
+		return nums;
+	}
+
 
 
 
