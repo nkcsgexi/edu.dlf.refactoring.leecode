@@ -914,6 +914,35 @@ public class GraphProblems {
 		BinaryTreeNode root = createTree();
 		prettyPrintBinaryTree(root);
 	}
+	
+	private static void printTreeLayer(BinaryTreeNode node, int layer) {
+		if(node == null)
+			return;
+		if(layer == 1) {
+			System.out.print(node.value + " ");
+		}
+		printTreeLayer(node.left, layer - 1);
+		printTreeLayer(node.right, layer - 1);
+	}
+
+	private static int getBinaryTreeDepth(BinaryTreeNode root) {
+		if(root == null)
+			return 0;
+		else 
+			return Math.max(getBinaryTreeDepth(root.left),
+				getBinaryTreeDepth(root.right)) + 1;
+	}
+
+	private static void printLayerByDepthFirstSearch(BinaryTreeNode root) {
+		for(int i = 1; i <= getBinaryTreeDepth(root); i++) {
+			printTreeLayer(root, i);
+			System.out.println();
+		}
+	}
+
+	private static void testPrintLayerByDFS() {
+		printLayerByDepthFirstSearch(createTree());
+	}	
 
 	public static void main(String[] args) {
 		//testConvertToLinkedList();
@@ -922,7 +951,7 @@ public class GraphProblems {
 		//testPostOrderTraversal();
 		//testPrintEdgeOfTree();
 		//testPrettyPrint();
-		testPrintLayersZigzag();
+		testPrintLayerByDFS();
 	}
 
 }
