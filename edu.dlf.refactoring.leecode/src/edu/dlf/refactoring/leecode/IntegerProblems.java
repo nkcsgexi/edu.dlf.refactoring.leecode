@@ -1183,8 +1183,44 @@ public class IntegerProblems {
 		System.out.println(convertExcelRowNumberToRealNumber("abc"));
 	}
 
+
+	private static void printCombinations(int total, List<Integer> options,
+			List<Integer> prefix) {
+		if(total == 0) {
+			for(int p : prefix) {
+				System.out.print(p + "+");
+			}
+			System.out.println();
+			return;
+		}
+		if(options.size() == 0)
+			return;
+		int op = options.get(0);
+		for(int i = 0; i * op <= total; i ++) {
+			int newTotal = total;
+			List<Integer> newPre = new ArrayList<Integer>();
+			newPre.addAll(prefix);
+			for(int j = 0; j < i; j ++) {
+				newPre.add(op);
+				newTotal -= op;
+			}
+			printCombinations(newTotal, options.subList(1, options.
+				size()), newPre);
+		}
+	}
+
+	private static void testPrintCombination() {
+		List<Integer> options = convertArrayToList(new int[]{
+			10, 1, 2, 7, 6, 5});
+		List<Integer> prefix = new ArrayList<Integer>();
+		int total = 8;
+		printCombinations(total, options, prefix);
+	}
+
+
 	public static void main(String args[]) {
-		testExcelRow();
+		//testExcelRow();
+		testPrintCombination();
 	}
 }
 
