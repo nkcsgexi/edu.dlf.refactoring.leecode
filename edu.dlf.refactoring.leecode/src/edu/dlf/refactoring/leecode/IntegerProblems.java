@@ -1217,10 +1217,39 @@ public class IntegerProblems {
 		printCombinations(total, options, prefix);
 	}
 
+	private static int bestTimeToBuyAndSell(int[] values) {
+		List<Integer> minValueFromLeft = new ArrayList<Integer>();
+		List<Integer> maxValueFromRight = new ArrayList<Integer>();
+		minValueFromLeft.add(values[0]);
+		maxValueFromRight.add(values[values.length - 1]);
+		for(int i = 1; i < values.length; i ++) {
+			int tail = minValueFromLeft.get(minValueFromLeft.size() - 1);
+			minValueFromLeft.add(Math.min(tail, values[i]));
+		}
+		for(int i = values.length - 1; i >= 0; i --) {
+			int head = maxValueFromRight.get(0);
+			maxValueFromRight.add(0, Math.max(head, values[i]));
+		}
+		int maxGap = Integer.MIN_VALUE;
+		for(int i = 1; i < values.length - 1; i ++) {
+			int leftMin = minValueFromLeft.get(i);
+			int rightMax = maxValueFromRight.get(i);
+			if(rightMax - leftMin > maxGap)
+				maxGap = rightMax - leftMin;
+		}
+		return maxGap;
+	}
+
+	private static void testBuyAndSell() {
+		int[] values = new int[]{2, 2, 1, 5, 1, 4};
+		System.out.println(bestTimeToBuyAndSell(values));
+	}
+
 
 	public static void main(String args[]) {
 		//testExcelRow();
-		testPrintCombination();
+		//testPrintCombination();
+		testBuyAndSell();
 	}
 }
 
