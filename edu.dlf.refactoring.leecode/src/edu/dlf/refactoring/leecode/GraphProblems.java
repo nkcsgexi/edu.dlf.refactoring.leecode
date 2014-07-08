@@ -856,7 +856,7 @@ public class GraphProblems {
 			for(int j = 0; j < lay.size(); j ++) {
 				int v = lay.get(j).value;
 				int p = pos.get(j);
-				for(int count = preP; count < p; count ++) {
+				for(int count = preP; count < p - 1; count ++) {
 					sb.append(gap);
 					sb.append(" ");
 				}
@@ -864,8 +864,8 @@ public class GraphProblems {
 				sb.append(v);
 				preP = p;
 			}
-			gap = (gap + gap).substring(1);
-			prefix = gap.substring(1);
+	//		prefix = gap.substring(1);
+			gap = (gap + gap + "  ").substring(1);
 			tree = sb.toString() + "\n" + tree;
 		}
 		System.out.print(tree);
