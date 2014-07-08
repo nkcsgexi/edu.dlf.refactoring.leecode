@@ -806,16 +806,102 @@ public class GraphProblems {
 		}
 		return nums;
 	}
+	private static class SpecialNode extends BinaryTreeNode {
+		SpecialNode() {
+			super(-1);
+		}
+	}
 
+	private static List<List<BinaryTreeNode>> getBinaryTreeLayers(BinaryTreeNode root) {
+		List<List<BinaryTreeNode>> layers = new ArrayList<List<BinaryTreeNode>>();
+		Queue<BinaryTreeNode> q = new LinkedList<BinaryTreeNode>();
+		q.add(new SpecialNode());
+		q.add(root);
+		while(q.size() != 0) {
+			BinaryTreeNode node = q.remove();
+			if(node instanceof SpecialNode) {
+				if(q.size() != 0) {
+					layers.add(new ArrayList<BinaryTreeNode>());
+					q.add(node);
+				}
+			}else {
+				if(node.left != null){
+					q.add(node.left);
+					node.left.parent = node;
+				}
+				if(node.right != null) {
+					q.add(node.right);
+					node.right.parent = node;
+				}
+				layers.get(layers.size() - 1).add(node);
+			}
+		}
+		return layers;
+	}
 
+	private static void prettyPrintBinaryTree(BinaryTreeNode root) {
+		List<List<BinaryTreeNode>> layers = getBinaryTreeLayers(root);
+		List<List<Integer>> positions = getNodesPositions(layers);	
 
+		String prefix = "";
+		String gap = " ";
+		String tree = "";
+		
+		for(int i = layers.size() - 1; i >= 0; i--) {
+			StringBuilder sb = new StringBuilder();
+			List<BinaryTreeNode> lay  = layers.get(i);
+			List<Integer> pos = positions.get(i);
+			sb.append(prefix);
+			int preP = 0;
+			for(int j = 0; j < lay.size(); j ++) {
+				int v = lay.get(j).value;
+				int p = pos.get(j);
+				for(int count = preP; count < p; count ++) {
+					sb.append(gap);
+					sb.append(" ");
+				}
+				sb.append(gap);
+				sb.append(v);
+				preP = p;
+			}
+			gap = (gap + gap).substring(1);
+			prefix = gap.substring(1);
+			tree = sb.toString() + "\n" + tree;
+		}
+		System.out.print(tree);
+	}
+
+	private static List<List<Integer>> getNodesPositions(
+			List<List<BinaryTreeNode>> layers) {
+		List<List<Integer>> positions = new ArrayList<List<Integer>>();
+		List<Integer> list = new ArrayList<Integer>();
+		list.add(0);
+		positions.add(list);	
+		for(int i = 1; i < layers.size(); i++) {
+			list = new ArrayList<Integer>();
+			for(BinaryTreeNode node : layers.get(i)) {
+				int preP = positions.get(i - 1).get(layers.
+					get(i - 1).indexOf(node.parent));
+				int p = preP * 2 + (node == node.parent.left ? 0 : 1);
+				list.add(p);
+			}
+			positions.add(list);
+		}
+		return positions;
+	}
+	
+	private static void testPrettyPrint() {
+		BinaryTreeNode root = createTree();
+		prettyPrintBinaryTree(root);
+	}
 
 	public static void main(String[] args) {
 		//testConvertToLinkedList();
 		//testConvertToBalanceTree();
 		//testGetLargestBinarySearchTree();
 		//testPostOrderTraversal();
-		testPrintEdgeOfTree();
+		//testPrintEdgeOfTree();
+		testPrettyPrint();
 	}
 
 }
