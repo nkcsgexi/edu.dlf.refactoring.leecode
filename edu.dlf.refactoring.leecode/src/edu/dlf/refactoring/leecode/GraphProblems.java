@@ -943,6 +943,19 @@ public class GraphProblems {
 	private static void testPrintLayerByDFS() {
 		printLayerByDepthFirstSearch(createTree());
 	}	
+	
+	private static boolean ifTreeBST(BinaryTreeNode root) {
+		return ifTreeIsBSTHelper(root, Integer.MIN_VALUE, Integer.MAX_VALUE);
+	}
+	private static boolean ifTreeIsBSTHelper(BinaryTreeNode root, int min, 
+			int max) {
+		if(root == null)
+			return true;
+		if(root.value <= min || root.value >= max)
+			return false;
+		return ifTreeIsBSTHelper(root.left, min, root.value) && 
+			ifTreeIsBSTHelper(root.right, root.value, max);
+	}
 
 	public static void main(String[] args) {
 		//testConvertToLinkedList();
