@@ -1,6 +1,7 @@
 package edu.dlf.refactoring.leecode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -811,6 +812,25 @@ public class GraphProblems {
 			super(-1);
 		}
 	}
+	
+	private static void printZigzagLayers(BinaryTreeNode root) {
+		List<List<BinaryTreeNode>> layers = getBinaryTreeLayers(root);
+		boolean reverse = false;
+		for(List<BinaryTreeNode> l : layers) {
+			if(reverse) 
+					Collections.reverse(l);
+			reverse = !reverse;
+			for(BinaryTreeNode n : l) {
+				System.out.print(n.value + " ");
+			}
+			System.out.println();
+		}
+	}
+
+	private static void testPrintLayersZigzag() {
+		BinaryTreeNode root = createTree();
+		printZigzagLayers(root);
+	}
 
 	private static List<List<BinaryTreeNode>> getBinaryTreeLayers(BinaryTreeNode root) {
 		List<List<BinaryTreeNode>> layers = new ArrayList<List<BinaryTreeNode>>();
@@ -901,7 +921,8 @@ public class GraphProblems {
 		//testGetLargestBinarySearchTree();
 		//testPostOrderTraversal();
 		//testPrintEdgeOfTree();
-		testPrettyPrint();
+		//testPrettyPrint();
+		testPrintLayersZigzag();
 	}
 
 }
