@@ -956,15 +956,47 @@ public class GraphProblems {
 		return ifTreeIsBSTHelper(root.left, min, root.value) && 
 			ifTreeIsBSTHelper(root.right, root.value, max);
 	}
-
-	public static void main(String[] args) {
-		//testConvertToLinkedList();
-		//testConvertToBalanceTree();
-		//testGetLargestBinarySearchTree();
-		//testPostOrderTraversal();
-		//testPrintEdgeOfTree();
-		//testPrettyPrint();
-		testPrintLayerByDFS();
+	
+	private static void serializeBinaryTree(BinaryTreeNode root,
+			List<String> sb) {
+		if(root == null) return;
+		sb.add(Integer.toString(root.value));
+		serializeBinaryTree(root.left, sb);
+		sb.add("#");
+		serializeBinaryTree(root.right, sb);
 	}
 
+	private static BinaryTreeNode deserializeBinaryTree(List<String> sb) {
+		if(sb.size() == 0)
+			return null;
+		if(sb.get(0).equals("#")) {
+			sb.remove(0);
+			return null;
+		}
+		BinaryTreeNode head = new BinaryTreeNode(Integer.parseInt(sb.get(0)));
+		sb.remove(0);
+		head.left = deserializeBinaryTree(sb);
+		head.right = deserializeBinaryTree(sb);
+		return head;
+	}
+	private static void testSerializeTree() {
+		BinaryTreeNode root = createTree();
+		List<String> tokens = new ArrayList<String>(); 
+		serializeBinaryTree(root, tokens);
+		for(String t : tokens) {
+			System.out.print(t + " ");
+		}
+		root = deserializeBinaryTree(tokens);
+		List<String> newTokens = new ArrayList<String>(); 
+		serializeBinaryTree(root, newTokens);
+		System.out.println();
+		for(String t : newTokens) {
+			System.out.print(t + " ");
+		}
+		System.out.println();
+	}
+
+	public static void main(String[] args) {
+	
+	}
 }
