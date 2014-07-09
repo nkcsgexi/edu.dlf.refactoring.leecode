@@ -995,8 +995,29 @@ public class GraphProblems {
 		}
 		System.out.println();
 	}
+	
+	private static void inorderTraversalWithoutRecursion(BinaryTreeNode root) {
+		List<BinaryTreeNode> closedList = new ArrayList<BinaryTreeNode>();
+		Stack<BinaryTreeNode> openList = new Stack<BinaryTreeNode>();
+		openList.add(root);
+		while(openList.size() != 0) {
+			BinaryTreeNode head = openList.peek();
+			if(head.left == null || closedList.contains(head.left)) {
+				System.out.print(head.value + " ");
+				closedList.add(openList.pop());
+				if(head.right != null) 
+					openList.push(head.right);
+			} else {
+				openList.push(head.left);
+			}
+		}
+	}
+	private static void testInorderTraversalNoRecursion() {
+		inorderTraversalWithoutRecursion(createTree());
+	}
 
 	public static void main(String[] args) {
+		testInorderTraversalNoRecursion();
 	
 	}
 }
