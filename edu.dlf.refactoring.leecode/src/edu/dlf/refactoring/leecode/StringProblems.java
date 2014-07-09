@@ -2,8 +2,12 @@
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 public class StringProblems {
 
@@ -653,10 +657,67 @@ public class StringProblems {
 		internalTestReplacingString("abcdeffdfegabcabcab", "abc");
 		
 	}
+	
+	private static class CharCount implements Comparable<CharCount>{
+		char c;
+		int count;
+		@Override
+		public int compareTo(CharCount other) {
+			return Character.compare(other.c, c);
+		}
+	}
+
+	private static String rearrangeCharacters(String s, int d) {
+		char[] chars = s.toCharArray();
+		PriorityQueue<CharCount> queue = new PriorityQueue<CharCount>();
+		HashMap<Character, CharCount> map = new HashMap<Character, CharCount>();
+		for(char c : chars) {
+			CharCount current = null;
+			if(map.containsKey(c)) 
+				current = map.get(c);
+			else {
+				current = new CharCount();
+				current.c = c;
+				current.count = 0;
+				map.put(c, current);
+			}
+			current.count += 1;
+		}
+		for(CharCount c : map.values()) {
+			queue.add(c);
+		}
+		StringBuilder sb = new StringBuilder();
+		Queue<Character> forbiddenList = new LinkedList<Character>();
+		List<CharCount> removed = new ArrayList<CharCount>();
+		while(queue.size() != 0) {
+			removed.clear();
+			while(queue.size() != 0 && forbiddenList.contains(queue.peek().c)) {
+					removed.add(queue.remove());	
+			}
+			if(queue.size() == 0) {
+				return "";
+			}else {
+				sb.append(queue.peek().c);
+				forbiddenList.add(queue.peek().c);
+				queue.peek().count -= 1;
+				if(queue.peek().count == 0)
+					queue.remove();
+				queue.addAll(removed);	
+			}
+			while(forbiddenList.size() >= d)
+				forbiddenList.remove();
+		}
+		return sb.toString();
+	}
+	
+	private static void testRearrangeChars() {
+		System.out.println(rearrangeCharacters("abb", 2));
+	}
+			
 
 	public static void main(String[] args) {
 		//testMinimumSubstringContainsAllCharacters();	
-		testReplacingString();
+		testRearrangeChars();
 	}
 
 }
