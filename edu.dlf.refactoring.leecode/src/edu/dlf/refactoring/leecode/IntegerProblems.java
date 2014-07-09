@@ -1277,8 +1277,20 @@ public class IntegerProblems {
 		}
 		System.out.println();
 	}
+	
+	private static int[] xorSwap(int x, int y) {
+		x = x ^ y;
+		y = x ^ y;
+		x = x ^ y;
+		return new int[]{x, y};
+	}
+	
+	private static void testXorSwap() {
+		int[] result = xorSwap(1, 222);
+		System.out.println(result[0] + " " + result[1]);
+	}
 
 	public static void main(String args[]) {
-		testIntersection();
+		testXorSwap();
 	}
 }
