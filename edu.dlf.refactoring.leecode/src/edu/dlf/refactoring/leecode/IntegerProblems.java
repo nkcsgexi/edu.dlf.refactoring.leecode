@@ -993,12 +993,12 @@ public class IntegerProblems {
 	}
 
 	/*
-	 * Given a set of digits, randomly get a number that can be represented
-	 * by those digits.
+	 * Given a set of digits, randomly get a number that can be represented by
+	 * those digits.
 	 */
 	private static void getNumberRandomly(int[] digits) {
 		Random seed = new Random();
-		for(int i = 0; i < digits.length; i ++) {
+		for (int i = 0; i < digits.length; i++) {
 			int j = seed.nextInt(digits.length - 1 - i);
 			int swap = digits[i];
 			digits[i] = digits[j];
@@ -1007,24 +1007,24 @@ public class IntegerProblems {
 	}
 
 	/*
-	 * Given a list of numbers, rearrange the positions of numbers so that
-	 * the even numbers are on even positions or the odd numbers are on odd
+	 * Given a list of numbers, rearrange the positions of numbers so that the
+	 * even numbers are on even positions or the odd numbers are on odd
 	 * positions.
 	 */
 	private static void rearrangeNumbers(int[] nums) {
 		int length = nums.length;
 		Stack<Integer> oddPositions = new Stack<Integer>();
 		Stack<Integer> evenPositions = new Stack<Integer>();
-		for(int i = 0; i < length; i ++) {
-			if(i%2 == nums[i]%2) {
+		for (int i = 0; i < length; i++) {
+			if (i % 2 == nums[i] % 2) {
 				continue;
 			}
-			if(i%2 == 1) {
+			if (i % 2 == 1) {
 				evenPositions.push(i);
-			}else
+			} else
 				oddPositions.push(i);
 		}
-		while(evenPositions.size() != 0 || oddPositions.size() != 0) {
+		while (evenPositions.size() != 0 || oddPositions.size() != 0) {
 			int e = evenPositions.pop();
 			int o = oddPositions.pop();
 			int temp = nums[e];
@@ -1035,10 +1035,10 @@ public class IntegerProblems {
 
 	private static String printPreviousLine(String pl) {
 		HashMap<Character, Integer> map = new HashMap<Character, Integer>();
-		for(char c : pl.toCharArray()) {
-			if(c >= '0' && c <= '9') {
+		for (char c : pl.toCharArray()) {
+			if (c >= '0' && c <= '9') {
 				int value = 1;
-				if(map.containsKey(c)){
+				if (map.containsKey(c)) {
 					value = map.get(c) + 1;
 					map.remove(c);
 				}
@@ -1046,7 +1046,7 @@ public class IntegerProblems {
 			}
 		}
 		StringBuilder sb = new StringBuilder();
-		for(Entry<Character, Integer> entry : map.entrySet()) {
+		for (Entry<Character, Integer> entry : map.entrySet()) {
 			sb.append(entry.getValue() + "" + entry.getKey());
 		}
 		return sb.toString();
@@ -1054,12 +1054,11 @@ public class IntegerProblems {
 
 	private static void printNLines(int N) {
 		String preLine = "1";
-		for(int i = 0; i < N; i ++) {
+		for (int i = 0; i < N; i++) {
 			System.out.println(preLine);
 			preLine = printPreviousLine(preLine);
 		}
 	}
-
 
 	private static void printNumbersAddingToValue(int value, int[] input) {
 		List<Integer> list = convertArrayToList(input);
@@ -1118,9 +1117,9 @@ public class IntegerProblems {
 	}
 
 	private static void printNumbers() {
-		int[] digits = new int[]{1, 2, 3, 4,5,6};
-		while(getNextNumber(digits)) {
-			for(int i : digits)
+		int[] digits = new int[] { 1, 2, 3, 4, 5, 6 };
+		while (getNextNumber(digits)) {
+			for (int i : digits)
 				System.out.print(i);
 			System.out.println();
 		}
@@ -1130,9 +1129,9 @@ public class IntegerProblems {
 		boolean found = false;
 		for (int index = digits.length - 1; index > 0; index--) {
 			if (digits[index] > digits[index - 1]) {
-				int swap = digits.length - 1 ;
-				for(; swap >= index; swap --) {
-					if(digits[swap] > digits[index - 1]) {
+				int swap = digits.length - 1;
+				for (; swap >= index; swap--) {
+					if (digits[swap] > digits[index - 1]) {
 						break;
 					}
 				}
@@ -1142,12 +1141,12 @@ public class IntegerProblems {
 				found = true;
 
 				List<Integer> l = new ArrayList<Integer>();
-				for(int i = digits.length - 1; i >= index; i --) {
+				for (int i = digits.length - 1; i >= index; i--) {
 					l.add(digits[i]);
 				}
 				Collections.sort(l);
 				int k = l.size() - 1;
-				for(int i = digits.length - 1; i >= index; i --) {
+				for (int i = digits.length - 1; i >= index; i--) {
 					digits[i] = l.get(k--);
 				}
 
@@ -1156,13 +1155,15 @@ public class IntegerProblems {
 		}
 		return found;
 	}
-	private static boolean binarySearch2(int[] row, int start, int end, int target) {
-		if(end < start)
+
+	private static boolean binarySearch2(int[] row, int start, int end,
+			int target) {
+		if (end < start)
 			return false;
 		int middle = (start + end) / 2;
-		if(row[middle] == target)
+		if (row[middle] == target)
 			return true;
-		if(row[middle] > target)
+		if (row[middle] > target)
 			return binarySearch2(row, start, middle - 1, target);
 		else
 			return binarySearch2(row, middle + 1, end, target);
@@ -1170,7 +1171,7 @@ public class IntegerProblems {
 
 	private static int convertExcelRowNumberToRealNumber(String s) {
 		int sum = 0;
-		for(int i = s.length() - 1, base = 1; i >= 0; i --, base *= 26) {
+		for (int i = s.length() - 1, base = 1; i >= 0; i--, base *= 26) {
 			int n = s.charAt(i) - 'a' + 1;
 			sum += n * base;
 		}
@@ -1183,35 +1184,34 @@ public class IntegerProblems {
 		System.out.println(convertExcelRowNumberToRealNumber("abc"));
 	}
 
-
 	private static void printCombinations(int total, List<Integer> options,
 			List<Integer> prefix) {
-		if(total == 0) {
-			for(int p : prefix) {
+		if (total == 0) {
+			for (int p : prefix) {
 				System.out.print(p + "+");
 			}
 			System.out.println();
 			return;
 		}
-		if(options.size() == 0)
+		if (options.size() == 0)
 			return;
 		int op = options.get(0);
-		for(int i = 0; i * op <= total; i ++) {
+		for (int i = 0; i * op <= total; i++) {
 			int newTotal = total;
 			List<Integer> newPre = new ArrayList<Integer>();
 			newPre.addAll(prefix);
-			for(int j = 0; j < i; j ++) {
+			for (int j = 0; j < i; j++) {
 				newPre.add(op);
 				newTotal -= op;
 			}
-			printCombinations(newTotal, options.subList(1, options.
-				size()), newPre);
+			printCombinations(newTotal, options.subList(1, options.size()),
+					newPre);
 		}
 	}
 
 	private static void testPrintCombination() {
-		List<Integer> options = convertArrayToList(new int[]{
-			10, 1, 2, 7, 6, 5});
+		List<Integer> options = convertArrayToList(new int[] { 10, 1, 2, 7, 6,
+				5 });
 		List<Integer> prefix = new ArrayList<Integer>();
 		int total = 8;
 		printCombinations(total, options, prefix);
@@ -1222,51 +1222,63 @@ public class IntegerProblems {
 		List<Integer> maxValueFromRight = new ArrayList<Integer>();
 		minValueFromLeft.add(values[0]);
 		maxValueFromRight.add(values[values.length - 1]);
-		for(int i = 1; i < values.length; i ++) {
+		for (int i = 1; i < values.length; i++) {
 			int tail = minValueFromLeft.get(minValueFromLeft.size() - 1);
 			minValueFromLeft.add(Math.min(tail, values[i]));
 		}
-		for(int i = values.length - 1; i >= 0; i --) {
+		for (int i = values.length - 1; i >= 0; i--) {
 			int head = maxValueFromRight.get(0);
 			maxValueFromRight.add(0, Math.max(head, values[i]));
 		}
 		int maxGap = Integer.MIN_VALUE;
-		for(int i = 1; i < values.length - 1; i ++) {
+		for (int i = 1; i < values.length - 1; i++) {
 			int leftMin = minValueFromLeft.get(i);
 			int rightMax = maxValueFromRight.get(i);
-			if(rightMax - leftMin > maxGap)
+			if (rightMax - leftMin > maxGap)
 				maxGap = rightMax - leftMin;
 		}
 		return maxGap;
 	}
 
 	private static void testBuyAndSell() {
-		int[] values = new int[]{2, 2, 1, 5, 1, 4};
+		int[] values = new int[] {2, 2, 1, 5, 1, 4 };
 		System.out.println(bestTimeToBuyAndSell(values));
 	}
 
+	private static List<Integer> getIntersectionOfTwoSortedArrays(
+			List<Integer> l1, List<Integer> l2) {
+		int p1 = 0;
+		int p2 = 0;
+		List<Integer> results = new ArrayList<Integer>();
+		while (p1 != l1.size() && p2 != l2.size()) {
+			int n1 = l1.get(p1);
+			int n2 = l2.get(p2);
+			if (n1 == n2) {
+				results.add(n1);
+				p1 ++;
+				p2 ++;
+			}
+			else if (n1 > n2)
+				p2++;
+			else
+				p1++;
+		}
+		return results;
+	}
+
+	private static void testIntersection() {
+		List<Integer> l1 = convertArrayToList(new int[]{1, 3, 4, 5, 7});
+		List<Integer> l2 = convertArrayToList(new int[]{4, 7});
+		Collections.sort(l1);
+		Collections.sort(l2);
+		List<Integer> l3 = getIntersectionOfTwoSortedArrays(l1, l2);
+		for( int i : l3) {
+			System.out.print(i + " ");
+		}
+		System.out.println();
+	}
 
 	public static void main(String args[]) {
-		//testExcelRow();
-		//testPrintCombination();
-		testBuyAndSell();
+		testIntersection();
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
