@@ -714,10 +714,31 @@ public class StringProblems {
 		System.out.println(rearrangeCharacters("abb", 2));
 	}
 			
+	private static String rotateString(String s, int k) {
+		s = reverseString(s);
+		String first = smartReverseString(s.substring(0, k));
+		String second = smartReverseString(s.substring(k));
+		return first + second;
+	}		
+			
+	private static String smartReverseString(String st) {
+		char[] s = st.toCharArray();
+		for(int i = 0; i < s.length/2; i ++){
+			int j = s.length - 1 -i;
+			s[i] = (char) (s[i] ^ s[j]);
+			s[j] = (char) (s[i] ^ s[j]);
+			s[i] = (char) (s[i] ^ s[j]);
+		}
+		return String.valueOf(s);
+	}
+
+	private static void testRotateString() {
+		String s = "abcdefghijk";
+		System.out.println(rotateString(s, 3));
+	}
 
 	public static void main(String[] args) {
 		//testMinimumSubstringContainsAllCharacters();	
-		testRearrangeChars();
+		testRotateString();
 	}
-
 }
