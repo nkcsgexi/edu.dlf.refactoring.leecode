@@ -190,13 +190,52 @@ public class LinkedListProblems {
 		}
 	}
 
+	private static boolean hasLoop(LinkedNode head) {
+		LinkedNode fast = head, slow = head;
+		while(fast != null) {
+			if(fast.next == null)
+				break;
+			fast = fast.next.next;
+			slow = slow.next;
+			if(fast == slow)
+				return true;
+		}
+		return false;
+	}
+	
+	private static LinkedNode[] splitLinkedList(LinkedNode head) {
+		LinkedNode fast = head, slow = head;
+		LinkedNode preSlow = null;
+		while(fast != null && fast.next != null) {
+			fast = fast.next.next;
+			preSlow = slow;
+			slow = slow.next;
+		}
+		if(fast == null) {
+			preSlow.next = null;
+			return new LinkedNode[]{head, slow};
+		}else {
+			LinkedNode temp = slow.next;
+			slow.next = null;
+			return new LinkedNode[]{head, temp};
+		}
+	}
+
+	private static void testSplitLinkedList() {
+		int[] nums = new int[]{1,2,3,4,5,6,7,8,9};
+		LinkedNode[] heads = splitLinkedList(constructLinkedList(nums));
+		printLinkedList(heads[0]);
+		printLinkedList(heads[1]);
+		nums = new int[]{1,2,3,4,5,6};
+		heads = splitLinkedList(constructLinkedList(nums));
+		printLinkedList(heads[0]);
+		printLinkedList(heads[1]);
+	}
 
 	public static void main(String[] args) {
-		int[] nums = new int[]{1,2,3,4,5,6,7,8,9};
-		LinkedNode head = constructLinkedList(nums);
-		subtract(head);
-		printLinkedList(head);
+		testSplitLinkedList();
 	}
+
 
 	
 
