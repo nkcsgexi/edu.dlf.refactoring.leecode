@@ -126,16 +126,7 @@ public class StackQueueProblems {
 				fromPod + " to " + toPod);
 		printHanoiMovementsInternal(plateCount - 1, startId, borrowPod, toPod);
 	}
-	
-	public static void main(String args[]) {
-		printHanoiMovements(3);
-		Stack<Integer> stack = new Stack<Integer>();
-		stack.push(1);
-		stack.push(0);
-		stack.push(3);
-		stack = sortStack(stack);
-		stack.forEach(i -> System.out.println(i));
-	}
+
 	
 	/* Implement a MyQueue class which implements a queue using two stacks.*/
 	private class TwoStackQueue implements IQueue{
@@ -188,6 +179,63 @@ public class StackQueueProblems {
 		return result;
 	}
 	
+	private static class SynchronizedSizedQueue {
+		private final int[] data;
+		private final int length;
+
+		private int start;
+		private int end;
+		
+		public SynchronizedSizedQueue(int length) {
+			this.length = length + 1;
+			this.data = new int[this.length + 1];
+			this.start = 0;
+			this.end = 0;
+		}
+		public synchronized int size() {
+			if(end >= start)
+				return end - start;
+			else
+				return end + length - start;
+		}
+
+		public synchronized boolean enqueue(int t) {
+			int originalEnd = end;
+			end = end == length - 1 ? 0 : end + 1;
+			if(size() == 0) {
+				end = originalEnd;
+				return false;
+			}
+			data[originalEnd] = t;
+			return true;
+		}
+
+		public synchronized int dequeue() {
+			if(size() == 0)
+				return Integer.MIN_VALUE;
+			int r = data[start];
+			start = start + 1 == length ? 0 : start + 1;
+			return r;
+		}
+	}
+	
+	private static void testSizedQueue() {
+		SynchronizedSizedQueue queue = new SynchronizedSizedQueue(10);
+		for(int i = 1; i <= 10; i ++)
+			System.out.println(i + ": " + queue.enqueue(i));
+		for(int i = 1; i <= 4; i ++)
+			System.out.println(i + ": " + queue.dequeue());
+		for(int i = 1; i <= 4; i ++)
+			System.out.println(i + ": " + queue.enqueue(i));
+		for(int i = 1; i <= 10; i ++)
+			System.out.println(i + ": " + queue.dequeue());
+	}
+		
+	
+	
+	public static void main(String args[]) {
+		testSizedQueue();
+	}
 	
 	
 }
