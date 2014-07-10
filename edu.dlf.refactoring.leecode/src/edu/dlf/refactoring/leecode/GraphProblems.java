@@ -1016,6 +1016,35 @@ public class GraphProblems {
 		inorderTraversalWithoutRecursion(createTree());
 	}
 
+	private static <T> List<T> cloneList(List<T> list) {
+		List<T> newList = new ArrayList<T>();
+		newList.addAll(list);
+		return newList;
+	}
+
+	private static void sumToValueBinarySearchTree(BinaryTreeNode head, int sum, 
+			List<Integer> prefix) {
+		if(sum == 0) {
+			for(int p : prefix) {
+				System.out.print(p + "  ");
+			}
+			System.out.println();
+			return;
+		}
+		if(head.value < sum) {
+			int newValue = sum - head.value;
+			List<Integer> newPrefix = cloneList(prefix);
+			newPrefix.add(head.value);
+			sumToValueBinarySearchTree(head.left, newValue, newPrefix);
+			sumToValueBinarySearchTree(head.right, newValue, newPrefix);
+		}			
+		sumToValueBinarySearchTree(head.left, sum, new ArrayList<Integer>());
+		sumToValueBinarySearchTree(head.right, sum, new ArrayList<Integer>());
+	}
+		
+		
+
+
 	public static void main(String[] args) {
 		testInorderTraversalNoRecursion();
 	
