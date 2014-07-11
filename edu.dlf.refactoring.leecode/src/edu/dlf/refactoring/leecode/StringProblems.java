@@ -765,12 +765,37 @@ public class StringProblems {
 		return results;
 	}
 
+	private static String LZWDecoding(List<Integer> code) {
+		StringBuilder sb = new StringBuilder();
+		HashMap<Integer, String> map = new HashMap<Integer, String>();
+		map.put(0, "#");
+		for(char c = 'a'; c <= 'z'; c ++)
+			map.put(c - 'a' + 1, Character.toString(c));
+		int nextKey = 27;
+		String prefix = null;
+		for(int start = 0; code.get(start) != 0; start++) {
+			String value = map.get(code.get(start));
+			sb.append(value);
+			if(prefix != null) {
+				map.put(nextKey ++, prefix + value.charAt(0));
+				prefix = value;
+			}else
+				prefix = value;
+		}
+		sb.append("#");
+		return sb.toString();
+	}
+
 	private static void testLZWEncoding() {
-		List<Integer> codes = LZWEncoding("TOBEORNOTTOBEORTOBEORNOT#".toLowerCase());
+		String o = "TOBEORNOTTOBEORTOBEORNOT#".toLowerCase();
+		List<Integer> codes = LZWEncoding(o);
 		for(int c : codes) {
 			System.out.print(c + " ");
 		}
 		System.out.println();
+		String s = LZWDecoding(codes);
+		System.out.println(o);
+		System.out.println(s);
 	}
 
 
