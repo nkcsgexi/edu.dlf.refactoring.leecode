@@ -737,8 +737,45 @@ public class StringProblems {
 		System.out.println(rotateString(s, 3));
 	}
 
+	private static List<Integer> LZWEncoding(String input) {
+		List<Integer> results = new ArrayList<Integer>();
+		HashMap<String, Integer> dict = new HashMap<String, Integer>();
+		dict.put("#", 0);
+		for(char c = 'a'; c <= 'z'; c++)
+			dict.put(Character.toString(c), c - 'a' + 1);
+		int end = input.length();
+		int nextValue = 27;
+		int start = 0;
+		while(input.charAt(start) != '#') {
+			int next = 0;
+			for(int l = 1; l + start <= end; l ++) {
+				String sub = input.substring(start, start + l);	
+				if(!dict.containsKey(sub)) {
+					dict.put(sub, nextValue);
+					nextValue ++;
+					start = l + start - 1;
+					break;
+				} else{
+					next = dict.get(sub);
+				}
+			}
+			results.add(next);
+		}
+		results.add(0);
+		return results;
+	}
+
+	private static void testLZWEncoding() {
+		List<Integer> codes = LZWEncoding("TOBEORNOTTOBEORTOBEORNOT#".toLowerCase());
+		for(int c : codes) {
+			System.out.print(c + " ");
+		}
+		System.out.println();
+	}
+
+
 	public static void main(String[] args) {
 		//testMinimumSubstringContainsAllCharacters();	
-		testRotateString();
+		testLZWEncoding();
 	}
 }
