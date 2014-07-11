@@ -1126,9 +1126,32 @@ public class GraphProblems {
 		System.out.println(ifAllLeavesSameLevel(root));
 		System.out.println(ifAllLeavesSameLeveNonrecursive(root));
 	}
+	private static int getClosestValueInBST(BinaryTreeNode root, int value) {
+		BinaryTreeNode current = root;
+		int upper = Integer.MIN_VALUE;
+		int lower = Integer.MAX_VALUE;
+		while(current != null) {
+			if(current.value > value) {
+				upper = Math.max(current.value, upper);
+				current = current.left;
+			} else if(current.value < value) {
+				lower = Math.min(current.value, lower);
+				current = current.right;
+			} else
+				return current.value;
+		}
+		return upper - value > value - lower ? lower : upper;
+	}
+
+	private static void testClosestValue() {
+		BinaryTreeNode root = createTree();
+		System.out.println(getClosestValueInBST(root, 11));
+	}
+
+
 
 	public static void main(String[] args) {
-		testSumToValueInBinarySearchTree();
+		testClosestValue();
 
 	}
 }
