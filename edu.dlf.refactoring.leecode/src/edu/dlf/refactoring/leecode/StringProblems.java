@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Random;
 
 public class StringProblems {
 
@@ -799,8 +800,57 @@ public class StringProblems {
 	}
 
 
+	private static int[] splitTwo(int num) {
+		int first = 0;
+		int second = 0;
+		Random random = new Random();
+		for(int i = 0; i < num; i++) {
+			if(random.nextBoolean())
+				first ++;
+			else
+				second ++;
+		}
+		return new int[]{first, second};
+	}
+
+	private static void guaxiangGenerator() {
+		int stable = 1;
+		int move = 49;
+		int[] yao = new int[6];
+		for(int i = 0; i < 6; i++) {
+			int num = move;
+			for(int j = 0; j < 3; j++) {
+				int[] splits = splitTwo(num);
+				int left = splits[0] % 4;
+				int right = (splits[1] - 1) % 4;
+				left = left == 0 ? 4 : left;
+				right = right == 0 ? 4 : right;
+				num -= left + right + 1;
+			}
+			yao[i] = num / 4;
+		}
+		System.out.println("Self");
+		String yin = "===   ===";
+		String yang = "=========";
+		for(int i = 5; i >= 0; i --) {
+			if(yao[i] % 2 == 1)
+				System.out.println(yang);
+			else 
+				System.out.println(yin);
+		}
+		System.out.println("Change");
+		for(int i = 5; i >= 0; i --) {
+			if(yao[i] == 6 || yao[i] == 7)
+				System.out.println(yang);
+			else
+				System.out.println(yin);
+		}
+	}
+
+
+
 	public static void main(String[] args) {
 		//testMinimumSubstringContainsAllCharacters();	
-		testLZWEncoding();
+		guaxiangGenerator();
 	}
 }
