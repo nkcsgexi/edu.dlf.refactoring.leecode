@@ -1289,8 +1289,23 @@ public class IntegerProblems {
 		int[] result = xorSwap(1, 222);
 		System.out.println(result[0] + " " + result[1]);
 	}
-
+	
+	private static int gcd(int a, int b) {
+		while(a != b) {
+			if (a > b) {
+				a = a - b;
+			} else {
+				b = b - a;
+			}
+		}
+		return a;
+	}
+	
+	private static void testGCD() {
+		System.out.println(gcd(42435, 424719));
+	}
+	
 	public static void main(String args[]) {
-		testXorSwap();
+		testGCD();
 	}
 }
