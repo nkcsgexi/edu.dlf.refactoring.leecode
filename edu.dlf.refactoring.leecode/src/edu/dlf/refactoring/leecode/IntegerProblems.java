@@ -1289,6 +1289,7 @@ public class IntegerProblems {
 		int[] result = xorSwap(1, 222);
 		System.out.println(result[0] + " " + result[1]);
 	}
+
 	private static int[] increment(int[] input) {
 		int carry = 1;
 		for(int i = input.length - 1; i > -1 && carry > 0; i --) {
@@ -1323,7 +1324,6 @@ public class IntegerProblems {
 	}
 
 	private static int getMaximumSequentialElementsSum(int[] input) {
-		int currentSum = 0;
 		int maxEndingHere = 0;
 		int sofarMax = 0;
 		int start = 0;
@@ -1375,4 +1375,21 @@ public class IntegerProblems {
 	public static void main(String args[]) {
 		testPushZeroToEnd();
 	}
+	
+	private static int gcd(int a, int b) {
+		while(a != b) {
+			if (a > b) {
+				a = a - b;
+			} else {
+				b = b - a;
+			}
+		}
+		return a;
+	}
+	
+	private static void testGCD() {
+		System.out.println(gcd(42435, 424719));
+	}
+	
+
 }
