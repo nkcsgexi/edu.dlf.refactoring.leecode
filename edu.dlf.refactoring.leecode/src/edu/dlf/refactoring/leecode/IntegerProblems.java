@@ -1289,8 +1289,90 @@ public class IntegerProblems {
 		int[] result = xorSwap(1, 222);
 		System.out.println(result[0] + " " + result[1]);
 	}
+	private static int[] increment(int[] input) {
+		int carry = 1;
+		for(int i = input.length - 1; i > -1 && carry > 0; i --) {
+			input[i] = input[i] + carry;
+			if(input[i] == 10){
+				input[i] = 0;
+				carry = 1;
+			}else
+				carry = 0;
+		}
+		if(carry == 1) {
+			int[] temp = new int[input.length + 1];
+			temp[0] = 1;
+			for(int i = 1; i < input.length + 1; i ++)
+				temp[i] = input[i - 1];
+			return temp;
+		}
+		return input;
+	}
 
+	private static int[] pushZeroToEnd(int[] input) {
+		int nextZero = input.length - 1;
+		for(int end = input.length - 1; end >= 0; end --) {
+			if(input[end] == 0) {
+				int temp = input[end];
+				input[end] = input[nextZero];
+				input[nextZero] = temp;
+				nextZero --;
+			}
+		}
+		return input;
+	}
+
+	private static int getMaximumSequentialElementsSum(int[] input) {
+		int currentSum = 0;
+		int maxEndingHere = 0;
+		int sofarMax = 0;
+		int start = 0;
+		int end = 0;
+
+		int currentStart = 0;
+		for(int currentEnd = 0; currentEnd < input.length; currentEnd ++) {
+			int value = input[currentEnd];
+			maxEndingHere += value;
+			if(maxEndingHere < 0){
+				maxEndingHere = 0;
+				currentStart = currentEnd + 1;
+			}
+			else {
+				if(maxEndingHere > sofarMax) {
+					sofarMax = maxEndingHere;
+					end = currentEnd;
+					start = currentStart;
+				}
+			}
+		}
+		return sofarMax;
+	}
+	private static void testSequentialSum() {
+		int[] input = new int[] {1,-8, 3, -2, 4};
+		System.out.println(getMaximumSequentialElementsSum(input));
+	}
+
+	private static void testIncrementArray() {
+		int[] input = new int[] {8, 4, 3, 2};
+		int[] input2 = new int[] {9, 9, 9};
+		printIntegerArray(increment(input));
+		printIntegerArray(increment(input2));
+	}
+	
+	private static void testPushZeroToEnd() {
+		int[] input = new int[]{3, 0, 3, 0, 4, 1, 2, 0};
+		printIntegerArray(pushZeroToEnd(input));
+	}
+	
+	private static void printIntegerArray(int[] input) {
+		for(int i : input) {
+			System.out.print(i + " ");
+		}
+		System.out.println();
+	}
+
+		
 	public static void main(String args[]) {
-		testXorSwap();
+		testPushZeroToEnd();
 	}
 }
