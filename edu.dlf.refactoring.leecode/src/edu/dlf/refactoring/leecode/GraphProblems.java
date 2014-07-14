@@ -1148,10 +1148,40 @@ public class GraphProblems {
 		System.out.println(getClosestValueInBST(root, 11));
 	}
 
-
-
+	private static BinaryTreeNode convertPreorder2BST(List<Integer> nums) {
+		if(nums.size() == 0)
+			return null;
+		BinaryTreeNode root = new BinaryTreeNode(nums.get(0));
+		List<Integer> rest = nums.subList(1, nums.size());
+		int i = 0;
+		for(; i < rest.size() && rest.get(i) < root.value; i++);
+		root.left = convertPreorder2BST(rest.subList(0, i));
+		root.right = convertPreorder2BST(rest.subList(i, rest.size()));
+		return root;
+	}
+	
+	private static void testConvertPre2BST() {
+		List<Integer> nums = new ArrayList<Integer>();
+		BinaryTreeNode root = constructBinarySearchTree(new int[]{3, 2, 5, 6, 1, 8});
+		previstTree(root, new Consumer<BinaryTreeNode>(){
+			@Override
+			public void accept(BinaryTreeNode t) {
+				nums.add(t.value);
+			}});
+		for(int n : nums) 
+			System.out.println(n);
+		BinaryTreeNode newRoot = convertPreorder2BST(nums);
+		nums.clear();
+		previstTree(newRoot, new Consumer<BinaryTreeNode>(){
+			@Override
+			public void accept(BinaryTreeNode t) {
+				nums.add(t.value);
+		}});
+		for(int n : nums) 
+			System.out.println(n);
+	}
 	public static void main(String[] args) {
-		testClosestValue();
+		testConvertPre2BST();
 
 	}
 }
