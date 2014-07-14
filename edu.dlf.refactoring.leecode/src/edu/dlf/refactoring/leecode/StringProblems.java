@@ -867,11 +867,43 @@ public class StringProblems {
 		System.out.println(testAnagram("abcdefg", "acdefgk"));
 		System.out.println(testAnagram("doctorwho", "torchwood"));
 	}
-
+	private static String reverseTokens(String s) {
+		s = reverseString2(s);
+		char[] cs = s.toCharArray();
+		int start = Integer.MIN_VALUE;
+		StringBuilder sb = new StringBuilder();
+		int lastCh = Integer.MIN_VALUE;
+		for(int end = 0; end < cs.length; end ++) {
+			if(cs[end] != ' ') {
+				if(lastCh != end - 1) {
+					if(start >= 0) {
+						sb.append(reverseString2(s.substring(start, lastCh + 1)));
+						sb.append(' ');
+					} 	
+					start = end;
+				}
+				lastCh = end;
+			}
+		}
+		sb.append(reverseString2(s.substring(start, lastCh + 1)));
+		return sb.toString();
+		}
+		
+	private static String reverseString2(String s) {
+		StringBuilder sb = new StringBuilder();
+		char[] cs = s.toCharArray();
+		for(int i = cs.length - 1; i >= 0; i --)
+			sb.append(cs[i]);
+		return sb.toString();
+	}
+	
+	private static void testReverseTokens() {
+		System.out.println(reverseTokens("the quick brown fox"));
+	}
 
 	public static void main(String[] args) {
 		//testMinimumSubstringContainsAllCharacters();	
-		guaxiangGenerator();
+		testReverseTokens();
 		//testAnagram();
 	}
 }
