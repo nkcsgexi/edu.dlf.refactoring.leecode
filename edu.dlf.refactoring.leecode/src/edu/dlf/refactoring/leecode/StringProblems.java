@@ -846,11 +846,32 @@ public class StringProblems {
 				System.out.println(yin);
 		}
 	}
+	private static boolean testAnagram(String s1, String s2) {
+		if(s1.length() != s2.length())
+			return false;
+		int[] nums = new int[26];
+		for(int i = 0; i < 26; i ++)
+			nums[i] = 0;
+		for(char c : s1.toCharArray()) {
+			nums[c - 'a'] ++;
+		}
+		for(char c : s2.toCharArray()) {
+			nums[c - 'a'] --;
+			if(nums[c - 'a'] < 0)
+				return false;
+		}
+		return true;
+	}
 
+	private static void testAnagram() {
+		System.out.println(testAnagram("abcdefg", "acdefgk"));
+		System.out.println(testAnagram("doctorwho", "torchwood"));
+	}
 
 
 	public static void main(String[] args) {
 		//testMinimumSubstringContainsAllCharacters();	
-		guaxiangGenerator();
+		//guaxiangGenerator();
+		testAnagram();
 	}
 }

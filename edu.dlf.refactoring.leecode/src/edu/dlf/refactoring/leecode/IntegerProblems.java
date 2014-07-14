@@ -1371,11 +1371,7 @@ public class IntegerProblems {
 		System.out.println();
 	}
 
-		
-	public static void main(String args[]) {
-		testPushZeroToEnd();
-	}
-	
+
 	private static int gcd(int a, int b) {
 		while(a != b) {
 			if (a > b) {
@@ -1391,5 +1387,46 @@ public class IntegerProblems {
 		System.out.println(gcd(42435, 424719));
 	}
 	
-
+	//Assume no duplication
+	private static List<Integer> getSequentialIntegersFromArrayOfIntegers(int[] nums) {
+		PriorityQueue<Integer> minQ = new PriorityQueue<Integer>();
+		PriorityQueue<Integer> maxQ = new PriorityQueue<Integer>(Collections.reverseOrder());
+		int maxLength = Integer.MIN_VALUE;
+		int start = 0;
+		int end = 0;
+		for(int i = 0; i < nums.length; i ++) {
+			minQ.clear();
+			maxQ.clear();
+			for(int j = i; j < nums.length; j++) {
+				int length = j - i + 1;
+				minQ.add(nums[j]);
+				maxQ.add(nums[j]);
+				if(maxQ.peek() - minQ.peek() + 1 == length) {
+					if(length > maxLength) {
+						maxLength = length;
+						start = i;
+						end = j;
+					}	
+				}
+			}
+		}
+		List<Integer> results = new ArrayList<Integer>();
+		for(int i = start; i <= end; i ++) {
+			results.add(nums[i]);
+		}
+		return results;
+	}
+	private static void testSequential() {
+		List<Integer> results = getSequentialIntegersFromArrayOfIntegers
+				(new int[] {3,10,2,5,7,6,8,4,1});
+		for(Integer i : results) {
+			System.out.print(i + " ");
+		}
+		System.out.println();
+	}
+			
+	public static void main(String args[]) {
+		testSequential();
+	}
+	
 }
