@@ -871,7 +871,7 @@ public class StringProblems {
 
 	public static void main(String[] args) {
 		//testMinimumSubstringContainsAllCharacters();	
-		//guaxiangGenerator();
-		testAnagram();
+		guaxiangGenerator();
+		//testAnagram();
 	}
 }
