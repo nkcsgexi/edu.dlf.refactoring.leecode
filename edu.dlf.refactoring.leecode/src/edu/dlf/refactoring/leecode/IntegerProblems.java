@@ -1424,9 +1424,37 @@ public class IntegerProblems {
 		}
 		System.out.println();
 	}
+	
+	private static void getNumbersSumTo(List<Integer> nums, int sum) {
+		Collections.sort(nums);
+		int end ;
+		for(end = nums.size() - 1; end >= 0 && nums.get(end) > sum; end --);
+		if(end < 0)
+			return;
+		int start = 0;
+		while(start != end) {
+			int value = nums.get(start) + nums.get(end);
+			if(value == sum) {
+				System.out.println(nums.get(start) + " + " + nums.get(end));
+				start ++;
+				end --;
+			} else if(value > sum) {
+				end --;
+			} else {
+				start ++;
+			}
+		}
+	}
+
+	private static void testSumToNumber() {
+		List<Integer> list = new ArrayList<Integer>();
+		for(int i = 1; i < 10; i ++)
+			list.add(i);
+		getNumbersSumTo(list, 10);
+	}		
 			
 	public static void main(String args[]) {
-		testSequential();
+		testSumToNumber();
 	}
 	
 }
