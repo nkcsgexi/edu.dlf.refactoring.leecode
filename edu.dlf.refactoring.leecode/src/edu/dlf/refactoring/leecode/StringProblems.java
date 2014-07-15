@@ -956,7 +956,33 @@ public class StringProblems {
 	private static void testReverseTokens() {
 		System.out.println(reverseTokens("the quick brown fox"));
 	}
+	
+	 private static String getUniqueBeutifulSubstring(String s) {
+	 	List<Character> set = new ArrayList<Character>();
+	 	String max = "aaaaa";
+	 	for(int start = 0, end = 0; end < s.length(); end ++) {
+	 		if(!set.contains(s.charAt(end))) {
+	 			set.add(s.charAt(end));
+	 			continue;
+	 		};
+	 		for(int i = start; i < end; i ++) {
+	 			String current = s.substring(i, end);
+	 			if(current.compareTo(max) > 0) 
+	 				max = current;
+	 		}
+	 		while(set.contains(s.charAt(end))) {
+	 			set.remove(0);
+	 			start ++;
+	 		}
+	 	}
+	 	return max;
+ 	}
+ 	
+ 	private static void testGetUnique() {
+ 		System.out.println(getUniqueBeutifulSubstring("bteavcxabeytbafdab"));
+ 	}
 
 	public static void main(String[] args) {
+		testGetUnique();
 	}
 }
