@@ -2,10 +2,12 @@
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
@@ -798,7 +800,7 @@ public class StringProblems {
 		System.out.println(o);
 		System.out.println(s);
 	}
-
+	
 
 	private static int[] splitTwo(int num) {
 		int first = 0;
@@ -813,7 +815,7 @@ public class StringProblems {
 		return new int[]{first, second};
 	}
 
-	private static void guaxiangGenerator() {
+	private static int[] guaxiangGenerator() {
 		int stable = 1;
 		int move = 49;
 		int[] yao = new int[6];
@@ -829,23 +831,77 @@ public class StringProblems {
 			}
 			yao[i] = num / 4;
 		}
-		System.out.println("Self");
+		int self = 0;
+		int change = 0;
+		for(int i = 5; i >= 0; i --) {
+			self = self << 1;
+			if(yao[i] % 2 == 1)
+				self |= 1;
+		}
+		for(int i = 5; i >= 0; i --) {
+			change = change << 1;
+			if(yao[i] == 6 || yao[i] == 7)
+				change |= 1;
+		}
+		return new int[]{self, change};
+	}
+
+	private static void multiGuaxiang() {
+		HashMap<Integer, Integer> selves = new HashMap<Integer, Integer>();
+		HashMap<Integer, Integer> changes = new HashMap<Integer, Integer>();
+		int count = 1;
+		for(int i = 0; i < count; i ++) {
+			int[] guas = guaxiangGenerator();
+			int selfCount = 1;
+			int changeCount = 1;
+			if(selves.containsKey(guas[0])) {
+				selfCount = selves.get(guas[0]) + 1;
+				selves.remove(guas[0]);
+			}
+			if(changes.containsKey(guas[1])) {
+				changeCount = changes.get(guas[1]) + 1;
+				changes.remove(guas[1]);
+			}
+			selves.put(guas[0], selfCount);
+			changes.put(guas[1], changeCount);
+		}
+		System.out.println("self:");
+		printGuaXiang(getMaxXiang(selves));
+		System.out.println("change:");
+		printGuaXiang(getMaxXiang(changes));
+	}
+
+	private static int getMaxXiang(HashMap<Integer, Integer> selves) {
+		PriorityQueue<Entry<Integer, Integer>> queue = new PriorityQueue<Entry
+			<Integer, Integer>>(new Comparator<Entry<Integer, Integer>>(){
+				@Override
+				public int compare(Entry<Integer, Integer> o1,
+						Entry<Integer, Integer> o2) {
+					return o2.getValue().compareTo(o1.getValue());
+				}});
+		for(Entry<Integer, Integer> e : selves.entrySet()){
+			queue.add(e);
+		}
+		return queue.remove().getKey();
+	}
+	
+	private static void printGuaXiang(int num) {
+		int[] yaos = new int[6];
+		for(int i = 0; i < 6; i ++) {
+			yaos[i] = num % 2;
+			num = num >> 1;
+		}
 		String yin = "===   ===";
 		String yang = "=========";
 		for(int i = 5; i >= 0; i --) {
-			if(yao[i] % 2 == 1)
+			if(yaos[i] == 1)
 				System.out.println(yang);
 			else 
 				System.out.println(yin);
 		}
-		System.out.println("Change");
-		for(int i = 5; i >= 0; i --) {
-			if(yao[i] == 6 || yao[i] == 7)
-				System.out.println(yang);
-			else
-				System.out.println(yin);
-		}
 	}
+
+
 	private static boolean testAnagram(String s1, String s2) {
 		if(s1.length() != s2.length())
 			return false;
@@ -902,9 +958,5 @@ public class StringProblems {
 	}
 
 	public static void main(String[] args) {
-		//testMinimumSubstringContainsAllCharacters();	
-		//testReverseTokens();
-		//testAnagram();
-		guaxiangGenerator();
 	}
 }
