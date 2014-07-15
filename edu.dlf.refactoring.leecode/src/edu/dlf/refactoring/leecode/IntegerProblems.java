@@ -1451,8 +1451,60 @@ public class IntegerProblems {
 		for(int i = 1; i < 10; i ++)
 			list.add(i);
 		getNumbersSumTo(list, 10);
-	}		
-			
+	}	
+
+	private static int getFirstDigit(int num) {
+		while(num >= 10) num /= 10;
+		return num;
+	}
+
+	private static int getNumDigitCount(int num) {
+		int length = 1;
+		while(num >= 10) {
+			num /= 10;
+			length ++;
+		}
+		return length;
+	}
+	private static int removeFirstDigit(int num) {
+		int count = getNumDigitCount(num);
+		return num % getFirstNumOfDigit(count);
+	}
+	
+	private static int getFirstNumOfDigit(int d) {
+		int result = 1;
+		for (int i = 1; i < d; i ++)
+			result *= 10;
+		return result;
+	}
+
+	private static int calculateNumberOfTwos(int N) {
+		int result = 0;
+		int fd = getFirstDigit(N);
+		int digitCount = getNumDigitCount(N);
+		if(digitCount == 1) {
+			if(N >= 2)
+				return 1;
+			else 
+				return 0;
+		}
+		int uppderBound = getFirstNumOfDigit(getNumDigitCount(N) + 1);
+		int limitedPart = calculateNumberOfTwos(removeFirstDigit(N));
+		int fullPart = calculateNumberOfTwos(uppderBound - 1);
+		for(int i = 0; i < fd; i ++) {
+			if(i != 2)
+				result += fullPart;
+			else{
+				result += fullPart;
+				result += getFirstNumOfDigit(digitCount);
+			}
+		}
+		result += limitedPart;
+		return result;
+	}
+
+
+
 	public static void main(String args[]) {
 		testSumToNumber();
 	}
