@@ -982,7 +982,32 @@ public class StringProblems {
  		System.out.println(getUniqueBeutifulSubstring("bteavcxabeytbafdab"));
  	}
 
+	private static void sortRGBArray(char[] s) {
+		int R = 0, B = s.length - 1;
+		for(int i = 0; i <= B; i ++) {
+			if(s[i] == 'r') {
+				char temp = s[i];
+				s[i] = s[R];
+				s[R] = temp;
+				while(s[R] == 'r') R ++;
+			}
+			if(s[i] == 'b') {
+				char temp = s[i];
+				s[i] = s[B];
+				s[B] = temp;
+				while(s[B] == 'b')B --;
+			}
+		}
+	}
+	
+	private static void testSortRGB() {
+		char[] s = "rbgbrgbbrbgrbgggbrrr".toCharArray();
+		sortRGBArray(s);
+		System.out.println(new String(s));
+	}
+	
+
 	public static void main(String[] args) {
-		testGetUnique();
+		testSortRGB();
 	}
 }
