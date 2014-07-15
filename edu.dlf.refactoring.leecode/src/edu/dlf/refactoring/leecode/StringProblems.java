@@ -903,7 +903,8 @@ public class StringProblems {
 
 	public static void main(String[] args) {
 		//testMinimumSubstringContainsAllCharacters();	
-		testReverseTokens();
+		//testReverseTokens();
 		//testAnagram();
+		guaxiangGenerator();
 	}
 }
