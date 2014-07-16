@@ -136,7 +136,48 @@ public class CommonProblems {
 		printAllStringPermutation("abcdefg");
 		
 	}
+	
+	private static int findMissingNumber(int[] nums) {
+		int[] first = new int[10];
+		int[] second = new int[10];
+		boolean isHundred = true;
+		for(int i = 0; i < 10; i ++)
+			first[i] = second[i] = 0;
+		for(int num : nums) {
+			if(num == 100) {
+				isHundred = false;
+				num = 0;
+			}
+			int f = num % 10;
+			int s = num / 10;
+			first[f] ++;
+			second[s] ++;
+		}
+		if(isHundred)
+			return 100;
+		int i, j;
+		for(i = 0; i < 10; i++)
+			if(first[i] != 10)
+				break;
+		for(j = 0; j < 10; j ++)
+			if(second[j] != 10)
+				break;
+		return j * 10 + i;
+	}
+	
+	private static void testMissingNumbers() {
+		int[] num = new int[99];
+		int index = 0;
+		for(int i = 1; i <= 100 ; i ++) {
+			if(i != 56) {
+				num[index] = i;
+				index ++;
+			}
+		}
+		System.out.println(findMissingNumber(num));
+	}
+	
 	public static void main(String[] args) {
-		testPermutations();
+		testMissingNumbers();
 	}
 }
