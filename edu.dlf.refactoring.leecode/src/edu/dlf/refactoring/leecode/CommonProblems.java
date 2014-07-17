@@ -177,7 +177,52 @@ public class CommonProblems {
 		System.out.println(findMissingNumber(num));
 	}
 	
+	private static HashSet<Integer> findDuplicateNumbers(List<Integer> nums) {
+		HashSet<Integer> set = new HashSet<Integer>();
+		HashSet<Integer> results = new HashSet<Integer>();
+		for(int n : nums) {
+			int before = set.size();
+			set.add(n);
+			if(set.size() == before)
+				results.add(n);
+		}
+		return results;
+	}
+	
+	private static void testDuplicate() {
+		List<Integer> input = new ArrayList<Integer>();
+		for(int i = 0; i < 100; i++) 
+			input.add(i);
+		for(int i = 11; i < 20; i++)
+			input.add(i);
+		HashSet<Integer> set = findDuplicateNumbers(input);
+		for(int i : set) 
+			System.out.println(i);
+		
+	}
+	
+	private HashSet<Integer> getDiff(List<Integer> list1, List<Integer> list2) {
+		HashSet<Integer> set = new HashSet<Integer>(list2);
+		HashSet<Integer> results = new HashSet<Integer>();
+		for(Integer i : list1) {
+			if(!set.contains(i))
+				results.add(i);
+		}
+		return results;
+	}
+	
 	public static void main(String[] args) {
-		testMissingNumbers();
+		testDuplicate();
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
