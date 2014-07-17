@@ -211,8 +211,86 @@ public class CommonProblems {
 		return results;
 	}
 	
+	private static boolean checkPalindrome(int num) {
+		List<Integer> digits = new ArrayList<Integer>();
+		while(num != 0) {
+			digits.add(0, num % 10);
+			num /= 10;
+		}
+		for(int i = 0, j = digits.size() - 1; i < j; i ++, j--) {
+			if(digits.get(i) != digits.get(j))
+				return false;
+		}
+		return true;
+	}
+	
+	private static void testCheckPalindrome() {
+		System.out.println(checkPalindrome(12121));
+		System.out.println(checkPalindrome(12131));
+	}
+	
+	private static boolean checkArmstrong(int num) {
+		List<Integer> digits = new ArrayList<Integer>();
+		int original = num;
+		while(num != 0) {
+			digits.add(0, num % 10);
+			num /= 10;
+		}
+		int add = 0;
+		for(int i : digits) {
+			add += i * i * i;
+		}
+		return add == original;
+		
+	}
+	
+	private static void testCheckArmstrong() {
+		System.out.println(checkArmstrong(371));
+	}
+	
+	private static List<Integer> getArmstrongNumbers() {
+		int[] base = new int[10];
+		for(int i = 0; i < 10; i ++) {
+			base[i] = i * i * i;
+		}
+		List<Integer> results = new ArrayList<Integer>();
+		for(int i = 0; i < 10; i ++)
+			for(int j = i; j < 10; j ++) 
+				for(int k = j; k < 10; k ++)
+				{
+					int add = base[i] + base[j] + base[k];
+					int original = add;
+					List<Integer> digits = new ArrayList<Integer>();
+					for(int d = 0; d < 3; d ++, add /= 10)
+						digits.add(0, add % 10);
+					List<Integer> shouldBe = new ArrayList<Integer>();
+					shouldBe.add(i);
+					shouldBe.add(j);
+					shouldBe.add(k);
+					Collections.sort(shouldBe);
+					Collections.sort(digits);
+					int d;
+					for(d = 0; d < 3; d ++){
+						if(shouldBe.get(d) != digits.get(d))
+							break;
+					}
+					if(d == 3) {
+						results.add(original); 
+					}
+				}
+		return results;
+	}
+	private static void testGetAllArmstrong() {
+		List<Integer> nums = getArmstrongNumbers();
+		for(int n : nums) {
+			System.out.println(n);
+		}
+		
+	}
+			
+	
 	public static void main(String[] args) {
-		testDuplicate();
+		testGetAllArmstrong();
 	}
 }
 
