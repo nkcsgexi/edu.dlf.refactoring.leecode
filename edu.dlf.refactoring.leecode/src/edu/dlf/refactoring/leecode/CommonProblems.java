@@ -318,12 +318,28 @@ public class CommonProblems {
 	        printWaysToClimb(remain - 2, next);    
 	    }
 	}
-	    
+	
+	private static double pow(int n, double base) {
+		if(n < 0) {
+			return 1/pow(-n, base);
+		}
+		if(n == 1) 
+			return base;
+		if(n % 2 == 0) {
+			return pow(n/2, base) * pow(n/2, base);
+		} else {
+			return pow(n/2, base) * pow(n/2, base) * base;
+		}
+	}
+	
+	private static void testPow() {
+		System.out.println(pow(-3, 2.0));
+	}
 	            
 
 	
 	public static void main(String[] args) {
-		testGetAllArmstrong();
+		testPow();
 	}
 }
 
