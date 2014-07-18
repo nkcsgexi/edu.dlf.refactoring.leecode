@@ -287,7 +287,40 @@ public class CommonProblems {
 		}
 		
 	}
-			
+	private int findSecondMax(int[] input) {
+	    int max = Integer.MIN_VALUE;
+	    int second = Integer.MIN_VALUE;
+	    for(int i = 0; i < input.length; i ++) {
+	        if(input[i] >= max) {
+	            second = max;
+	            max = input[i];
+	        } else if (input[i] > second) {
+	            second = input[i];
+	        }
+	    }
+	    return second;
+	}
+
+	private static void printWaysToClimb(int remain, List<Integer> prefix) {
+	    if(remain == 0) {
+	        for(int i : prefix) 
+	            System.out.print(i + " ");
+	        
+	        System.out.println();
+	        return;
+	    }
+	    List<Integer> next = new ArrayList<Integer>(prefix);
+	    next.add(1);
+	    printWaysToClimb(remain - 1, next);
+	    if(remain > 1) {
+	        next = new ArrayList<Integer>(prefix);
+	        next.add(2);
+	        printWaysToClimb(remain - 2, next);    
+	    }
+	}
+	    
+	            
+
 	
 	public static void main(String[] args) {
 		testGetAllArmstrong();
