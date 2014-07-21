@@ -474,6 +474,20 @@ public class CommonProblems {
 			System.out.println(results[0].get(i) + " " + results[1].get(i));
 		}
 	}
+	private static int maxSubarray(int[] nums) {
+		int max = Integer.MIN_VALUE;
+		// the max value of the summation when ending at a value.
+		int endingHere = 0;
+		for(int i = 0; i < nums.length; i ++) {
+			if(endingHere < 0) {
+				endingHere = nums[i];
+			} else {
+				endingHere += nums[i];
+			}
+			if(max < endingHere) max = endingHere;
+		}
+		return max;
+	}
 
 
 	public static void main(String[] args) {
