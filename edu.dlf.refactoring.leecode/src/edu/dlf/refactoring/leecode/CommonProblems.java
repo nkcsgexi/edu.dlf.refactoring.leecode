@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Stack;
 
 import edu.dlf.refactoring.leecode.GraphProblems.BinaryTreeNode;
 
@@ -488,7 +489,65 @@ public class CommonProblems {
 		}
 		return max;
 	}
+	
+	private static int[][] matrix;
+	
+	private static boolean knows(int i, int j) {
+		return matrix[i][j] == 1;
+	}
 
+	private static List<Integer> findCelebrityRecursive(List<Integer> nums) {
+		List<Integer> results = new ArrayList<Integer>();
+		if(nums.size() == 1) {
+			results.add(nums.get(0));
+			return results;
+		}
+		int first = nums.get(0);
+		List<Integer> remainCeleb = findCelebrityRecursive(nums.subList(1, nums.size()));
+		for(int i : remainCeleb) {
+			if(knows(first, i)) {
+				results.add(i);
+			}
+		}
+		boolean firstCelebrity = true;
+		for(int i : nums.subList(1, nums.size())) {
+		       if(!knows(i, first)) {
+			       firstCelebrity = false;
+			       break;
+		       }
+		}
+		if(firstCelebrity)
+			results.add(first);
+		return results;
+	}
+
+	private static int findCelebrityStatck(int N) {
+		Stack<Integer> stack = new Stack<Integer>();
+		for(int i = 0; i < N; i++) {
+			stack.push(i);
+		}
+		while(stack.size() > 1) {
+			int first = stack.pop();
+			int second = stack.pop();
+			if(knows(first, second)) {
+				stack.push(second);
+			}else{
+				stack.push(first);
+			}
+		}
+		int last = stack.pop();
+		boolean lastOk = true;
+		for(int i = 0; i < N; i++) {
+			if(i != last) {
+				lastOk = knows(i, last) && !knows(last, i);
+				if(lastOk == false) break;
+			}
+		}
+		if(lastOk)
+			return last;
+		else 
+			return -1;
+	}
 
 	public static void main(String[] args) {
 		testNutsBolts();
