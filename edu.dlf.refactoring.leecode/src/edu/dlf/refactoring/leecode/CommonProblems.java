@@ -1,9 +1,13 @@
 package edu.dlf.refactoring.leecode;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
+
+import edu.dlf.refactoring.leecode.GraphProblems.BinaryTreeNode;
 
 public class CommonProblems {
 
@@ -287,10 +291,207 @@ public class CommonProblems {
 		}
 		
 	}
-			
+	private int findSecondMax(int[] input) {
+	    int max = Integer.MIN_VALUE;
+	    int second = Integer.MIN_VALUE;
+	    for(int i = 0; i < input.length; i ++) {
+	        if(input[i] >= max) {
+	            second = max;
+	            max = input[i];
+	        } else if (input[i] > second) {
+	            second = input[i];
+	        }
+	    }
+	    return second;
+	}
+
+	private static void printWaysToClimb(int remain, List<Integer> prefix) {
+	    if(remain == 0) {
+	        for(int i : prefix) 
+	            System.out.print(i + " ");
+	        
+	        System.out.println();
+	        return;
+	    }
+	    List<Integer> next = new ArrayList<Integer>(prefix);
+	    next.add(1);
+	    printWaysToClimb(remain - 1, next);
+	    if(remain > 1) {
+	        next = new ArrayList<Integer>(prefix);
+	        next.add(2);
+	        printWaysToClimb(remain - 2, next);    
+	    }
+	}
 	
+	private static double pow(int n, double base) {
+		if(n < 0) {
+			return 1/pow(-n, base);
+		}
+		if(n == 1) 
+			return base;
+		if(n % 2 == 0) {
+			return pow(n/2, base) * pow(n/2, base);
+		} else {
+			return pow(n/2, base) * pow(n/2, base) * base;
+		}
+	}
+	
+	private static void testPow() {
+		System.out.println(-3/2);
+		System.out.println(pow(-3, 2.0));
+	}
+	            
+
+	private static BinaryTreeNode getLowestCommonAncestor1(BinaryTreeNode root,
+			BinaryTreeNode n1, BinaryTreeNode n2) {
+		if(root == n1 || root == n2 || root == null)
+			return root;
+		BinaryTreeNode left = getLowestCommonAncestor1(root.left, n1, n2);
+		BinaryTreeNode right = getLowestCommonAncestor1(root.right, n1, n2);
+		if(left != null && right != null)
+			return root;
+		return left == null ? right : left;
+	}
+
+	private static BinaryTreeNode getLCA2(BinaryTreeNode root, BinaryTreeNode n1,
+			BinaryTreeNode n2){
+		HashSet<BinaryTreeNode> visited = new HashSet<BinaryTreeNode>();
+		while(n1 != null || n2 != null) {
+			if(n1 != null) {
+				if(visited.contains(n1.parent)) {
+					return n1.parent;
+				}
+				visited.add(n1.parent);
+				n1 = n1.parent;
+			}
+			if(n2 != null) {
+				if(visited.contains(n2.parent)) {
+					return n2.parent;
+				}
+				visited.add(n2.parent);
+				n2 = n2.parent;
+			}
+		}
+		return null;
+	}
+
+	private static int getDepth(BinaryTreeNode n1) {
+		int depth = 0;
+		while(n1 != null) {
+			n1 = n1.parent;
+			depth ++;
+		}
+		return depth;
+	}
+
+	private static BinaryTreeNode getLCA3(BinaryTreeNode root, BinaryTreeNode n1,
+			BinaryTreeNode n2) {
+		int d1 = getDepth(n1);
+		int d2 = getDepth(n2);
+		if(d1 > d2) {
+			BinaryTreeNode tmp = n1;
+			n1 = n2;
+			n2 = tmp;
+		}
+		int dDiff = Math.abs(d1 - d2);
+		for(int i = 0; i < dDiff; i ++)
+			n2 = n2.parent;
+		while(n1 != null && n2 != null) {
+			if(n1 == n2) return n1;
+			n1 = n1.parent;
+			n2 = n2.parent;
+		}
+		return null;
+	}
+
+	private static class RandomGenerator{
+		final long a = 0x5DEECE66DL;
+		final long c = 0xBL;
+		final long m = (1 << 48) - 1;
+		long seed;
+		
+		public RandomGenerator(long seed) {
+			this.seed = seed;
+		}
+
+		public long next() {
+			seed = (seed * a + c) & m;
+			return seed;
+		}
+	}
+
+	private static RandomGenerator random = new RandomGenerator(6);
+	private static List<Integer>[] matchNutsBolts(List<Integer> nuts, 
+			List<Integer> bolts) {
+		int count = nuts.size();
+		if(count == 0) {
+			List<Integer>[] results = (List<Integer>[]) Array.newInstance
+					(ArrayList.class, 2);
+			results[0] = new ArrayList<Integer>();
+			results[1] = new ArrayList<Integer>();
+			return results;
+		}
+		int pivot = nuts.get((int)random.next() % count); 
+		int map = 0;
+		List<Integer> preBolts = new ArrayList<Integer>();
+		List<Integer> postBolts = new ArrayList<Integer>();
+		for(int i = 0; i < bolts.size(); i ++) {
+			if(pivot == bolts.get(i)) {
+				map = bolts.get(i);
+			} else if(pivot > bolts.get(i)) {
+				preBolts.add(bolts.get(i));
+			} else {
+				postBolts.add(bolts.get(i));
+			}
+		}
+		List<Integer> preNuts = new ArrayList<Integer>();
+		List<Integer> postNuts = new ArrayList<Integer>();
+		for(int i = 0; i < nuts.size(); i ++) {
+			if(map < nuts.get(i)) {
+				postNuts.add(nuts.get(i));
+			} else if(map > nuts.get(i)) {
+				preNuts.add(nuts.get(i));
+			}
+		}
+		List<Integer>[] results1 = matchNutsBolts(preNuts, preBolts);
+		List<Integer>[] results2 = matchNutsBolts(postNuts, postBolts);
+		results1[0].add(pivot);
+		results1[0].addAll(results2[0]);
+		results1[1].add(map);
+		results1[1].addAll(results2[1]);
+		return results1;
+	}
+	
+	private static void testNutsBolts() {
+		List<Integer> nuts = new ArrayList<Integer>();
+		List<Integer> bolts = new ArrayList<Integer>();
+		for (int i = 0; i < 100; i ++) {
+			nuts.add(i);
+			bolts.add(0, i);
+		}
+		List<Integer>[] results = matchNutsBolts(nuts, bolts);
+		for(int i = 0; i < 100; i ++) {
+			System.out.println(results[0].get(i) + " " + results[1].get(i));
+		}
+	}
+	private static int maxSubarray(int[] nums) {
+		int max = Integer.MIN_VALUE;
+		// the max value of the summation when ending at a value.
+		int endingHere = 0;
+		for(int i = 0; i < nums.length; i ++) {
+			if(endingHere < 0) {
+				endingHere = nums[i];
+			} else {
+				endingHere += nums[i];
+			}
+			if(max < endingHere) max = endingHere;
+		}
+		return max;
+	}
+
+
 	public static void main(String[] args) {
-		testGetAllArmstrong();
+		testNutsBolts();
 	}
 }
 

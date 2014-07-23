@@ -28,13 +28,13 @@ public class GraphProblems {
 		}
 	}
 
-	private static class BinaryTreeNode {
+	public static class BinaryTreeNode {
 		int value;
 		BinaryTreeNode left;
 		BinaryTreeNode right;
 		BinaryTreeNode parent;
 
-		BinaryTreeNode(int value) {
+		public BinaryTreeNode(int value) {
 			this.value = value;
 		}
 	}
