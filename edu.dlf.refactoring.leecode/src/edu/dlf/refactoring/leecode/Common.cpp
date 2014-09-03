@@ -32,6 +32,31 @@ void quickSort(int* nums, int len) {
     positionWell(nums, 0, len - 1);
 }
 
+void printString(char* c, int len) {
+	for(int i = 0; i < len; i++) 
+		cout<<c[i];
+	cout<<endl;
+}
+
+void stringPermutation(char* s, int start, int end, char *prefix) {
+	if(start > end) {
+		printString(prefix, end);
+		return;
+	}
+	char c = s[start];
+	for(int p = 0; p < start + 1; p ++) {
+		char* next = new char[start + 1];
+		next[p] = c;
+		for(int i = 0, j = 0; i < start +1; i++) {
+			if(i != p) {
+				next[i] = prefix[j];
+				j++;
+			}
+		}
+		stringPermutation(s, start + 1, end, next);
+	}
+}
+
 
 int main()
 {
