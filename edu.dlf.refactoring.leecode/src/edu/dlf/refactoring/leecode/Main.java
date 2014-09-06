@@ -753,8 +753,128 @@ class Main {
 		System.out.println(calculateFormular("1 * 3 + 2 * 3 - 3 / 1"));
 	}
 			
+	private static class DoubleLinkedNode<T> {
+		public T value;
+		public DoubleLinkedNode<T> before;
+		public DoubleLinkedNode<T> after;
+		public String toString() { return value.toString();}
+	}
 
+	private static class DoubleLinkedList<T> {
+		private DoubleLinkedNode<T> head;
+		private DoubleLinkedNode<T> tail;
+
+		public DoubleLinkedList() {
+			this.head = this.tail = null;
+		}
+
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			for(DoubleLinkedNode<T> current = head; current != null;
+					current = current.after) {
+				sb.append(current.value + "<->");
+			}
+			return sb.toString();
+		}
+
+		public DoubleLinkedNode<T> add2Head(DoubleLinkedNode<T> node) {
+			if(null == head) head = tail = node;
+			else {
+				node.after = head;
+				node.after.before = node;
+				head = node;
+			}
+			return node;
+		}
+
+		public DoubleLinkedNode<T> add2Tail(DoubleLinkedNode<T> node) {
+			if(null == tail) tail = head = node;
+			else {
+				tail.after = node;
+				node.before = tail;
+				tail = node;
+			}
+			return node;
+		}
+		public DoubleLinkedNode<T> removeTail() {
+			DoubleLinkedNode<T> temp = tail;
+			if(null == tail) return temp;
+			if(head == tail) { head = tail = null; return temp; }
+			tail.before.after = null;
+			tail = tail.before;
+			return temp;
+		}
+
+		public void move2Head(DoubleLinkedNode<T> node) {
+			if(node == head || head == tail) return;
+			node.before.after = node.after;
+			if(null != node.after) node.after.before = node.before;
+			else tail = node.before;
+			node.after = head;			
+			head.before = node;
+			head = node;
+			head.before = null;
+		}
+	
+	}
+
+
+	private static class SizedHashtable<K, V> {
+		private final HashMap<K, DoubleLinkedNode<KVPair>> table;
+		private final DoubleLinkedList<KVPair> accessed;
+		private final int capacity;
+
+		private class KVPair {
+			public K key;
+			public V value;
+			public String toString() {return key.toString();}
+		}	
+
+		public SizedHashtable(int capacity) {
+			this.capacity = capacity;
+			this.table = new HashMap<K, DoubleLinkedNode<KVPair>>();
+			this.accessed = new DoubleLinkedList<KVPair>();
+		}
+
+		public V getValue(K key) {
+			if(!table.containsKey(key)) return null;
+			DoubleLinkedNode<KVPair> node = table.get(key);
+			accessed.move2Head(node);
+			System.out.println("accessed " + key);
+			System.out.println(accessed);
+			return node.value.value;	
+		}
+
+		public void put(K k, V v) {
+			if(table.containsKey(k)) return;
+			if(table.size() == this.capacity) {
+				DoubleLinkedNode<KVPair> tail = accessed.
+					removeTail();
+				table.remove(tail.value.key);
+				System.out.println("removed " + tail.value.key);
+			}
+			DoubleLinkedNode<KVPair> node = new DoubleLinkedNode
+				<KVPair>();
+			node.value = new KVPair();
+			node.value.key = k;
+			node.value.value = v;
+			accessed.add2Head(node);
+			table.put(k, node);
+			System.out.println("put " + k);
+		}
+	}
+
+	
+	private static void testSizedHashtable() {
+		SizedHashtable<Integer, Integer> table = new SizedHashtable
+			<Integer, Integer>(3);
+		table.put(1, 2);
+		table.put(2, 3);
+		table.put(3, 5);
+		table.getValue(1);
+		table.put(4, 2);
+	}
 	public static void main(String[] args) {
-		testCalculateForm();
+		testSizedHashtable();
 	}
 }
