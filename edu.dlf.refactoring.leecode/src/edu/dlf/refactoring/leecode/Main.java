@@ -863,8 +863,6 @@ class Main {
 			System.out.println("put " + k);
 		}
 	}
-
-	
 	private static void testSizedHashtable() {
 		SizedHashtable<Integer, Integer> table = new SizedHashtable
 			<Integer, Integer>(3);
@@ -874,7 +872,7 @@ class Main {
 		table.getValue(1);
 		table.put(4, 2);
 	}
+
 	public static void main(String[] args) {
-		testSizedHashtable();
 	}
 }
