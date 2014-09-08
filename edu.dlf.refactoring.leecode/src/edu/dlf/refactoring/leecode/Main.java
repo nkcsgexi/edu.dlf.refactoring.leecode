@@ -906,8 +906,91 @@ class Main {
 		System.out.println(minSplitString2Palindromes("abba"));
 		System.out.println(minSplitString2Palindromes("abbac"));
 		System.out.println(minSplitString2Palindromes("dabbac"));
-	}	
+	}
+	
+	private static List<Character> getMoves(char[][] matrix, int length, 
+			int r, int c, char ch) {
+		List<Character> list = new ArrayList<Character>();
+		if(r + 1 < length && matrix[r + 1][c] == ch) list.add('d');
+		if(r - 1 > -1 && matrix[r - 1][c] == ch) list.add('u');
+		if(c + 1 < length && matrix[r][c + 1] == ch) list.add('r');
+		if(c - 1 > -1 && matrix[r][c - 1] == ch) list.add('l');
+		return list;
+	}
+		
+	private static boolean pathHelper(char[][] matrix, int length, String s,
+			int sr, int sc) {
+		Stack<Character> stack = new Stack<Character>();
+		for(int row = sr, column = sc; stack.size() < s.length() - 1;) {
+			List<Character> moves = getMoves(matrix, length, row, 
+				column, s.charAt(stack.size() + 1));
+			if(moves.size() == 0) {
+				while(stack.size() != 0) {
+					char c = stack.pop();
+					switch(c) {
+						case 'd': row --; break;
+						case 'u': row ++; break;
+						case 'l': column ++; break;
+						case 'r': column --; break;
+					}
+					moves = getMoves(matrix, length, row, 
+						column, s.charAt(stack.size() + 1));
+					if(moves.indexOf(c) + 1 != moves.size())
+					{
+						char m = moves.get(moves.
+							indexOf(c) + 1);
+						switch(m) {
+							case 'd': row ++; break;
+							case 'u': row --; break;
+							case 'l': column --; break;
+							case 'r': column ++; break;
+						}
+						stack.push(m);
+						break;
+					}
+				}
+				if(0 == stack.size()) 
+					return false;
+			} else {
+				stack.push(moves.get(0));
+				switch(stack.peek()) {
+					case 'd': row ++; break;
+					case 'u': row --; break;
+					case 'l': column --; break;
+					case 'r': column ++; break;
+				}
+			}
+		}
+		return true;
+	}
+
+	private static boolean ifFoundPath(char[][] matrix, int length, String s) {
+		for(int i = 0; i < length; i++) {
+			for(int j = 0; j < length; j++) {
+				if(s.charAt(0) == matrix[i][j] && pathHelper(
+						matrix, length, s, i, j))
+				 	return true;
+			}
+		}
+		return false;
+	}
+
+	private static void testFoundPath() {
+		char[][] matrix = {
+			new char[]{'a','b', 'c', 'e'},
+			new char[]{'s', 'f', 'c', 's'},
+			new char[]{'a', 'd', 'e', 'e'},
+			new char[]{'a', 'b', 'c', 'e'}
+		};
+		System.out.println(ifFoundPath(matrix, 4, "abfdb"));
+		System.out.println(ifFoundPath(matrix, 4, "sfda"));
+		System.out.println(ifFoundPath(matrix, 4, "deeecb"));
+		System.out.println(ifFoundPath(matrix, 4, "eescfsa"));
+		System.out.println(ifFoundPath(matrix, 4, "abceg"));
+	}
+		
+			
 	public static void main(String[] args) {
-		testSplit2Palindrome();
+		testFoundPath();
 	}
 }
