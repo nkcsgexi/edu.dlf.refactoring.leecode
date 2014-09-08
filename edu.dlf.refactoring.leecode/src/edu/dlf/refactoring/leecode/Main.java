@@ -872,7 +872,42 @@ class Main {
 		table.getValue(1);
 		table.put(4, 2);
 	}
+	private static boolean isPalindrome(String s) {
+		for(int i = 0; i < s.length()/2; i++)
+			if(s.charAt(i) != s.charAt(s.length() - 1 -i)) return false;
+		return true;
+	}
 
+	private static int minSplitString2Palindromes(String s) {
+		int[][] matrix = new int[s.length()][s.length()];
+		for(int i = 0; i < s.length(); i++) matrix[i][i] = 0;
+		for(int gap = 1; gap < s.length(); gap++) {
+			for(int row = 0; row < s.length() - gap; row ++) {
+				int column = row + gap;
+				if(isPalindrome(s.substring(row, column + 1)))
+					matrix[row][column] = 0;
+				else {
+					int min = Integer.MAX_VALUE;
+					for(int middle = row; middle < column; 
+							middle ++) {
+						int m = matrix[row][middle] +
+							matrix[middle + 1][column] 
+								+ 1;
+						min = m < min ? m : min;
+					}
+					matrix[row][column] = min;
+				}
+			}
+		}
+		return matrix[0][s.length() - 1];
+	}
+
+	private static void testSplit2Palindrome() {
+		System.out.println(minSplitString2Palindromes("abba"));
+		System.out.println(minSplitString2Palindromes("abbac"));
+		System.out.println(minSplitString2Palindromes("dabbac"));
+	}	
 	public static void main(String[] args) {
+		testSplit2Palindrome();
 	}
 }
