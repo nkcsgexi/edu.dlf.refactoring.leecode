@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Stack;
 import java.util.Queue;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 public class GraphAlgorithms {
 
 	public static interface IGraph {
@@ -300,10 +301,123 @@ public class GraphAlgorithms {
 		}
 	}
 
-	private static void print(Iterable<Integer> l) {
+	private static class Edge implements Comparable<Edge> {
+		public final int From;
+		public final int To;
+		public final double Weight;
+		
+		public Edge(int From, int To, double Weight) {
+			this.From = From;
+			this.To = To;
+			this.Weight = Weight;
+		}
+		
+		public int other(int e) {
+			return e == From ? To : From;
+		}
+
+		@Override
+		public int compareTo(Edge that) {
+			return this.Weight > that.Weight ? 1 : -1;
+		}
+
+		@Override
+		public String toString() {
+			return From + "->" + To;
+		}	
+	}
+	private static class EdgeList extends ArrayList<Edge> {}
+
+	private static class WeightedEdgeGraph implements IGraph{
+		private final EdgeList[] edgeArrays;	
+
+		public WeightedEdgeGraph(int V) {
+			this.edgeArrays = new EdgeList[V];
+			for(int i = 0; i < V; i ++)
+				edgeArrays[i] = new EdgeList();
+		}
+
+		public int V() {
+			return edgeArrays.length;
+		}
+
+		public int E() {
+			int sum = 0;
+			for(List<Edge> l : edgeArrays) {
+				sum += l.size();
+			}
+			return sum/2;
+		}
+		public void addEdge(int f, int t, double w) {
+			Edge e = new Edge(f, t, w);
+			edgeArrays[f].add(e);
+			edgeArrays[t].add(e);
+		}	
+		public Iterable<Integer> getNeighbors(int v) {
+			List<Integer> results = new ArrayList<Integer>();
+			for(Edge e : edgeArrays[v]) {
+				results.add(e.other(v));
+			}
+			return results;
+		}
+		public Iterable<Edge> getEdges(int v) {
+			return edgeArrays[v];
+		}
+
+		public static WeightedEdgeGraph createGraph() {
+			WeightedEdgeGraph g = new WeightedEdgeGraph(8);
+			g.addEdge(4, 5, 0.35);
+			g.addEdge(4, 7, 0.37);
+			g.addEdge(5, 7, 0.28);
+			g.addEdge(0, 7, 0.16);
+			g.addEdge(1, 5, 0.32);
+			g.addEdge(0, 4, 0.38);
+			g.addEdge(2, 3, 0.17);
+			g.addEdge(1, 7, 0.19);
+			g.addEdge(0, 2, 0.26);
+			g.addEdge(1, 2, 0.36);
+			g.addEdge(1, 3, 0.29);
+			g.addEdge(2, 7, 0.34);
+			g.addEdge(6, 2, 0.40);
+			g.addEdge(3, 6, 0.52);
+			g.addEdge(6, 0, 0.58);
+			g.addEdge(6, 4, 0.93);
+			return g;
+		}
+	}
+
+	private static class MSTAlgorithms {
+
+		public static Iterable<Edge> prim(WeightedEdgeGraph g) {
+			List<Edge> mst = new ArrayList<Edge>();
+			PriorityQueue<Edge> queue = new PriorityQueue<Edge>();
+			boolean[] marked = new boolean[g.V()];
+			for(int i = 0; i < marked.length; i++) marked[i] = false;
+			primVisit(g, 0, marked, queue);
+			while(queue.size() != 0) {
+				Edge e = queue.poll();
+				if(marked[e.From] && marked[e.To]) continue;
+				mst.add(e);
+				primVisit(g, marked[e.From] ? e.To : e.From, 
+					marked, queue);
+			}
+			return mst;
+		}
+
+		private static void primVisit(WeightedEdgeGraph g, int v, 
+				boolean[] marked, PriorityQueue<Edge> queue) {
+			marked[v] = true;
+			for(Edge e : g.getEdges(v)) {
+				if(!marked[e.other(v)])
+					queue.add(e);
+			}
+		}
+	}
+
+	private static <T> void print(Iterable<T> l) {
 		System.out.println("===start===");
-		for(int i : l)
-			System.out.println(i);
+		for(T i : l)
+			System.out.println(i.toString());
 		System.out.println("===end===");
 	}
 
@@ -361,8 +475,13 @@ public class GraphAlgorithms {
 			print(c);
 	}
 
+	private static void testMST() {
+		WeightedEdgeGraph g = WeightedEdgeGraph.createGraph();
+		print(MSTAlgorithms.prim(g));
+	}
+
 	public static void main(String[] args) {
-		testStrongComponents();
+		testMST();
 	}
 
 
