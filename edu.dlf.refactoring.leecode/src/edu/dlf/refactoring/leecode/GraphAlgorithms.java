@@ -521,8 +521,46 @@ public class GraphAlgorithms {
 				allPaths.add(findPath(allNodes, i));
 			return allPaths;
 		}
-
-
+		
+		public static Iterable<Iterable<Integer>> bellmanFord(
+				DirectedWeightedEdgeGraph g) {
+			double d[] = new double[g.V()];
+			int pre[] = new int[g.V()];
+			for(int i = 0; i < d.length; i++)
+				d[i] = Double.MAX_VALUE;
+			d[0] = 0.0;
+			for(int i = 0; i < pre.length; i++)
+				pre[i] = -1;
+			for(int i = 0; i < g.V(); i ++) {
+				for(int v = 0; v < g.V(); v++) {
+					for(Edge e : g.getEdges(v)) {
+						double nd = d[e.From] + e.Weight;
+						if(d[e.To] > nd) {
+							d[e.To] = nd;
+							pre[e.To] = e.From;
+						}
+					}
+				}
+			}
+			for(int v = 0; v < g.V(); v++) {
+				for(Edge e : g.getEdges(v)) {
+					double nd = d[e.From] + e.Weight;
+					if(d[e.To] > nd) {
+						// has negative circle
+						return null;
+					}
+				}
+			}
+			List<Iterable<Integer>> allPaths = new ArrayList<Iterable
+				<Integer>>();
+			for(int v = 1; v < g.V(); v ++) {
+				List<Integer> p = new ArrayList<Integer>();
+				for(int c = v; c != -1; c = pre[c]) 
+					p.add(0, c);
+				allPaths.add(p);
+			}
+			return allPaths;
+		}
 	}
 
 	private static <T> void print(Iterable<T> l) {
@@ -593,7 +631,7 @@ public class GraphAlgorithms {
 
 	private static void testSP() {
 		DirectedWeightedEdgeGraph g = DirectedWeightedEdgeGraph.createGraph();
-		Iterable<Iterable<Integer>> paths = SPAlgorithms.Dijkstra(g);
+		Iterable<Iterable<Integer>> paths = SPAlgorithms.bellmanFord(g);
 		for(Iterable<Integer> p : paths) {
 			for(Integer n : p) 
 				System.out.print(n + "->");
