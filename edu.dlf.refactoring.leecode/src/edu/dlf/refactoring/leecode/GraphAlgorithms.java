@@ -318,7 +318,7 @@ public class GraphAlgorithms {
 
 		@Override
 		public int compareTo(Edge that) {
-			return this.Weight > that.Weight ? 1 : -1;
+			return Double.compare(this.Weight, that.Weight);
 		}
 
 		@Override
@@ -329,7 +329,7 @@ public class GraphAlgorithms {
 	private static class EdgeList extends ArrayList<Edge> {}
 
 	private static class WeightedEdgeGraph implements IGraph{
-		private final EdgeList[] edgeArrays;	
+		protected final EdgeList[] edgeArrays;	
 
 		public WeightedEdgeGraph(int V) {
 			this.edgeArrays = new EdgeList[V];
@@ -376,6 +376,37 @@ public class GraphAlgorithms {
 			g.addEdge(1, 7, 0.19);
 			g.addEdge(0, 2, 0.26);
 			g.addEdge(1, 2, 0.36);
+			g.addEdge(1, 3, 0.29);
+			g.addEdge(2, 7, 0.34);
+			g.addEdge(6, 2, 0.40);
+			g.addEdge(3, 6, 0.52);
+			g.addEdge(6, 0, 0.58);
+			g.addEdge(6, 4, 0.93);
+			return g;
+		}
+	}
+
+	private static class DirectedWeightedEdgeGraph extends WeightedEdgeGraph {
+		public DirectedWeightedEdgeGraph(int V) {
+			super(V);
+		}
+		@Override
+		public void addEdge(int f, int t, double w) {
+			Edge e = new Edge(f, t, w);
+			edgeArrays[f].add(e);
+		}
+
+		public static DirectedWeightedEdgeGraph createGraph() {
+			DirectedWeightedEdgeGraph g = new DirectedWeightedEdgeGraph(8);
+			g.addEdge(4, 5, 0.35);
+			g.addEdge(5, 4, 0.35);
+			g.addEdge(4, 7, 0.37);
+			g.addEdge(5, 7, 0.28);
+			g.addEdge(7, 5, 0.28);
+			g.addEdge(5, 1, 0.32);
+			g.addEdge(0, 4, 0.38);
+			g.addEdge(0, 2, 0.26);
+			g.addEdge(7, 3, 0.39);
 			g.addEdge(1, 3, 0.29);
 			g.addEdge(2, 7, 0.34);
 			g.addEdge(6, 2, 0.40);
@@ -437,6 +468,61 @@ public class GraphAlgorithms {
 			}
 			return mst;
 		}
+	}
+
+	private static class SPAlgorithms {
+		private static class Node implements Comparable<Node>{
+			public final int v;
+			public double d = Double.MAX_VALUE;
+			public int before = -1;
+			public Node(int v) {
+				this.v = v;
+			}
+			@Override
+			public int compareTo(Node that) {
+				return Double.compare(this.d, that.d);
+			}
+		}
+		
+		private static void relax(DirectedWeightedEdgeGraph g, int v, 
+				Node[] allNodes, PriorityQueue<Node> queue) {
+			for(Edge e : g.getEdges(v)) {
+				double nd = allNodes[e.From].d + e.Weight;
+				if(allNodes[e.To].d > nd) {
+					allNodes[e.To].d = nd;
+					allNodes[e.To].before = e.From;
+					queue.remove(allNodes[e.To]);
+					queue.add(allNodes[e.To]);
+				}
+			}
+		}
+		private static Iterable<Integer> findPath(Node[] allNodes,
+				int e) {
+			List<Integer> path = new ArrayList<Integer>();
+			for(int c = e; c != -1; c = allNodes[c].before)
+				path.add(0, c);
+			return path;
+		}
+
+		public static Iterable<Iterable<Integer>> Dijkstra(
+				DirectedWeightedEdgeGraph g) {
+			Node[] allNodes = new Node[g.V()];
+			PriorityQueue<Node> queue = new PriorityQueue<Node>();
+			for(int i = 0; i < allNodes.length; i ++) {	
+				allNodes[i] = new Node(i);
+				queue.add(allNodes[i]);
+			}
+			allNodes[0].d = 0.0;
+			while(queue.size() != 0)
+				relax(g, queue.remove().v, allNodes, queue);
+			List<Iterable<Integer>> allPaths = new ArrayList<Iterable<
+				Integer>>();
+			for(int i = 1; i < g.V(); i++)
+				allPaths.add(findPath(allNodes, i));
+			return allPaths;
+		}
+
+
 	}
 
 	private static <T> void print(Iterable<T> l) {
@@ -505,8 +591,18 @@ public class GraphAlgorithms {
 		print(MSTAlgorithms.Kruskal(g));
 	}
 
+	private static void testSP() {
+		DirectedWeightedEdgeGraph g = DirectedWeightedEdgeGraph.createGraph();
+		Iterable<Iterable<Integer>> paths = SPAlgorithms.Dijkstra(g);
+		for(Iterable<Integer> p : paths) {
+			for(Integer n : p) 
+				System.out.print(n + "->");
+			System.out.println();
+		}
+	}
+
 	public static void main(String[] args) {
-		testMST();
+		testSP();
 	}
 
 
