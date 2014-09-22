@@ -412,6 +412,31 @@ public class GraphAlgorithms {
 					queue.add(e);
 			}
 		}
+
+		public static Iterable<Edge> Kruskal(WeightedEdgeGraph g) {
+			List<Edge> mst = new ArrayList<Edge>();
+			int[] trees = new int[g.V()];
+			for(int i = 0; i < trees.length; i++)
+				trees[i] = i;
+			HashSet<Edge> allEdges = new HashSet<Edge>();
+			for(int v = 0; v < g.V(); v ++)
+				for(Edge e : g.getEdges(v))
+					allEdges.add(e);
+			PriorityQueue<Edge> queue = new PriorityQueue<Edge>();
+			for(Edge e : allEdges)
+				queue.add(e);
+			while(mst.size() < g.V() - 1) {
+				Edge e = queue.remove();
+				if(trees[e.From] == trees[e.To]) continue;
+				int original = trees[e.From];
+				int update = trees[e.To];
+				for(int j = 0; j < trees.length; j ++) 
+					if(trees[j] == original)
+						trees[j] = update;
+				mst.add(e);
+			}
+			return mst;
+		}
 	}
 
 	private static <T> void print(Iterable<T> l) {
@@ -477,7 +502,7 @@ public class GraphAlgorithms {
 
 	private static void testMST() {
 		WeightedEdgeGraph g = WeightedEdgeGraph.createGraph();
-		print(MSTAlgorithms.prim(g));
+		print(MSTAlgorithms.Kruskal(g));
 	}
 
 	public static void main(String[] args) {
