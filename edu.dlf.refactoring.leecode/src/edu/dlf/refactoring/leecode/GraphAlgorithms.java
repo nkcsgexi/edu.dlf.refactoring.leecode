@@ -54,7 +54,7 @@ public class GraphAlgorithms {
 			adjs.get(v).add(w);
 		}
 
-		public IGraph reverse() {
+		public DirectedGraph reverse() {
 			DirectedGraph g = new DirectedGraph(this.V);
 			for(int i = 0; i < this.adjs.size(); i++) {
 				AdjacencyList list = adjs.get(i);
@@ -71,8 +71,73 @@ public class GraphAlgorithms {
 			return s.getVisited(0);
 		}
 
-		public boolean hasCircle() {
-			return false;
+		public Iterable<Iterable<Integer>> strongComponents() {
+			List<Iterable<Integer>> components = new ArrayList<
+				Iterable<Integer>>();
+			boolean[] marked = getMarked(V());
+			int[] ids = new int[V()];
+			DirectedGraph rg = reverse();
+			Iterable<Integer> sequence = rg.topologicalSort();
+			for(int s = getNextStart(marked, sequence), id = 0; s != -1;
+					s = getNextStart(marked, sequence), id++) {
+				DFS search = new DFS(this);
+				search.search(s);
+				Iterable<Integer> visited = search.getVisited(0);
+				for(int v : visited) {
+					if(!marked[v]) {
+						ids[v] = id;
+						marked[v] = true;
+					}
+				}
+			}
+			for(int id = 0; ;id++) {
+				List<Integer> comp = new ArrayList<Integer>();
+				for(int v = 0; v < ids.length; v++)
+					if(ids[v] == id) comp.add(v);
+				if(0 == comp.size())
+					break;
+				else
+					components.add(comp);
+			}
+			return components;
+		}
+
+		private boolean[] getMarked(int v) {
+			boolean[] marked = new boolean[v];
+			for(int i = 0; i < marked.length; i ++)
+				marked[i] = false;
+			return marked;
+		}
+
+		private void mark(boolean[] marks, Iterable<Integer> vs) {
+			for(int i : vs)
+				marks[i] = true;
+		}
+
+		private int getNextStart(boolean[] marked, Iterable<Integer> 
+				sequence) {
+			for(int s : sequence)
+				if(!marked[s]) return s;
+			return -1;
+		}
+
+		private int getNextStart(boolean[] marked) {
+			for(int i = 0; i < marked.length; i++)
+				if(!marked[i]) return i;
+			return -1;
+		}
+
+		public Iterable<Integer> getCircle() {
+			boolean[] marked = getMarked(V());
+			for(int s = 0; s!= -1; s = getNextStart(marked)) {
+				DFS search = new DFS(this);
+				search.search(s);
+				if(null != search.getCircle())
+					return search.getCircle();
+				for(int i : search.getVisited(0)) 
+					marked[i] = true;
+			}
+			return null;
 		}
 	}
 	
@@ -159,6 +224,7 @@ public class GraphAlgorithms {
 		private final List<Integer> preorder;
 		private final List<Integer> postorder;
 		private final List<Integer> postReverseOrder;
+		private List<Integer> circle;
 
 		public DFS(IGraph g) {
 			this.g = g;
@@ -187,12 +253,20 @@ public class GraphAlgorithms {
 				}
 				Iterable<Integer> neis = g.getNeighbors(p);
 				boolean found = false;
-				for(int n : neis) {
+				for(int n : neis) {	
 					if(!blackNodes.contains(n) &&
 						!greyNodes.contains(n)) {
 						stack.push(n);
 						found = true;
 						break;
+					}else if(greyNodes.contains(n)) {
+						this.circle = new ArrayList
+							<Integer>();
+						int st = stack.indexOf(n);
+						for(int i = st; i < stack.size(); 
+							    	i++) 
+							circle.add(stack.elementAt(i));	
+						circle.add(n);
 					}
 				}
 				if(found) continue;
@@ -220,6 +294,9 @@ public class GraphAlgorithms {
 		}
 		public Iterable<Integer> getPostReverseOrder() {
 			return postReverseOrder;
+		}
+		public Iterable<Integer> getCircle() {
+			return circle;
 		}
 	}
 
@@ -251,17 +328,41 @@ public class GraphAlgorithms {
 		print(bs.getVisited(1));
 	}
 	
-	private static void testDirectedGraph() {
-		int[] from = {0,0,0,2,2,3,5,6,6,7,8,9,9,9,11};
-		int[] to = {1,5,6,0,3,5,4,4,9,6,7,10,11,12,12};
-		DirectedGraph g = new DirectedGraph(13);
+	private static DirectedGraph createDirectedGraph(int[] from, int[] to, 
+			int V) {
+		DirectedGraph g = new DirectedGraph(V);
 		for(int i = 0; i < from.length; i++)
 			g.addEdge(from[i], to[i]);
-		print(g.topologicalSort());
+		return g;
+	}
+	private static DirectedGraph getDGraph() {
+		int[] from = {0,0,0,2,2,3,5,6,6,7,8,9,9,9,11};
+		int[] to = {1,5,6,0,3,5,4,4,9,6,7,10,11,12,12};
+		return createDirectedGraph(from, to, 13);
+	}
+	
+	private static DirectedGraph getDGraph2() {
+		return createDirectedGraph(new int[]{0,3,4,5}, 
+			new int[]{5,5,3,4},6);
+	}
+			
+	private static void testDirectedGraph() {
+		print(getDGraph().topologicalSort());
+	}
+
+	private static void testHasCircle() {
+		print(getDGraph2().getCircle());
+	}
+
+	private static void testStrongComponents() {
+		DirectedGraph g = getDGraph2();
+		Iterable<Iterable<Integer>> comps = g.strongComponents();
+		for(Iterable<Integer> c : comps)
+			print(c);
 	}
 
 	public static void main(String[] args) {
-		testDirectedGraph();
+		testStrongComponents();
 	}
 
 
