@@ -644,13 +644,14 @@ public class GraphAlgorithms {
 		}
 	}
 
+	private static String[] getTestData() {
+		return ("she sells seashells by the seashore"
+			+ " the shells she sells are surely seashells").
+				split(" ");
+	}	
 	private static class StringSort {
 	
-		private static String[] getTestData() {
-			return ("she sells seashells by the seashore"
-				+ " the shells she sells are surely seashells").
-					split(" ");
-		}	
+	
 
 		private static void testSort() {
 			print(MSD(getTestData()));
@@ -721,8 +722,137 @@ public class GraphAlgorithms {
 		}
 
 	}
+
+	private static class Tries {
+		private static final int R = 26;
+		private static class Node {
+			public final Node[] next = new Node[R];
+			public Integer value;
+		}
+		private final Node root = new Node();
+
+		public int get(String key) {
+			return internalGet(root, 0, key).value;
+		}
+		public void put(String key, int v) {
+			internalPut(root, 0, key, v);
+		}
+		public Iterable<String> keys() {
+			Queue<String> q = new LinkedList<String>();
+			collectKeys(root, "", q);
+			return q;
+		}
+		public Iterable<String> keysWithPrefix(String pre) {
+			Node n = internalGet(root, 0, pre);
+			Queue<String> q = new LinkedList<String>();
+			collectKeys(n, pre, q);
+			return q;
+		}
+		public String longestPrefix(String s) {
+			int len = longest(root, s, 0, 0);
+			return s.substring(0, len);	
+		}
+
+		public void remove(String key) {
+			internalRemove(root, key, 0);
+		}
+
+		private Node internalRemove(Node n, String k, int d) {
+			if(null == n) return null;
+			if(d == k.length()) {
+				n.value = null;
+			} else {
+				Node nd = n.next[k.charAt(d) - 'a'];
+				if(internalRemove(nd, k, d+1) == null)
+					n.next[k.charAt(d) - 'a'] = null;
+				else
+					return n;
+			}
+			for(int i = 0; i < R; i ++)
+				if(n.next[i] != null || n.value != null) return n;
+			return null;
+		}	
+
+
+		private Node internalGet(Node n, int p, String key) {
+			if(p == key.length()) return n;
+			if(null == n.next[key.charAt(p) - 'a']) return null;
+			return internalGet(n.next[key.charAt(p) - 'a'], p + 1, key);
+		}
+
+		private void internalPut(Node n, int p, String key, int v) {
+			if(p == key.length()) {
+				n.value = v;
+				return;
+			}
+			if(n.next[key.charAt(p) - 'a'] == null)
+				n.next[key.charAt(p) - 'a'] = new Node();
+			internalPut(n.next[key.charAt(p) - 'a'], p + 1, key, v);
+		}
+		private void collectKeys(Node n, String pre, Queue<String> q) {
+			if(n == null) return;
+			if(n.value != null) q.add(pre);
+			for(char i = 'a'; i <= 'z'; i ++)
+				collectKeys(n.next[i - 'a'], pre + i, q);
+		}
+		private int longest(Node n, String key, int d, int len) {
+			if(null == n) return len;
+			if(n.value != null) len = d;
+			if(d == key.length()) return d;
+			Node nd = n.next[key.charAt(d) - 'a'];
+			return longest(nd, key, d + 1, len);	
+		}
+
+		public static Tries createTries() {
+			Tries t = new Tries();
+			String[] words = getTestData();
+			for(int i = 0; i < words.length; i ++){
+				t.put(words[i], i);
+			}
+			return t;
+		}
+
+		public static void testTries() {
+			Tries t = createTries();
+			Iterable<String> ks = t.keys();
+			for(String s : ks) 
+				System.out.println(s + ":" + t.get(s));
+			System.out.println(t.longestPrefix("shelters"));
+			for(String k : t.keysWithPrefix("sh")) 
+				System.out.println(k);
+			t.remove("shells");
+			System.out.println(t.get("she"));
+		}
+	}
+	
+	public static TernarySearchTree {
+		private static class Node{
+			public Node left;
+			public Node right;
+			public Node mid;
+			public char c;
+			public Integer value;
+		}
+
+		public int get(String key) {
+			return internalGet(root, key, 0).value;
+		}
+		
+		private Node internalGet(Node n, String k, int d) {
+			if(null == n) return null;
+			char c = k.charAt(d);
+			if(c > n.c) 
+				return internalGet(n.right, k, d);
+			else if (c < n.c) 
+				return internalGet(n.left, k, d);
+			else if (d < k.length() - 1) 
+				return internalGet(n.mid, k, d + 1);
+			else return n;
+		}
+	}
+
 	public static void main(String[] args) {
-		StringSort.testSort();
+		Tries.testTries();
 	}
 
 
