@@ -638,9 +638,91 @@ public class GraphAlgorithms {
 			System.out.println();
 		}
 	}
+	private static <T> void print(T[] a) {
+		for(T t : a) {
+			System.out.println(t);
+		}
+	}
 
+	private static class StringSort {
+	
+		private static String[] getTestData() {
+			return ("she sells seashells by the seashore"
+				+ " the shells she sells are surely seashells").
+					split(" ");
+		}	
+
+		private static void testSort() {
+			print(MSD(getTestData()));
+		}
+		private static int getIndex(String w, int off) {
+			if(off < w.length())
+				return w.charAt(off) - 'a' + 2;
+			else
+				return 1;
+		}
+		
+		private static int[] internalSort(String[] words, int s, int e, 
+				int off) {
+			// first slot is reserved for empty char
+			int size = 28;
+			int[] count = new int[size];
+			for(int i = 0; i < size; i ++)
+				count[i] = 0;
+			for(int i = s; i <= e; i++)
+				count[getIndex(words[i], off)] ++;
+			for(int i = 0; i < 26; i++)
+				count[i + 1] += count[i];
+			String[] buffer = new String[e - s + 1];
+			for(int i = s; i <= e; i++) 
+				buffer[count[getIndex(words[i], off) - 1] ++] = 
+					words[i];
+			for(int i = s; i <= e; i++)
+				words[i] = buffer[i - s];
+			return count;
+		}
+
+		private static String[] LSD(String[] words) {
+			int longest = Integer.MIN_VALUE;
+			for(String w : words)
+				longest = longest < w.length() ? w.length() : 
+					longest;
+			for(int i = longest - 1; i >= 0; i --) 
+				internalSort(words, 0, words.length - 1, i);
+			return words;
+		}
+
+		private static String[] MSD(String[] words) {
+			internalMSD(words, 0, words.length - 1, 0);
+			return words;
+		}
+
+		private static void internalMSD(String[] words, int s, int e,
+				int off) {
+			if(e <= s) return;
+			int size = 28;
+			int[] count = new int[size];
+			for(int i = 0; i < size; i ++) count[i] = 0;
+			for(int i = s; i <= e; i++) {
+				count[getIndex(words[i], off)]++;
+			}
+			for(int i = 0; i < size - 1;i++) 
+				count[i + 1] += count[i];
+			String[] buffer = new String[e - s + 1];
+			for(int i = s; i <= e; i++)
+				buffer[count[getIndex(words[i], off) - 1] ++] =
+				       	words[i];
+			for(int i = s; i <= e; i++)
+				words[i] = buffer[i - s];
+			for(int i = 0, start = 0; i < size - 1; start = count[i++]) {
+				int end = count[i] - 1;
+				internalMSD(words, start, end, off +1);
+			}
+		}
+
+	}
 	public static void main(String[] args) {
-		testSP();
+		StringSort.testSort();
 	}
 
 
