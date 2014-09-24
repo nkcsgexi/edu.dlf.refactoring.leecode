@@ -655,9 +655,10 @@ public class GraphAlgorithms {
 	
 	
 
-		private static void testSort() {
-			print(MSD(getTestData()));
+		public static void testSort() {
+			print(quick3Sort(getTestData()));
 		}
+
 		private static int getIndex(String w, int off) {
 			if(off < w.length())
 				return w.charAt(off) - 'a' + 2;
@@ -722,7 +723,36 @@ public class GraphAlgorithms {
 				internalMSD(words, start, end, off +1);
 			}
 		}
-
+		public static String[] quick3Sort(String[] words) {
+			internal3Sort(words, 0, words.length - 1, 0);
+			return words;
+		}
+		private static int getChar(String w, int d) {
+			if(d >= w.length()) return -1;
+			else return w.charAt(d) - 'a';
+		}
+		private static void swap(String[] words, int i, int j) {
+			String s = words[i];
+			words[i] = words[j];
+			words[j] = s;
+		}
+		private static void internal3Sort(String[] words, int s, int e,
+				int d) {
+			if(e <= s) return;
+			int c = getChar(words[s], d);
+			int l = s;
+			int h = e;
+			int i = s + 1;
+			while(i < h) {
+				int cc = getChar(words[i], d);
+				if(cc < c) swap(words, l++, i++);
+				else if(cc > c) swap(words, h--, i);
+				else i++;
+			}
+			internal3Sort(words, s, l - 1, d);
+			if(c >= 0) internal3Sort(words, l, h, d + 1);
+			internal3Sort(words, h + 1, e, d);
+		}
 	}
 
 	private static class Tries {
@@ -1031,7 +1061,7 @@ public class GraphAlgorithms {
 
 
 	public static void main(String[] args) {
-		StringCompression.testHuffman();
+		StringSort.testSort();
 	}
 
 
