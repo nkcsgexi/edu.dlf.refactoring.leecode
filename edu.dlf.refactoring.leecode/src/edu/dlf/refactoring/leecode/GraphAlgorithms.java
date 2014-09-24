@@ -825,7 +825,7 @@ public class GraphAlgorithms {
 		}
 	}
 	
-	public static TernarySearchTree {
+	public static class TernarySearchTree {
 		private static class Node{
 			public Node left;
 			public Node right;
@@ -833,11 +833,46 @@ public class GraphAlgorithms {
 			public char c;
 			public Integer value;
 		}
+		private Node root;
 
 		public int get(String key) {
 			return internalGet(root, key, 0).value;
 		}
-		
+		public void put(String key, int v) {
+			Node n = internalPut(root, key, 0, v);
+			if(null == this.root) this.root = n;
+		}
+		public Iterable<String> keys() {
+			Queue<String> q = new LinkedList<String>();
+			collectKeys(root, q, "");
+			return q;
+		}
+
+		private void collectKeys(Node n, Queue<String> q, String pre) {
+			if(null == n) return;
+			if(null != n.value) q.add(pre + n.c);
+			collectKeys(n.left, q, pre);
+			collectKeys(n.mid, q, pre + n.c);
+			collectKeys(n.right, q, pre);
+		}
+
+		private Node internalPut(Node n, String key, int d, int v) {
+			char c = key.charAt(d);
+			if(null == n) {
+				n = new Node();
+				n.c = c;
+			}
+			if(c < n.c) 
+				n.left = internalPut(n.left, key, d, v);
+			else if(c > n.c) 
+				n.right = internalPut(n.right, key, d, v);
+			else if(d < key.length() - 1) 
+				n.mid = internalPut(n.mid, key, d + 1, v);
+			else
+				n.value = v;
+			return n;
+		}	
+
 		private Node internalGet(Node n, String k, int d) {
 			if(null == n) return null;
 			char c = k.charAt(d);
@@ -849,10 +884,24 @@ public class GraphAlgorithms {
 				return internalGet(n.mid, k, d + 1);
 			else return n;
 		}
+
+		private static TernarySearchTree createTree() {
+			String[] words = getTestData();
+			TernarySearchTree t = new TernarySearchTree();
+			for(int i = 0; i < words.length; i++)
+				t.put(words[i], i);
+			return t;
+		}
+		
+		public static void testSearchTree() {
+			TernarySearchTree t = createTree();
+			for(String k : t.keys()) {
+				System.out.println(k + ":" + t.get(k));
+			}
+		}
 	}
 
 	public static void main(String[] args) {
-		Tries.testTries();
 	}
 
 
