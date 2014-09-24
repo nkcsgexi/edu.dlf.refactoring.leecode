@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.HashSet;
 import java.util.Stack;
+import java.util.Set;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
@@ -925,15 +927,111 @@ public class GraphAlgorithms {
 			}
 			return results;
 		}
+
+		private static Iterable<Integer> BM(String text, String p) {
+			int size = 26;
+			List<Integer> results = new ArrayList<Integer>();
+			int right[] = new int[size];
+			for(int i =0; i < size; i++) right[i] = -1;
+			for(int i = 0; i < p.length(); i++) right[p.charAt(i)
+				- 'a'] = i;
+			for(int i = 0, skip = 0; i <= text.length() - p.length(); 
+					i += skip) {
+				skip = 0;
+				int end = i + p.length() - 1;
+				for(int j = end; j >= i; j--) {
+					if(text.charAt(j) != p.charAt(j - i)) {
+						skip = j - i - right[text.charAt(j) 
+							- 'a'];	
+						if(skip < 0) skip = 1;
+					}
+				}
+				if(skip == 0) {
+					results.add(i);
+					skip = 1;
+				}
+			}
+			return results;
+		}
 		public static void testSearch() {
 			String text = "abcdefageabcdabcde";
 			String pattern = "abcde";
-			print(KMP(text, pattern));
+			print(BM(text, pattern));
 		}
 	}
 
+	private static class StringCompression {
+
+		private static class Node implements Comparable<Node>{
+			public Node left;
+			public Node right;
+			public int frequency;
+			public String text;
+
+			public int compareTo(Node that) {
+				return Integer.compare(this.frequency, that.
+					frequency);
+			}
+			public Node merge(Node that) {
+				Node root = new Node();
+				root.left = this;
+				root.right = that;
+				root.frequency = this.frequency + that.frequency;
+				return root;
+			}
+
+			public Set<Entry<String, String>> getCoding() {
+				Hashtable<String, String> tab = new Hashtable<String,
+					String>();
+				 internalGetCode(this, "", tab);
+				 return tab.entrySet();
+			}
+
+			private static void internalGetCode(Node n, String pre, 
+					Hashtable<String, String> tab) {
+				if(null == n) return;
+				if(null != n.text) {
+					tab.put(n.text, pre);
+					return;
+				}
+				internalGetCode(n.left, pre + '0', tab);
+				internalGetCode(n.right, pre + '1', tab);
+			}
+				
+		}
+
+		private static Set<Entry<String, String>> huffman(Hashtable<String,
+				Integer> freq) {
+			PriorityQueue<Node> queue = new PriorityQueue<Node>();
+			for(Entry<String, Integer> e : freq.entrySet()) {
+				Node n = new Node();
+				n.text = e.getKey();
+				n.frequency = e.getValue();
+				queue.add(n);
+			}
+			while(queue.size() > 1) {
+				Node first = queue.remove();
+				Node second = queue.remove();
+				queue.add(first.merge(second));
+			}
+			return queue.remove().getCoding();
+		}
+		private static void testHuffman() {
+			Hashtable<String, Integer> fre = new Hashtable<String,
+				Integer>();
+			int v = 1;
+			for(char c = 'a'; c < 'z'; c++, v++) {
+				fre.put(Character.toString(c), v);
+			}
+			for(Entry<String, String> e : huffman(fre)) {
+				System.out.println(e.getKey() + ":" + e.getValue());
+			}
+		}
+	}		
+
+
 	public static void main(String[] args) {
-		SubstringMatch.testSearch();
+		StringCompression.testHuffman();
 	}
 
 
