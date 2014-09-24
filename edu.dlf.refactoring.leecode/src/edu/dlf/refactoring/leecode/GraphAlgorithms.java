@@ -901,7 +901,39 @@ public class GraphAlgorithms {
 		}
 	}
 
+	private static class SubstringMatch {
+
+		private static Iterable<Integer> KMP(String text, String p) {
+			int[][] ft = new int[26][p.length() + 1];
+			for(int i = 0; i < 26; i++)
+				for(int j = 0; j < p.length() + 1; j++)
+					ft[i][j] = 0;
+			ft[text.charAt(0) - 'a'][0] = 1;
+			for(int i = 1, x = 0; i < p.length() + 1; i++) {
+				for(int c = 0; c < 26; c++)
+					ft[c][i] = ft[c][x];
+				if(i != p.length()) {
+					ft[p.charAt(i) - 'a'][i] = i + 1;
+					x = ft[p.charAt(i) - 'a'][x];
+				}
+			}
+			int i, j;
+			List<Integer> results = new ArrayList<Integer>();
+			for(i = 0, j = 0; i < text.length(); i++) {
+				j = ft[text.charAt(i) - 'a'][j];
+				if(j == p.length()) results.add(i - j + 1);
+			}
+			return results;
+		}
+		public static void testSearch() {
+			String text = "abcdefageabcdabcde";
+			String pattern = "abcde";
+			print(KMP(text, pattern));
+		}
+	}
+
 	public static void main(String[] args) {
+		SubstringMatch.testSearch();
 	}
 
 
