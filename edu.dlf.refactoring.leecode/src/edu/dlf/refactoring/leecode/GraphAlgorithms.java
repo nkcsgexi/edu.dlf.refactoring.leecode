@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.HashSet;
@@ -8,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
+
 public class GraphAlgorithms {
 
 	public static interface IGraph {
@@ -729,7 +731,8 @@ public class GraphAlgorithms {
 		}
 		private static int getChar(String w, int d) {
 			if(d >= w.length()) return -1;
-			else return w.charAt(d) - 'a';
+			else if (Character.isWhitespace(w.charAt(d))) return 0;
+			else return w.charAt(d) - 'a' + 1;
 		}
 		private static void swap(String[] words, int i, int j) {
 			String s = words[i];
@@ -1059,9 +1062,42 @@ public class GraphAlgorithms {
 		}
 	}		
 
+	private static class SuffixArray {
+		private final String[] suffixes;
 
+		public SuffixArray(String s) {
+			this.suffixes = new String[s.length()];
+			for(int i = 0; i < s.length(); i++)
+				suffixes[i] = s.substring(i);
+			Arrays.sort(suffixes);
+		}
+
+		private static String getLCP(String s1, String s2) {
+			for(int i = 0; i < Math.min(s1.length(), s2.length()); i++)
+				if(s1.charAt(i) != s2.charAt(i))
+					return s1.substring(0, i);
+			return s1.length() < s2.length() ? s1 : s2;
+		}
+
+		public String lcp(int i) {
+			return getLCP(suffixes[i], suffixes[i - 1]);
+		}
+		public String lcp() {
+			String result = "";
+			for(int i = 1; i < suffixes.length; i++)
+				result = lcp(i).length() > result.length() ? lcp(i)
+					: result;
+			return result;
+		}
+		public static void test() {
+			SuffixArray a = new SuffixArray("it was the best of times"
+				+" it was the worst of times");
+			System.out.println(a.lcp());
+		}
+			
+	}
 	public static void main(String[] args) {
-		StringSort.testSort();
+		SuffixArray.test();
 	}
 
 
