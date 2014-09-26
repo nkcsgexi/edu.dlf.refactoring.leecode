@@ -508,6 +508,36 @@ public class BinarySearch{
 
 		}
 
+		private static <T extends Comparable> void merge(T[] input, 
+				int s, int m, int e, T max) {
+			if(m - s < 1) return;
+			if(e - m + 1 < 1) return;
+			if(s >= e) return;
+			T[] first = (T[]) new Comparable[m - s + 1];
+			T[] second = (T[]) new Comparable[e - m + 2];
+			first[first.length - 1] = second[second.length - 1] = max;
+			for(int i = 0; i < first.length - 1; i++)
+				first[i] = input[s + i];
+			for(int i = 0; i < second.length - 1; i ++)
+				second[i] = input[m + i];
+			for(int i = s, fi = 0, si = 0; i <= e; i ++) {
+				input[i] = first[fi].compareTo(second[si]) < 0 ?
+				       	first[fi++] : second[si ++];
+			}
+		}
+		private static <T extends Comparable> T[] internalMergeSort
+				(T[] input, int s, int e) {
+			if(s >= e) return input;
+			int mid = (s + e)/2;
+			internalMergeSort(input, s, mid - 1);
+			internalMergeSort(input, mid, e);
+			merge(input, s, mid, e, Integer.MAX_VALUE);
+			return input;
+		}
+		private static <T extends Comparable> T[] mergeSort(T[] input) {
+			return internalMergeSort(input, 0, input.length - 1);
+		}
+
 		private static Integer[] getInput() {
 			Integer[] input = new Integer[10];
 			for(int i = 0; i < input.length; i ++)
