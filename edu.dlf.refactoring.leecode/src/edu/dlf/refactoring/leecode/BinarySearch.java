@@ -337,10 +337,89 @@ public class BinarySearch{
 		}
 	}
 
+	private static class SearchArray<T extends Comparable, V> {
+		T[] keys;
+		V[] values;
+		int N;
+		int M;
+
+		public SearchArray(int M) {
+			this.keys = (T[]) new Comparable[M];
+			this.values = (V[]) new Object[M];
+			this.N = 0;
+			this.M = M;
+		}
+
+		private int searchInternal(int s, int e, T t) {
+			if(s >= e) return s;
+			int mid = (s + e)/2;
+			int c = keys[mid].compareTo(t);
+			if(c == 0) return mid;
+			if(c > 0) return searchInternal(s, mid -1, t);
+			else return searchInternal(mid + 1, e, t);
+		}
+		private void resize(int s) {
+			T[] nks = (T[]) new Comparable[s];
+			V[] nvls = (V[]) new Object[s];
+			for(int i = 0; i < N; i++) {
+				nks[i] = keys[i];
+				nvls[i] = values[i];
+			}
+			keys = nks;
+			values = nvls;
+			M = s;
+		}
+
+		public int rank(T t) {
+			return searchInternal(0, N - 1, t);
+		}
+
+		public V search(T t) {
+			int i = searchInternal(0, N - 1, t);
+			if(keys[i].compareTo(t) == 0) return values[i];
+			else return null;
+		}
+
+		public void put(T t, V v) {
+			if(this.N > this.M/2) resize(M * 2);
+			int i = searchInternal(0, N - 1, t);
+			if(i >= 0 && i < N && keys[i].compareTo(t) == 0) {
+				values[i] = v;
+				return;
+			}
+			for(int j = N; j >= i; j --) {
+				keys[j + 1] = keys[j];
+				values[j + 1] = values[j];
+			}
+			N ++;
+			keys[i] = t;
+			values[i] = v;
+		}
+		public static void test() {
+			SearchArray<Integer, Integer> s = new SearchArray<Integer,
+				Integer>(10);
+			for(int i = 1000; i > 0; i --)
+				s.put(i, i);
+			for(int i = 2000; i < 3000; i ++)
+				s.put(i, i);
+			System.out.println(s.search(13));
+			System.out.println(s.search(76));
+			System.out.println(s.search(-1));
+			System.out.println(s.search(0));
+			System.out.println(s.search(1000));
+			System.out.println(s.search(1001));
+			System.out.println(s.rank(2000));	
+			System.out.println(s.rank(1100));	
+			System.out.println(s.rank(1239));	
+			System.out.println(s.rank(2032));
+		}
+	}
+
+
 
 
 	public static void main(String[] args) {
-		ProbeHashtable.test();
+		SearchArray.test();
 	}
 
 }
