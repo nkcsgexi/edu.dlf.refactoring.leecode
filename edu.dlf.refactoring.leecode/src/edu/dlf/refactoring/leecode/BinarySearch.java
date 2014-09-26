@@ -1,6 +1,7 @@
 import java.util.function.Consumer;
 import java.util.Queue;
 import java.util.LinkedList;
+import java.util.Iterator;
 public class BinarySearch{
 
 	private static class BinaryNode<T extends BinaryNode, V> {
@@ -233,8 +234,113 @@ public class BinarySearch{
 			System.out.println(t.root.search(322));
 		}
 	}
+
+	private static class ProbeHashtable<T, V> {
+		int M;
+		int N;
+		T[] keys;
+		V[] values;
+		
+		public ProbeHashtable(int M) {
+			this.M = M;
+			this.keys = (T[]) new Object[M];
+			this.values = (V[]) new Object[M];
+			this.N = 0;
+		}
+		
+		private class It implements Iterator<Integer> {
+			private int start;
+			private int current; 
+			private boolean begin;
+			public It(T k) { 
+				this.current = hash(k) % M; 
+				this.start = this.current;
+				this.begin = false;
+			}
+			public boolean hasNext() { 
+				return !begin || current % M != start; 
+			}
+			public Integer next() { 
+				this.begin = true;
+				return this.current ++ % M; 
+			} 
+		}
+
+		public int size() {
+			return N;
+		}
+
+		private int hash(T t) {
+			return (t.hashCode() & (~(1 << 31))) % M;
+		}
+
+		private void resize(int s) {
+			ProbeHashtable<T, V> tmp = new ProbeHashtable<T, V>(s);
+			for(int i = 0; i < N; i++)
+				if(null != keys[i])
+					tmp.put(keys[i], values[i]);
+			this.M = tmp.M;
+			this.N = tmp.N;
+			this.keys = tmp.keys;
+			this.values = tmp.values;
+		}
+
+		public void put(T k, V v) {
+			if(N > M/2) resize(M * 2);
+			It it = new It(k);
+			int i;
+			for(i = it.next(); it.hasNext(); i = it.next())
+				if(null == keys[i]) 
+					break;
+			keys[i] = k;
+			values[i] = v;
+			N ++;
+		}
+
+		public V get(T k) {
+			It it = new It(k);
+			return values[it.next()];
+		}
+
+		public void remove(T k) {
+			It it = new It(k);
+			int i;
+			for(i = it.next(); it.hasNext(); i = it.next()) {
+				if(keys[i].equals(k)) {
+					keys[i] = null;
+					values[i] = null;
+					it.next();
+					break;
+				}
+			}
+			for(;it.hasNext();i = it.next()) {
+				if(keys[i] == null) break;
+				T rk = keys[i];
+				V rv = values[i];
+				keys[i] = null;
+				values[i] = null;
+				N --;
+				put(rk, rv);
+			}
+			N --;
+			if(N < M/8)
+				resize(M/2);
+		}	
+		public static void test() {
+			ProbeHashtable<Integer, Integer> t = new ProbeHashtable
+				<Integer, Integer>(100);
+			for(int i =0; i < 100; i++) 
+				t.put(i, i);
+			System.out.println(t.get(33));
+			t.remove(1);
+			System.out.println(t.get(1));
+		}
+	}
+
+
+
 	public static void main(String[] args) {
-		BinarySearchTree.test();
+		ProbeHashtable.test();
 	}
 
 }
