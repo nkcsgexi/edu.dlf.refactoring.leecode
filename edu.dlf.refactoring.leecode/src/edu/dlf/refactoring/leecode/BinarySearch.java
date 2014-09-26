@@ -338,10 +338,10 @@ public class BinarySearch{
 	}
 
 	private static class SearchArray<T extends Comparable, V> {
-		T[] keys;
-		V[] values;
-		int N;
-		int M;
+		private T[] keys;
+		private V[] values;
+		private int N;
+		private int M;
 
 		public SearchArray(int M) {
 			this.keys = (T[]) new Comparable[M];
@@ -395,6 +395,18 @@ public class BinarySearch{
 			keys[i] = t;
 			values[i] = v;
 		}
+
+		public void remove(T t) {
+			int i = searchInternal(0, N - 1, t);
+			if(i >= 0 && i < N && 0 == keys[i].compareTo(t)) {
+				for(int j = i + 1; j < N; j++) {
+					keys[j - 1] = keys[j];
+					values[j - 1] = values[j];
+				}
+				N--;
+			}
+		}
+
 		public static void test() {
 			SearchArray<Integer, Integer> s = new SearchArray<Integer,
 				Integer>(10);
@@ -402,6 +414,8 @@ public class BinarySearch{
 				s.put(i, i);
 			for(int i = 2000; i < 3000; i ++)
 				s.put(i, i);
+			for(int i = 0; i < 1000; i ++)
+				s.remove(i);
 			System.out.println(s.search(13));
 			System.out.println(s.search(76));
 			System.out.println(s.search(-1));
@@ -415,11 +429,108 @@ public class BinarySearch{
 		}
 	}
 
+	private static class Sorting {
+		
+		private static <T extends Comparable> T[] insertion(T[] input) {
+			for(int i = 1; i < input.length; i ++) {
+				T toInsert = input[i];
+				int j;
+				for(j = i - 1; j >= 0; j --) {
+					if(input[j].compareTo(toInsert) < 0) {
+						break;
+					}
+				}
+				j ++;
+				for(int k = i; k > j; k --)
+					input[k] = input[k - 1];
+				input[j] = toInsert;
+			}
+			return input;
+		}
 
+		private static <T extends Comparable> T[] selection(T[] input) {
+			for(int i = 0; i < input.length - 1; i ++) {
+				T min = input[i];
+				int minInd = i;
+				for(int j = i + 1; j < input.length; j ++) {
+					if(input[j].compareTo(min) < 0) {
+						minInd = j;
+						min = input[j];
+					}
+				}
+				T t = input[i];
+				input[i] = input[minInd];
+				input[minInd] = t;
+			}
+			return input;
+		}
+	
+		private static <T> void swap(T[] input, int i, int j) {
+			T t = input[i];
+			input[i] = input[j];
+			input[j] = t;
+		}
+
+		private static <T extends Comparable> void split(T[] input, 
+				int s, int e) {
+			if(s >= e) return;
+			T p = input[e];
+			int index = s;
+			for(int i = s; i < e; i ++)
+				if(input[index].compareTo(p) < 0)
+					swap(input, i, index ++);
+			swap(input, index, e);
+			split(input, s, index - 1);
+			split(input, index + 1, e);
+		}
+
+		private static <T extends Comparable> T[] qsort(T[] input) {
+			split3(input, 0, input.length - 1);
+			return input;
+		}
+
+		private static <T extends Comparable> void split3(T[] input,
+				int l, int h) {
+			if(l >= h) return;
+			T p = input[l];
+			int i = l + 1;
+			int high = h;
+			int low = l;
+			while(i <= high) {
+				if(p.compareTo(input[i]) < 0) 
+					swap(input, i, high --);
+				else if(p.compareTo(input[i]) > 0)
+					swap(input, i ++, low ++);
+				else i++;
+			}
+			split3(input, l, low - 1);
+			split3(input, high + 1, h);
+
+		}
+
+		private static Integer[] getInput() {
+			Integer[] input = new Integer[10];
+			for(int i = 0; i < input.length; i ++)
+				input[i] = 10 - i;
+			return input;
+		}
+		
+		private static void print(Integer[] input) {
+			for(int i = 0; i < input.length; i ++)
+				System.out.print(input[i] + " ");
+			System.out.println();
+		}
+
+		public static void test() {
+			print(insertion(getInput()));
+			print(selection(getInput()));
+			print(qsort(getInput()));
+		}
+	}
 
 
 	public static void main(String[] args) {
-		SearchArray.test();
+		Sorting.test();
 	}
 
 }
