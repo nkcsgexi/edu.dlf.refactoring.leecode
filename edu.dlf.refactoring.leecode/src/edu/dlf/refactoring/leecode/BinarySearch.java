@@ -5,6 +5,8 @@ import java.util.Queue;
 import java.util.LinkedList;
 import java.util.Iterator;
 import java.util.Stack;
+import java.util.List;
+import java.util.ArrayList;
 public class BinarySearch{
 
 	private static class BinaryNode<T extends BinaryNode, V> {
@@ -688,8 +690,54 @@ public class BinarySearch{
 		System.out.println(expressionEvaluate(
 					"( 1 + ( ( 2 + 3 ) * ( 4 * 5 ) ) )"));
 	}
+
+	private static class UnionFind {
+		private final int[] data;
+		private int count;	
+		public UnionFind(int N) {
+			this.data = new int[N];
+			this.count = N;
+			for(int i = 0; i< data.length; i++)
+				this.data[i] = i;
+		}
+
+		private int find(int i) {
+			List<Integer> list = new ArrayList<Integer>();
+			while(data[i] != i) {
+				list.add(i); 
+				i = data[i];
+			}
+			for(int j : list) data[j] = i;
+			return i;
+		}
+
+		public void connect(int i, int j) {
+			int ih = find(i);
+			int jh = find(j);
+			if(ih == jh) return;
+			data[ih] = jh;
+			count --;
+		}
+		
+		public boolean isConnected(int i, int j) {
+			return find(i) == find(j);
+		}
+
+		public static void test() {
+			int from[] = {4,3,6,9,2,8,5,7,6,1,6};
+			int to[] = {3,8,5,4,1,9,0,2,1,0,7};
+			UnionFind uf = new UnionFind(10);
+			for(int i = 0; i < from.length; i ++)
+				uf.connect(from[i], to[i]);
+			System.out.println(uf.count);
+		}
+
+	}
+
+
 	public static void main(String[] args) {
-		testEvaluation();
+		UnionFind.test();
+		
 	}
 
 }
