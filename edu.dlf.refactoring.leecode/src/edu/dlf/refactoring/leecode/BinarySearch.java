@@ -1,7 +1,10 @@
 import java.util.function.Consumer;
+import java.util.function.BiFunction;
+import java.util.Hashtable;
 import java.util.Queue;
 import java.util.LinkedList;
 import java.util.Iterator;
+import java.util.Stack;
 public class BinarySearch{
 
 	private static class BinaryNode<T extends BinaryNode, V> {
@@ -558,9 +561,135 @@ public class BinarySearch{
 		}
 	}
 
+	private static class Heap<T extends Comparable> {
+		private int N;
+		private int M;
+		private T[] data;
 
+		public Heap(int M) {
+			this.N = 0;
+			this.M = M;
+			this.data = (T[]) new Comparable[this.M];
+		}
+
+		private void swap(int i, int j) {
+			T t = data[i];
+			data[i] = data[j];
+			data[j] = t;
+		}
+
+		private void sink(int k) {
+			for(int i = k; i * 2 <= this.N;) {
+				int left = 2 * i;
+				int c = left;
+				int right = left + 1;
+				if(right <= this.N)
+					c = data[left].compareTo(data[right]) < 0 ?
+						left : right;
+				if(data[c].compareTo(data[i]) > 0) 
+					break;
+				swap(c, i);
+				i = c;
+			}	
+		}
+		private void swim(int k) {
+			for(int i = k; i > 1; i /= 2) {
+				int parent = i/2;
+				if(data[parent].compareTo(data[i]) < 0)
+					break;
+				swap(parent, i);
+			}
+		}
+
+		public void add(T t) {
+			N ++;
+			data[N] = t;
+			swim(N);
+		}
+
+		public T remove() {
+			T re = data[1];
+			data[1] = data[N--];
+		       	sink(1);
+			return re;	
+		}
+		public static Comparable[] heapSort(Comparable[] data) {
+			Heap h = new Heap(data.length * 2);
+			for(Comparable c : data) 
+				h.add(c);
+			for(int i = 0; i < data.length; i ++)
+				data[i] = h.remove();
+			return data;
+		}
+		public static void test() {
+			Integer[] input = { 2, 1, 8, 9, 6, 5, 0, 3};
+			for(Comparable i : heapSort(input))
+				System.out.println(i);
+		}
+	}
+
+	private static class ExpIterator implements Iterator<String> {
+		private final char[] ops = {'(', ')', '+', '-', '*', '/'};
+		private final String text;
+		private int current;
+		public ExpIterator(String text) { 
+			this.text = text; this.current = 0;
+		}
+		
+		private boolean isOp(char c) {
+			for(char o : ops)
+				if(o == c) return true;
+			return false;
+		}
+
+		@Override
+		public boolean hasNext() { return current != text.length(); }
+		@Override
+		public String next() {
+			while(Character.isWhitespace(text.charAt(current))) current ++;
+			if(isOp(text.charAt(current))) 
+				return Character.toString(text.charAt(current ++));
+			StringBuilder num = new StringBuilder();
+			while(Character.isDigit(text.charAt(current))) {
+				num.append(text.charAt(current));
+				current ++;
+			}
+			return num.toString();
+		}
+	}
+			
+	private static int expressionEvaluate(String s) {
+		Hashtable<String, BiFunction<Integer, Integer, Integer>> 
+			funcs = new Hashtable<String, BiFunction<Integer, Integer,
+			      Integer>>();
+		funcs.put("+", (i, j) -> i + j);
+		funcs.put("-", (i, j) -> i - j);
+		funcs.put("*", (i, j) -> i * j);
+		funcs.put("/", (i, j) -> i / j);
+		Stack<Integer> nums = new Stack<Integer>();
+		Stack<String> ops = new Stack<String>();
+		Iterator<String> it = new ExpIterator(s);
+		while(it.hasNext()) {
+			String t = it.next();
+			if(funcs.keySet().contains(t)) ops.push(t);
+			else if(t.equals("("));
+			else if(t.equals(")")) {
+				int i = nums.pop();
+				int j = nums.pop();
+				nums.push(funcs.get(ops.pop()).apply(j, i));
+			} else{
+				nums.push(Integer.parseInt(t));
+			}
+		}
+		return nums.pop();
+	}	
+
+	private static void testEvaluation() {
+		System.out.println(expressionEvaluate(
+					"( 1 + ( ( 2 + 3 ) * ( 4 * 5 ) ) )"));
+	}
 	public static void main(String[] args) {
-		Sorting.test();
+		testEvaluation();
 	}
 
 }
