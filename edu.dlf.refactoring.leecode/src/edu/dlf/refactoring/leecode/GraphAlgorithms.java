@@ -986,10 +986,43 @@ public class GraphAlgorithms {
 			}
 			return results;
 		}
+
+		private static int prime() {
+			int p = 1;
+			for(int i = 2; i < 20; i++)
+				p *= i;
+			p--;
+			return 3355439;
+		}
+
+		private static Iterable<Integer> KR(String text, String p) {
+			int d = 26;
+			int q = prime();
+			int h1 = 0, h2 = 0;
+			int rm = 1;
+			for(int i = 1; i < p.length(); i++)
+				rm = (rm * d) % q;
+			for(int i = 0; i < p.length(); i++) { 
+				h1 = (h1 * d + (p.charAt(i) - 'a')) % q;
+				h2 = (h2 * d + (text.charAt(i) - 'a')) % q;
+			}
+			List<Integer> results = new ArrayList<Integer>();
+			for(int i = p.length(); i < text.length(); i ++) {
+				if(h1 == h2) results.add(i - p.length());
+				int h = text.charAt(i - p.length()) - 'a';
+				int l = text.charAt(i) - 'a';
+				h2 = (h2 + q - ((h * rm) % q)) % q;
+				h2 = (h2 * d + l) % q;
+			}
+			if(h2 == h1)
+				results.add(text.length() - p.length());
+			return results;
+		}
+
 		public static void testSearch() {
 			String text = "abcdefageabcdabcde";
 			String pattern = "abcde";
-			print(BM(text, pattern));
+			print(KR(text, pattern));
 		}
 	}
 
@@ -1097,7 +1130,7 @@ public class GraphAlgorithms {
 			
 	}
 	public static void main(String[] args) {
-		SuffixArray.test();
+		SubstringMatch.testSearch();
 	}
 
 
