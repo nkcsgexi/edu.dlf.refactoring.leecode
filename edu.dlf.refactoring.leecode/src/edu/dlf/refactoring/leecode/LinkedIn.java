@@ -238,6 +238,38 @@ public class LinkedIn {
 	private static void testPalindrome() {
 		System.out.println(longestPalindrome("baaba"));
 	}
+
+	
+	private static int[] searchRange(int[] data, int t) {
+		int[] result = new int[2];
+		int low = 0; 
+		int high = data.length - 1;
+		while(low < high) {
+			int mid = (low + high) / 2;
+			if(data[mid] < t) 
+				low = mid + 1;
+			else 
+				high = mid;
+		}
+		result[0] = low;
+		high = data.length - 1;
+		while(low < high) {
+			int mid = (low + high) / 2;
+			if(data[mid] > t) 
+				high = mid;
+			else 
+				low = mid + 1;
+		}
+		result[1] = low - 1;
+		return result;
+	}
+
+	private static void testSearchRange() {
+		int[] data = new int[] {2, 3, 3, 3, 10};
+		int[] re = searchRange(data, 3);
+		System.out.println(re[0] + ":" + re[1]);
+	}
+
 	public static void main(String[] args) {
 		System.out.println(canMap("abb", "cdd"));
 		System.out.println(getNested("{{1,1},2,{1,1}}"));
@@ -248,6 +280,7 @@ public class LinkedIn {
 		testLCA();
 		testMultiExcept();
 		testPalindrome();
+		testSearchRange();
 	}
 	
 }
