@@ -197,6 +197,47 @@ public class LinkedIn {
 			System.out.println(d);
 	}
 
+	private static boolean checkBound(int len, int i) {
+		return i >=0 && i < len;
+	}
+	private static String longestPalindrome(String s) {
+		char[] data = new char[s.length() * 2 + 1];
+		for(int i = 0; i < s.length(); i++) {
+			data[2 * i] = '#';
+			data[2 * i + 1] = s.charAt(i);
+		}
+		data[s.length() * 2] = '#';
+		int[] id = new int[data.length];
+		int md = 0;
+		int mx = 0;
+		for(int i = 0; i < data.length; i++) {
+			id[i] = mx > i ? Math.min(id[2 * md - i], mx - i) : 1;
+			while(checkBound(data.length, id[i] + i) && 
+				checkBound(data.length, i - id[i]) &&
+				data[id[i] + i] == data[i - id[i]]) 
+					id[i] ++;
+			if(id[i] + i > mx) {
+				md = i;
+				mx = id[i] + i;
+			}
+		}
+		mx = 0;
+		md = 0;
+		for(int i = 0; i < id.length; i++) {
+			if(id[i] > mx) {
+				mx = id[i];
+				md = i;
+			}
+		}
+		StringBuilder sb = new StringBuilder();
+		for(int i = md - id[md] + 1; i < md + id[md]; i++) 
+			if(data[i] != '#') sb.append(data[i]);
+		return sb.toString();
+	}
+	
+	private static void testPalindrome() {
+		System.out.println(longestPalindrome("baaba"));
+	}
 	public static void main(String[] args) {
 		System.out.println(canMap("abb", "cdd"));
 		System.out.println(getNested("{{1,1},2,{1,1}}"));
@@ -206,6 +247,7 @@ public class LinkedIn {
 		testPermutation();
 		testLCA();
 		testMultiExcept();
+		testPalindrome();
 	}
 	
 }
