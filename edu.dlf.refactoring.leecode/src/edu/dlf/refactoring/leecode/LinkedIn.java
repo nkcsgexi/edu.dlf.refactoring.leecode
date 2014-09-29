@@ -15,7 +15,7 @@ public class LinkedIn {
 		public Node(int value) {this.value = value;}
 	}
 
-	private static Node getTree() {
+	private static Node[] getTree() {
 		Node[] ns = new Node[5];
 		for(int i = 0; i < ns.length; i ++)
 			ns[i] = new Node(i);
@@ -23,7 +23,7 @@ public class LinkedIn {
 		ns[0].right = ns[2];
 		ns[1].left = ns[3];
 		ns[1].right = ns[4];
-		return ns[0];
+		return ns;
 	}
 
 
@@ -47,10 +47,22 @@ public class LinkedIn {
 	}
 
 	private static void testLayer() {
-		Node root = getTree();
+		Node root = getTree()[0];
 		traverseLayer(root, (n, l) -> System.out.println(l + ":" + n.value));
 	}
 
+	private static Node lowestCommonAncestor(Node root, Node a, Node b) {
+		if(root == a || root == b || root == null) return root;
+		Node l = lowestCommonAncestor(root.left, a, b);
+		Node r = lowestCommonAncestor(root.right, a, b);
+		return l == null ? r : r == null ? l : root;
+	}
+
+	private static void testLCA() {
+		Node[] ns = getTree();
+		System.out.println(lowestCommonAncestor(ns[0], ns[3], ns[4]).value);
+	}
+	
 	private static int getNested(String s) {
 		List<Integer> nums = new ArrayList<Integer>();
 		List<Integer> nests = new ArrayList<Integer>();
@@ -164,7 +176,27 @@ public class LinkedIn {
 		int i = 1;
 		for(String s : result) System.out.println(s + ":" + i ++);
 	}
-	
+
+	private static int[] getMultipleExcept(int[] data) {
+		int[] front = new int[data.length];
+		int[] back = new int[data.length];
+		front[0] = 1;
+		back[data.length - 1] = 1;
+		for(int i = 1; i < data.length; i++) 
+			front[i] = data[i - 1] * front[i - 1];
+		for(int i = data.length - 2; i >= 0; i --)
+		       	back[i]	= back[i + 1] * data[i + 1];
+		for(int i = 0; i < data.length; i ++)
+			data[i] = front[i] * back[i];
+		return data;
+	}
+
+	private static void testMultiExcept() {
+		int[] data = {10, 2, 5};
+		for(int d : getMultipleExcept(data))
+			System.out.println(d);
+	}
+
 	public static void main(String[] args) {
 		System.out.println(canMap("abb", "cdd"));
 		System.out.println(getNested("{{1,1},2,{1,1}}"));
@@ -172,6 +204,8 @@ public class LinkedIn {
 		testLayer();
 		testMax();
 		testPermutation();
+		testLCA();
+		testMultiExcept();
 	}
 	
 }
