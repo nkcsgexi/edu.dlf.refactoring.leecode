@@ -989,10 +989,9 @@ public class GraphAlgorithms {
 
 		private static int prime() {
 			int p = 1;
-			for(int i = 2; i < 20; i++)
+			for(int i = 2; i < 10; i++)
 				p *= i;
-			p--;
-			return 3355439;
+			return --p;
 		}
 
 		private static Iterable<Integer> KR(String text, String p) {
