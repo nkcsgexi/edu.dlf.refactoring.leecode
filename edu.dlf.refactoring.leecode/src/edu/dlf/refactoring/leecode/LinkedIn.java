@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import java.util.function.BiConsumer;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Iterator;
 public class LinkedIn {
 
 	private static class Node {
@@ -13,7 +14,165 @@ public class LinkedIn {
 		public Node right;
 		public final int value;
 		public Node(int value) {this.value = value;}
+		
+		public static Node clone(Node n) {
+			if(null == n) return null;
+			Node c = new Node(n.value);
+			c.left = clone(n.left);
+			c.right = clone(n.right);
+			return c;
+		}
+
+		public static Node clone2(Node root) {
+			Node nr = new Node(root.value);
+			Stack<Node> os = new Stack<Node>();
+			Stack<Node> ns = new Stack<Node>();
+			os.push(root);
+			ns.push(nr); 
+			while(os.size() != 0) {
+				Node on = os.pop();
+				Node nn = ns.pop();
+				if(null != on.left) {
+					os.push(on.left);
+					nn.left = new Node(on.left.value);
+					ns.push(nn.left);
+				}
+				if(null != on.right) {
+					os.push(on.right);
+					nn.right = new Node(on.right.value);
+					ns.push(nn.right);
+				}
+			}
+			return nr;
+		}
+
+		public static boolean equal(Node n1, Node n2) {
+			if(null == n1 && null == n2) return true;
+			if(null == n1 || null == n2) return false;
+			return n1.value == n2.value && equal(n1.left, n2.left) 
+				&& equal(n1.right, n2.right);
+		}
+
 	}
+
+	private static class MultiNode {
+		List<MultiNode> children;
+		int value;
+
+		private static class NodeIt implements Iterator<Integer> {
+			
+			private Stack<MultiNode> ns;
+
+			public NodeIt(MultiNode root) {
+				this.ns = new Stack<MultiNode>();
+				for(MultiNode c = root;;) {
+					this.ns.push(c);
+					if(c.children != null)
+						c = c.children.get(0);
+					else 
+						break;
+				}
+
+					
+			}
+
+			@Override
+			public boolean hasNext() {
+				return ns.size() != 0;
+			}
+
+			@Override
+			public Integer next() {
+				int result = ns.pop().value;
+				for(MultiNode c = ns.pop(); ns.size() != 0;) {
+					MultiNode p = ns.pop();
+					int i = p.children.indexOf(c);
+					if(i + 1 < p.children.size()) {
+						MultiNode n = p.children.get(i + 1);
+						this.ns.push(p);
+						for(;n != null; n = getFirstChild(n))
+							this.ns.push(n);
+						break;
+					}
+					c = p;
+				}
+				return result;
+			}
+
+			private MultiNode getFirstChild(MultiNode n) {
+				return n.children == null ? null : n.children.get(0);
+			}
+		}
+	}
+
+	private static int wordDistance(String[] words, String w1, String w2) {
+		Hashtable<String, List<Integer>> table = new Hashtable<String, 
+			List<Integer>>();
+		for(int i = 0; i < words.length; i++) {
+			if(table.containsKey(words[i])) {
+				table.get(words[i]).add(i);
+			} else {
+				List<Integer> l = new ArrayList<Integer>();
+				l.add(i);
+				table.put(words[i], l);
+			}
+		}
+		List<Integer> l1 = table.get(w1);
+		List<Integer> l2 = table.get(w2);
+		int min = Integer.MAX_VALUE;
+		for(int i1 : l1)
+			for(int i2 :l2)
+				min = min < Math.abs(i1 - i2) ? min :
+					Math.abs(i1 - i2);
+		return min;
+	}
+
+	private static void addWord(Hashtable<String, List<Integer>> table,
+			String word, int i) {
+		if(table.contains(word)) {
+			table.get(word).add(i);
+		} else {
+			List<Integer> l = new ArrayList<Integer>();
+			l.add(i);
+			table.put(word, l);
+		}
+	}
+
+	private static void removeWord(Hashtable<String, List<Integer>> table,
+			String word) {
+		if(table.keySet().contains(word)) {
+			List<Integer> l = table.get(word);
+			if(l.size() > 1) l.remove(0);
+			else table.remove(word);
+		}
+	}
+			
+	private static int[] getWordSet(String[] words) {
+		Hashtable<String, List<Integer>> table = new Hashtable<String,
+			List<Integer>>();
+		for(int i =0; i < words.length; i ++) 
+			addWord(table, words[i], i);
+		Hashtable<String, List<Integer>> ct = new Hashtable<String,
+			List<Integer>>();
+		int min = Integer.MAX_VALUE;
+		int ms = 0;
+		int me = 0;
+		for(int end = 0, start = 0; end < words.length; end ++) {
+			boolean found = false;
+			addWord(ct, words[end], end);	
+			while(ct.keySet().size() == table.keySet().size()) {
+				found = true;
+				removeWord(ct, words[start ++]);
+			}
+			if(found && end - start < min) {
+				ms = start - 1;
+				me = end;
+				min = end - start;
+			}	
+		}
+		return new int[] {ms, me};
+	}
+	
 
 	private static Node[] getTree() {
 		Node[] ns = new Node[5];
@@ -26,6 +185,13 @@ public class LinkedIn {
 		return ns;
 	}
 
+	private static void checkCloneTree() {
+		Node root = getTree()[0];
+		Node cr = Node.clone(root);
+		Node cr2 = Node.clone2(root);
+		System.out.println(Node.equal(root, cr));
+		System.out.println(Node.equal(root, cr2));
+	}
 
 	private static void traverseLayer(Node root, BiConsumer<Node, Integer> c) {
 		Queue<Node> q = new LinkedList<Node>();
@@ -267,9 +433,53 @@ public class LinkedIn {
 	private static void testSearchRange() {
 		int[] data = new int[] {2, 3, 3, 3, 10};
 		int[] re = searchRange(data, 3);
-		System.out.println(re[0] + ":" + re[1]);
+		System.out.println(strictlySmaller(data, 4) + ":" + 
+				strictlyLarger(data, 4));
 	}
 
+	private static int strictlyLarger(int[] data, int t) {
+		int low = 0;
+		int high = data.length - 1;
+		while(low < high) {
+			int mid = (low + high) / 2;
+			if(data[mid] < t) 
+				low = mid + 1;
+			else 
+				high = mid;
+		}
+		return low;
+	}
+	private static int strictlySmaller(int[] data, int t) {
+		int low = 0;
+		int high = data.length - 1;
+		while(low < high) {
+			int mid = (low + high) / 2;
+			if(data[mid] > t) 
+				high = mid;
+			else
+				low = mid + 1;
+		}
+		return low - 1;
+	}
+	
+	private static class BlockQueue {
+		private final Queue<Integer> q = new LinkedList<Integer>();
+
+		public synchronized boolean add(Integer i) {
+			q.add(i);
+			notify();
+			return true;
+		}
+
+		public synchronized Integer remove() throws InterruptedException{
+			while(q.size() == 0) {
+				wait();
+			}
+			return q.remove();
+		}
+
+		public Integer peek() { return q.peek(); }
+	}
 	public static void main(String[] args) {
 		System.out.println(canMap("abb", "cdd"));
 		System.out.println(getNested("{{1,1},2,{1,1}}"));
@@ -281,6 +491,7 @@ public class LinkedIn {
 		testMultiExcept();
 		testPalindrome();
 		testSearchRange();
+		checkCloneTree();
 	}
 	
 }
