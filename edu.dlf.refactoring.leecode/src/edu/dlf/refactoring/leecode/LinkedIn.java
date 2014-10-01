@@ -7,7 +7,17 @@ import java.util.function.BiConsumer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Iterator;
+import java.util.HashSet;
 public class LinkedIn {
+
+	private static class LinkedNode {
+		public final int value;
+		public LinkedNode next;
+		public LinkedNode(int value) {
+			this.value = value;
+			this.next = null;
+		}
+	}
 
 	private static class Node {
 		public Node left;
@@ -52,8 +62,40 @@ public class LinkedIn {
 			return n1.value == n2.value && equal(n1.left, n2.left) 
 				&& equal(n1.right, n2.right);
 		}
+	
 
+		public static List<LinkedNode> convert2LinkedList(Node root) {
+			List<LinkedNode> results = new ArrayList<LinkedNode>();
+			LinkedNode current = new LinkedNode(root.value);
+			if(root.left == null && root.right == null) {
+				results.add(current);
+				return results;
+			}
+			if(root.left != null) 
+				results.addAll(convert2LinkedList(root.left));
+			if(root.right != null) 
+				results.addAll(convert2LinkedList(root.right));
+			HashSet<LinkedNode> toAppend = new HashSet<LinkedNode>();
+			for(LinkedNode n : results) {
+				while(null != n.next) n = n.next;
+				toAppend.add(n);
+			}
+			for(LinkedNode n : toAppend) n.next = current;
+			return results;
+		}
 	}
+	private static void testConvert() {
+		Node root = getTree()[0];
+		List<LinkedNode> list = Node.convert2LinkedList(root);
+		for(LinkedNode n : list) {
+			while(null != n) { 
+				System.out.print(n.value + " ");
+				n = n.next;
+			}
+			System.out.println();
+		}
+	}
+	
 
 	private static class MultiNode {
 		List<MultiNode> children;
@@ -480,18 +522,30 @@ public class LinkedIn {
 
 		public Integer peek() { return q.peek(); }
 	}
+
+	private static void coin(int[] options, List<Integer> counts, 
+			int amount) {
+		if(amount == 0) {
+			for(int i : counts) 
+				System.out.print(i + " ");
+			System.out.println();
+			return;
+		}
+		if(counts.size() == options.length) return;	
+		int op = options[counts.size()];
+		for (int i = 0; i * op <= amount; i ++) {
+			counts.add(i);
+			coin(options, counts, amount - op * i);
+			counts.remove(counts.size() - 1);
+		}
+
+	}
+
+	private static void testCoin() {
+		coin(new int[] {1, 5, 10, 20}, new ArrayList<Integer>(), 100);
+	}
 	public static void main(String[] args) {
-		System.out.println(canMap("abb", "cdd"));
-		System.out.println(getNested("{{1,1},2,{1,1}}"));
-		System.out.println(getNested("{1,{4,{6}}}"));
-		testLayer();
-		testMax();
-		testPermutation();
-		testLCA();
-		testMultiExcept();
-		testPalindrome();
-		testSearchRange();
-		checkCloneTree();
+		testCoin();
 	}
 	
 }
