@@ -628,10 +628,33 @@ public class LinkedIn {
 		}
 		return matrix[machine - 1][volumns.length - 1];
 	}
-
+	private static boolean ifVolumnOk(int[] v, int m, int capacity) {
+		int needed = 1;
+		int current = 0;
+		for(int i : v) {
+			if(current + i > capacity) {
+				needed ++;
+				current = i;
+			} else 
+				current += i;
+			if(needed > m) 
+				return false;
+		}
+		return true;
+	}
+	private static int storageProblem2(int[] v, int m) {
+		int total = 0;
+		for(int i : v) total += i;
+		int capacity = total;
+		for(; ifVolumnOk(v, m, capacity); capacity--);
+		return capacity + 1;
+		
+	}
 	private static void testStorage() {
-		System.out.println(minMaxStorageProblem(
-			new int[]{3, 5, 3, 4, 6, 7, 8, 1}, 7));
+		int[] data = new int[]{3, 5, 3, 4, 6, 7, 8, 1};
+		int m = 4;
+		System.out.println(minMaxStorageProblem(data, m));
+		System.out.println(storageProblem2(data, m));
 	}
 
 	public static void main(String[] args) {
