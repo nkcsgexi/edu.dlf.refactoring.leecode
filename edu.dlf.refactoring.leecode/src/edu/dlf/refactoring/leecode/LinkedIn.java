@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Iterator;
 import java.util.HashSet;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
 public class LinkedIn {
 
 	private static class LinkedNode {
@@ -541,11 +544,98 @@ public class LinkedIn {
 
 	}
 
+	private static Iterable<String> regular(String text) {
+		HashSet<String> set = new HashSet<String>();
+		String dot = Pattern.quote(".");
+		String noDot = "[^" + dot + "]"; 
+		StringBuilder sb = new StringBuilder();
+		sb.append(noDot);
+		sb.append("(\\d+" + dot);
+		sb.append("\\d+" + dot);
+		sb.append("\\d+" + dot);
+		sb.append("\\d+)");
+		sb.append(noDot);
+		Pattern pattern = Pattern.compile(sb.toString());
+		Matcher m = pattern.matcher(text);
+		while(m.find()) {
+			String add = m.group(1);
+			String[] nums = add.split("\\.");
+			boolean isOk = true;
+			for(String n : nums) {
+				try{
+					int num = Integer.parseInt(n);
+					if(num < 0 || num > 255) isOk = false;
+				} catch(Exception e) {
+					isOk = false;
+				}
+				if(!isOk) break;
+			}
+			if(isOk) set.add(add);
+		}
+		return set;
+	}
+
+	private static void testRegular() {
+		String s = "fadasfd10.10.10000.10fd";
+		System.out.println(regular(s).iterator().hasNext());
+	}
+
 	private static void testCoin() {
 		coin(new int[] {1, 5, 10, 20}, new ArrayList<Integer>(), 100);
 	}
+
+	private static int getRandom(int min, int max) {
+		int d = (int)(Math.random() * (max - min + 1));
+		return min + d;
+	}
+
+	private static int[] shuffle(int[] data) {
+		for(int i = 0; i < data.length; i++) {
+			int j = getRandom(i, data.length - 1);
+			int t = data[i];
+			data[i] = data[j];
+			data[j] = t;
+		}
+		return data;
+	}
+
+	private static void testShuffle() {
+		int[] data = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+		for(int i : shuffle(data)) {
+			System.out.print(i + " ");
+		}
+		System.out.println();
+	}
+
+	private static int minMaxStorageProblem(int[] volumns, int machine) {
+		int[][] matrix = new int[machine][volumns.length];
+		matrix[0][0] = volumns[0];
+		for(int i = 1; i < volumns.length; i++)
+			matrix[0][i] = matrix[0][i - 1] + volumns[i];
+		for(int m = 1; m < machine; m++) {
+			for(int i = 0; i < volumns.length; i ++) {
+				int min = Integer.MAX_VALUE;
+				for(int j = 0; j <= i; j ++) {
+					int current = 0;
+					for(int  k = j + 1; k <= i; k++)
+						current += volumns[k];
+					current = Math.max(current, 
+							matrix[m - 1][j]);
+					min = current < min ? current : min;
+				}
+				matrix[m][i] = min;
+			}
+		}
+		return matrix[machine - 1][volumns.length - 1];
+	}
+
+	private static void testStorage() {
+		System.out.println(minMaxStorageProblem(
+			new int[]{3, 5, 3, 4, 6, 7, 8, 1}, 7));
+	}
+
 	public static void main(String[] args) {
-		testCoin();
+		testStorage();
 	}
 	
 }
