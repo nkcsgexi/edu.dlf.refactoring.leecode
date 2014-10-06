@@ -1,6 +1,8 @@
 import java.util.Queue;
 import java.util.List;
 import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Stack;
 import java.util.function.Consumer;
 import java.util.function.BiConsumer;
@@ -10,6 +12,8 @@ import java.util.Iterator;
 import java.util.HashSet;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class LinkedIn {
 
@@ -656,9 +660,167 @@ public class LinkedIn {
 		System.out.println(minMaxStorageProblem(data, m));
 		System.out.println(storageProblem2(data, m));
 	}
+	private static int getZigzag(int[] data) {
+		int[] len = new int[data.length];
+		len[0] = 1;
+		len[1] = 2;
+		int pre = data[1] - data[0] == 0 ? 0 : 
+			(data[1] - data[0] > 0 ? 1 : -1);
+		for(int end = 2; end < data.length; end ++) {
+			int v = data[end] - data[end - 1];
+			v = v == 0 ? 0 : (v > 0 ? 1 : -1);
+			if(v + pre == 0) len[end] = len[end - 1] + 1;
+			else len[end] = 2;
+			pre = v;
+		}
+		int max = Integer.MIN_VALUE;
+		for(int l : len)
+			max = max < l ? l : max;
+		return max;
+	}
+	private static void testZigzag() {
+		System.out.println(getZigzag(new int[] {
+			70, 55, 13, 2, 99, 2, 80, 80, 80, 
+			80, 100, 19, 7, 5, 5, 5, 1000, 32, 32}));
+	}
+	private static int getUpper(int i) {
+		int j = 10;
+		for(; j <= i; j *= 10);
+		return j;
+	}
 
+	/*
+	 * Given a string of digits, for instance 123445, calculate the minimum
+	 * number of + inserted to make the formular equal to a given number,
+	 * for instance, 123 + 445 == 568.
+	 * */
+	private static int quickSum(String d, int sum) {
+		HashMap<Integer, Integer[]> map = new HashMap<Integer, Integer[]>();
+		Integer[] ns = new Integer[d.length()];
+		for(int i = 0; i < ns.length; i++)
+			ns[i] = d.charAt(i) - '0';
+		int s = 0;
+		for(int n : ns) s += n;
+		map.put(s, ns);
+		for(int split = d.length() - 1; split > 0; split --) {
+			Iterable<Entry<Integer, Integer[]>> pre = getSplit(map, 
+				split + 1);
+			for(Entry<Integer, Integer[]> data : pre) {
+				Integer[] v = data.getValue();
+				Integer k = data.getKey();
+				for(int m = 1; m < v.length; m++) {
+					int original = v[m - 1] + v[m];
+					int updated = getUpper(v[m]) * v[m-1] 
+						+ v[m];
+					int nk = k - original + updated;
+					Integer[] nv = new Integer[v.length - 1];
+					for(int i = 0; i < m - 1; i++)
+						nv[i] = v[i];
+					nv[m - 1] = updated;
+					for(int i = m; i < nv.length; i++)
+						nv[i] = v[i + 1];
+					map.put(nk, nv);
+				}
+			}
+		}
+		return map.containsKey(sum) ? map.get(sum).length : -1;
+	}
+
+	private static Iterable<Entry<Integer, Integer[]>> getSplit
+			(HashMap<Integer, Integer[]> map, int count) {
+		List<Entry<Integer, Integer[]>> results = new ArrayList
+			<Entry<Integer, Integer[]>>();
+		for(Entry<Integer, Integer[]> data : map.entrySet()) {
+			if(data.getValue().length == count) {
+				results.add(data);
+			}
+		}
+		return results;
+	}
+
+	private static class H2O { 
+		private final AtomicInteger h;
+		private final AtomicInteger o;
+		private final Semaphore hs;
+		private final Semaphore os;
+
+		public H2O() {
+			this.h = new AtomicInteger(0);
+			this.o = new AtomicInteger(0);
+			this.hs = new Semaphore(0);
+			this.os = new Semaphore(0);
+		}
+
+		public void H() throws Exception {
+			h.getAndIncrement();
+			check();
+			generate(hs);
+		}
+		public void O() throws Exception {
+			o.getAndIncrement();
+			check();
+			generate(os);
+		}
+
+		private synchronized void check() {
+			if(h.get() >= 2 && o.get() >= 1) {
+				h.getAndAdd(-2);
+				o.getAndAdd(-1);
+				hs.release(2);
+				os.release(1);
+				notifyAll();
+			}
+		}
+
+		private void generate(Semaphore s) throws 
+				Exception{
+			while(!s.tryAcquire()) {
+				wait();
+			}
+		}
+
+		public Runnable createORun() {
+			final H2O p = this;
+			return new Runnable() {
+				@Override
+				public void run() {
+					try{
+						p.O();
+						System.out.println("o");
+					} catch(Exception e) {}
+				}
+			};
+		}
+		public Runnable createHRun() {
+			final H2O p = this;
+			return new Runnable() {
+				@Override
+				public void run() {
+					try{
+						p.H();
+						System.out.println("h");
+					}catch(Exception e){}
+				}
+			};
+		}
+	}
+
+	private static void testSplit() {
+		System.out.println(quickSum("382834", 100));
+	}
+
+	private static void testH2O() {
+		List<Runnable> runs = new ArrayList<Runnable>();
+		H2O h = new H2O();
+		for(int i = 0; i < 100; i ++) {
+			runs.add(h.createORun());
+			runs.add(h.createHRun());	
+		}
+		for(Runnable r : runs) 
+			new Thread(r).start();
+	}
 	public static void main(String[] args) {
-		testStorage();
+		testH2O();
 	}
 	
 }
