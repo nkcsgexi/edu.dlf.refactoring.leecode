@@ -361,7 +361,30 @@ class LeetCode {
 		System.out.println(distanceMax(data));
 	}
 
+	private static String getLongestStringNoDup(String s) {
+		HashSet<Character> set = new HashSet<Character>();
+		int start = 0;
+		int max = Integer.MIN_VALUE;
+		int maxStart = 0;
+		for(int end = 0; end < s.length(); end ++) {
+			if(set.contains(s.charAt(end))) {
+				int len = end - start;
+				if(len > max) {
+					max = len;
+					maxStart = start;
+				}
+				while(s.charAt(start) != s.charAt(end)) start ++;
+				start ++;
+			} else
+				set.add(s.charAt(end));
+		}
+		return s.substring(maxStart, max);
+	}
+
+	private static void testNodup() {
+		System.out.println(getLongestStringNoDup("abcabcbb"));
+	}
 	public static void main(String[] args) {
-		testDistance();
+		testNodup();
 	}
 }
