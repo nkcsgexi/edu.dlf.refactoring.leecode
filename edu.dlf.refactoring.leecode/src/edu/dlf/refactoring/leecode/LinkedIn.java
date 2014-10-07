@@ -819,8 +819,85 @@ public class LinkedIn {
 		for(Runnable r : runs) 
 			new Thread(r).start();
 	}
+
+	private static class ConsumerProducer {
+		private final int size;
+		private final int pwait;
+		private final int cwait;
+		private int pool;
+		private final int P = 100;
+		private final int C = 100;
+
+		public ConsumerProducer() {
+			this.pool = 0;
+			this.size = 100;
+			this.pwait = 200;
+			this.cwait = 300;
+		}
+
+		private void produce() {
+			try {
+				for(int i = 0; i < P; i++) {
+					Thread.sleep(this.pwait);
+					add(i); 
+				}
+			} catch(Exception e) {}
+		}
+
+		private void consume() {
+			try {
+				for(int i = 0; i < C; i++) {
+					Thread.sleep(this.cwait);
+					remove(i);
+				}
+			} catch(Exception e) {}
+		}
+
+		private synchronized void add(int i) throws Exception {
+			while(pool == size) wait();
+			System.out.println("add " + i);
+			pool++;
+			notifyAll();
+		}
+		private synchronized void remove(int i) throws Exception {
+			while(pool == 0) wait();
+			System.out.println("remove " + i);
+			pool --;
+			notifyAll();
+		}
+		public Runnable getProducer() {
+			final ConsumerProducer p = this;
+			return new Runnable() {
+			       @Override
+		       		public void run() { p.produce(); }
+			};
+		}
+		public Runnable getConsumer() {
+			final ConsumerProducer p = this;
+			return new Runnable() {
+				@Override
+				public void run() { p.consume(); }
+			};
+		}
+	}
+
+	private static void testProCon() {
+		ConsumerProducer p = new ConsumerProducer();
+		Thread t1 = new Thread(p.getProducer());
+		Thread t2 = new Thread(p.getConsumer());
+		t1.start();
+		t2.start();
+	}
+
+	private static void sleep(int sec) {
+		try{
+			Thread.sleep(1000 * sec);
+		} catch (InterruptedException e){}
+	}
+
 	public static void main(String[] args) {
-		testH2O();
+		testProCon();
+		sleep(60);	
 	}
 	
 }
