@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Stack;
 import java.util.function.Consumer;
 import java.util.Collections;
+import java.util.Comparator;
 class LeetCode {
 
 	private static class GNode {
@@ -464,13 +465,14 @@ class LeetCode {
 			System.out.println(i);
 	}
 	
-	private static void findKthSmallestTwoSortedArray(int[] a1, int[] a2) {
+	private static int findKthSmallestTwoSortedArray(int[] a1, int[] a2, 
+			int k) {
 		int i = 0;
 		int j = 0;
 		while(i + j != k - 1) {
 			int[] a = i == a1.length ? a2 : (a2.length == j ? a1 :
 					(a1[i] < a2[j] ? a1 : a2));
-			a == a1 ? i ++ : j ++;
+			int t = a == a1 ? i ++ : j ++;
 		}
 		return Math.min(a1[i], a2[j]);
 	}	
@@ -481,16 +483,24 @@ class LeetCode {
 		List<Integer> common = new ArrayList<Integer>();
 		while(i < a1.length && j < a2.length) {
 			if(a1[i] == a2[j]) {
-				list.add(a1[i]);
+				common.add(a1[i]);
 				i ++;
 				j ++;
 			} 
 			else {
-				a1[i] > a2[j] ? j ++ : i ++;
+				int t = a1[i] > a2[j] ? j ++ : i ++;
 			}
 		}	
 		return common;
 	}
+	private static void testSortedArray() {
+		int[] a1 = {1, 3, 4, 6, 7, 8, 9};
+		int[] a2 = {2, 4, 5, 6, 9, 10, 12};
+		System.out.println(findKthSmallestTwoSortedArray(a1, a2, 5));
+		for(int i : findIntersectionTwoSortedArray(a1, a2)) 
+			System.out.println(i);
+	}
+
 	
 	
 	private static class Ele implements Comparable<Ele> {
@@ -551,8 +561,66 @@ class LeetCode {
 		System.out.println(getLongestStringNoDup("abcabcbb"));
 	}
 
+	private static String minConcatenateWords(String[] words) {
+		List<String> l = new ArrayList<String>();
+		for(String s : words) l.add(s);
+		Comparator<String> c = new Comparator<String>() {
+			@Override
+			public int compare(String s1, String s2) {
+				return (s1 + s2).compareTo(s2 + s1);
+			}
+		};
+		Collections.sort(l, c);
+		StringBuilder sb = new StringBuilder();
+		for(String s : l) 
+			sb.append(s);
+		return sb.toString();
+	}
+
+	private static void concatenateWordsTest() {
+		String[] words = {"ji", "jibw", "jijibw"};
+		System.out.println(minConcatenateWords(words));
+	}
+
+	private static boolean squareAdd(int n) {
+		Hashtable<Integer, Integer> table = new Hashtable<Integer,
+			Integer>();
+		int max = 2147483647;
+		int maxKey = (int)(Math.sqrt(max));
+		for(int k = 0; k <= maxKey; k ++) {
+			table.put(k * k, k);
+		}
+		for(int i = 0; i <= (int)(Math.sqrt(n/2)); i++) {
+			int m = n - i * i;
+			if(table.contains(m))
+				return true;
+		}
+		return false;
+	}
+
+	private static void testSquare() {
+		int[] in = {1233, 8833, 10100, 5882353};
+		for(int i : in)
+			System.out.println(squareAdd(i));
+	}
+
+	private static int copyA(int step, int buffer, int count) {
+		if(step <= 0) return count;
+		int p1 = copyA(step - 1, buffer, count + 1);
+		int p2 = copyA(step - 2, count, count);
+		int p3 = copyA(step - 1, buffer, buffer + count);
+		return Math.max(p1, Math.max(p2, p3));
+	}
+
+	private static void testCopy() {
+		System.out.println(copyA(12, 0,0));
+		System.out.println(copyA(13, 0,0));
+		System.out.println(copyA(14, 0,0));
+	}
+
+
 
 	public static void main(String[] args) {
-		testSlidingWin();
+		testCopy();
 	}
 }
