@@ -270,7 +270,10 @@ class LeetCode {
 		public Node right;
 		public int value;
 		public Node parent;
+		public Node(int value) {this.value = value;}
 	}
+
+
 
 
 	private static class LCA {
@@ -326,6 +329,169 @@ class LeetCode {
 
 	}
 
+	private static void inorder(Node n) {
+		if(null == n) return;
+		inorder(n.left);
+		System.out.println(n.value);
+		inorder(n.right);
+	}
+	private static void preorder(Node n) {
+		if(null == n) return;
+		System.out.println(n.value);
+		preorder(n.left);
+		preorder(n.right);
+	}
+
+	private static void postorder(Node n) {
+		if(null == n) return;
+		postorder(n.left);
+		postorder(n.right);
+		System.out.println(n.value);
+	}
+
+	private static int[] subarray(int[] data, int start, int end) {
+		int[] result = new int[end - start + 1];
+		for(int i = 0; i < result.length; i ++)
+			result[i] = data[start + i];
+		return result;
+	}
+
+	private static Node recreateNode(int[] in, int[] pre) {
+		if(null == in || null == pre || in.length == 0 || pre.length == 0)
+			return null;
+		int len = in.length;
+		int divider = pre[0];
+		int inDivider = 0;
+		for(int i = 0; i < len; i++)
+			if(divider == in[i])
+				inDivider = i;
+		Node root = new Node(divider);
+		root.left = recreateNode(subarray(in, 0, inDivider - 1), 
+			subarray(pre, 1, inDivider));
+		root.right = recreateNode(subarray(in, inDivider + 1, len - 1),
+			subarray(pre, inDivider + 1, len - 1));
+		return root;
+	}
+
+	private static Node recreateNode2(int[] in, int[] post) {
+		if(null == in || null == post || in.length == 0 ||
+			post.length == 0 || in.length != post.length)
+				return null;
+		int len = post.length;
+		int d = post[len - 1];
+		int div = 0;
+		for(int i = 0; i < len; i ++)
+			if(in[i] == d) div = i;
+		Node root = new Node(d);
+		root.left = recreateNode2(subarray(in, 0, div - 1),
+			subarray(post, 0, div - 1));
+		root.right = recreateNode2(subarray(in, div + 1, len - 1),
+			subarray(post, div, len - 2));
+		return root;
+	}
+
+	private static void testRecreateNode() {
+		int[] pre = {7,10,4,3,1,2,8,11};
+		int[] in = {4,10,3,1,7,11,8,2};
+		int[] post = {4, 1, 3, 10, 11, 8, 2, 7};
+		Node root1 = recreateNode(in, pre);
+		Node root2 = recreateNode2(in, post);
+		System.out.println("root1");
+		preorder(root1);
+		inorder(root1);
+		System.out.println("root2");
+		postorder(root2);
+		inorder(root2);
+	}
+		
+	private static int maxMoney(int[] data, int start, int end) {
+		if(start == end) return data[start];
+		if(start > end) return 0;
+		int p1 = data[start] + maxMoney(data, start + 2, end);
+		int p2 = data[start] + maxMoney(data, start + 1, end - 1);
+		int p3 = data[end] + maxMoney(data, start, end - 2);
+		int p4 = data[end] + maxMoney(data, start + 1, end - 1);
+		return Math.max(Math.max(p1, p2), Math.max(p3, p4));
+	}
+	private static int maxMoney(int[] data) {
+		int len = data.length;
+		int[][] matrix = new int[len][len];
+		for(int i = 0; i < len; i++) matrix[i][i] = data[i];
+		for(int i = 0; i < len - 1; i++) matrix[i][i + 1] =
+			Math.max(data[i], data[i + 1]);
+
+		for(int diff = 2; diff < len; diff ++) {
+			for(int i = 0; i + diff < len; i ++) {
+				int j = i + diff;
+				int p1 = data[i] + matrix[i + 2][j];
+				int p2 = data[i] + matrix[i + 1][j - 1];
+				int p3 = data[j] + matrix[i][j - 2];
+				int p4 = data[j] + matrix[i + 1][j - 1];
+				matrix[i][j] = Math.max(Math.max(p1, p2), 
+						Math.max(p3, p4));
+			}
+		}
+		return matrix[0][len - 1];
+	}
+	private static void testMaxMoney() {
+		int[] data = { 3, 2, 2, 3, 1, 2 };
+		System.out.println(maxMoney(data, 0, data.length - 1));
+		System.out.println(maxMoney(data));
+	}
+
+	private static int[] slidingWindowMax(int[] data, int ws) {
+		int len = data.length;
+		int[] res = new int[len - ws + 1];
+		LinkedList<Integer> q = new LinkedList<Integer>();
+		for(int i = 0; i < ws; i ++){
+			q.add(data[i]);
+			while(q.peek() < data[i]) q.remove();
+		}
+		int index = 0;
+		for(int end = ws; end < len; end ++) {
+			res[index ++] = q.peek();
+			while(q.size() >= ws) q.remove();
+			q.add(data[end]);
+			while(q.peek() < data[end]) q.remove();
+		}
+		res[index] = q.peek();
+		return res;
+	}
+
+	private static void testSlidingWin() {
+		int[] data = {1, 3, -1, -3, 5, 3, 6, 7};
+		for(int i : slidingWindowMax(data, 3)) 
+			System.out.println(i);
+	}
+	
+	private static void findKthSmallestTwoSortedArray(int[] a1, int[] a2) {
+		int i = 0;
+		int j = 0;
+		while(i + j != k - 1) {
+			int[] a = i == a1.length ? a2 : (a2.length == j ? a1 :
+					(a1[i] < a2[j] ? a1 : a2));
+			a == a1 ? i ++ : j ++;
+		}
+		return Math.min(a1[i], a2[j]);
+	}	
+	private static Iterable<Integer> findIntersectionTwoSortedArray
+			(int[] a1, int[] a2) {
+		int i = 0;
+		int j = 0;
+		List<Integer> common = new ArrayList<Integer>();
+		while(i < a1.length && j < a2.length) {
+			if(a1[i] == a2[j]) {
+				list.add(a1[i]);
+				i ++;
+				j ++;
+			} 
+			else {
+				a1[i] > a2[j] ? j ++ : i ++;
+			}
+		}	
+		return common;
+	}
+	
 	
 	private static class Ele implements Comparable<Ele> {
 		public int data;
@@ -384,7 +550,9 @@ class LeetCode {
 	private static void testNodup() {
 		System.out.println(getLongestStringNoDup("abcabcbb"));
 	}
+
+
 	public static void main(String[] args) {
-		testNodup();
+		testSlidingWin();
 	}
 }
