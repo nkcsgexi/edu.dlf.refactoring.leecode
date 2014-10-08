@@ -796,7 +796,42 @@ class LeetCode {
 		postVisitNoRecursion(n, i -> System.out.println(i.value));
 	}
 
+	private static int toInt(char c) {
+		return c - 'a';
+	}
+
+	private static Iterable<Integer> substringMatch(String s, String p) {
+		int row = 26;
+		int column = p.length() + 1;
+		int[][] matrix = new int[row][column];
+		for(int i = 0; i < row; i ++) matrix[i][0] = 0;
+		matrix[toInt(p.charAt(0))][0] = 1;
+		int k = 0;
+		for(int i = 1; i < column; i ++) {
+			for(int j = 0; j < row; j ++)
+				matrix[j][i] = matrix[j][k];
+			if(i < p.length()) {
+				matrix[toInt(p.charAt(i))][i] = i + 1;
+				k = matrix[toInt(p.charAt(i))][k];
+			}
+		}
+		int cs = 0;
+		List<Integer> results = new ArrayList<Integer>();
+		for(int i = 0; i < s.length(); i ++) {
+			cs = matrix[toInt(s.charAt(i))][cs];
+			if(cs == column - 1) {
+				results.add(i - p.length() + 1);
+			}
+		}
+		return results;
+	}
+		
+	private static void testSubstring() {
+		for(int i : substringMatch("hfjdkashfjd", "hfj"))
+			System.out.println(i);
+	}
+
 	public static void main(String[] args) {
-		testPost();
+		testSubstring();
 	}
 }
