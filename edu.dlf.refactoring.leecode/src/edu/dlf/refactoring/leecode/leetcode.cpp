@@ -1,5 +1,6 @@
 #include<string>	
 #include<iostream>
+#include<climits>
 
 using namespace std;
 
@@ -82,6 +83,29 @@ Node* convert2Tree(LinkedNode* node, LinkedNode* end) {
 	root -> right = right;
 	return root;
 }
+int findLargestBST(Node* p, int min, int max, Node*& maxBST, int& maxSize,
+		Node*& child) {
+	if(!p) return 0;
+	if(p->value > min && p->value < max) {
+		Node* parent = new Node(p->value);
+		int cl = findLargestBST(p->left, min, p->value, maxBST, maxSize, 
+			child);
+		parent->left = cl > 0 ? child : NULL;
+		int cr = findLargestBST(p->right, p->value, max, maxBST, maxSize, 
+			child);
+		parent->right = cr > 0 ? child : NULL;
+		child = parent;
+		if(maxSize < cl + cr + 1) {
+			maxSize = cl + cr + 1;
+			maxBST = parent;
+		}
+		return cl + cr + 1;
+	} else {
+		findLargestBST(p, INT_MIN, INT_MAX, maxBST, maxSize, child);
+		return 0;
+	}
+}
+
 
 int main(int c, const char* args[]) {
 	testConvert();
