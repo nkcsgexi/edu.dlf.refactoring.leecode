@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.Hashtable;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Stack;
 import java.util.function.Consumer;
 import java.util.Collections;
@@ -105,7 +106,7 @@ class LeetCode {
 		return nr;
 	}
 
-	private static void cloneTest() {
+	private static GNode getGraph() {
 		GNode[] nodes = new GNode[5];
 		for(int i = 0; i < nodes.length; i ++)
 			nodes[i] = new GNode(i);
@@ -114,8 +115,13 @@ class LeetCode {
 		nodes[1].neighbors.add(nodes[3]);
 		nodes[1].neighbors.add(nodes[4]);
 		nodes[3].neighbors.add(nodes[2]);
-		GNode nr = cloneGraph2(nodes[0]);
-		nodes[0].BFS(n -> System.out.println(n.value));
+		return nodes[0];	
+	}
+
+	private static void cloneTest() {
+		GNode r = getGraph();
+		GNode nr = cloneGraph2(r);
+		r.BFS(n -> System.out.println(n.value));
 		nr.BFS(n -> System.out.println(n.value));
 	}
 
@@ -618,9 +624,179 @@ class LeetCode {
 		System.out.println(copyA(14, 0,0));
 	}
 
+	private static class MinStack {
+		private final Stack<Integer> dataS = new Stack<Integer>();
+		private final Stack<Integer> minS = new Stack<Integer>();
 
+		public Integer peek() {
+			return dataS.peek();
+		}
+		public void push(int d) {
+			int min = minS.size() == 0 ? d : 
+				(minS.peek() < d ? minS.peek() : d);
+			dataS.push(d);
+			minS.push(min);
+		}
+
+		public Integer pop() {
+			minS.pop();
+			return dataS.pop();
+		}
+
+		public Integer getMin() {
+			return minS.peek();
+		}
+
+		public int size() {
+			return dataS.size();
+		}
+
+		private static void test() {
+			MinStack s = new MinStack();
+			for(int i = 100; i > 0; i --) 
+				s.push(i);
+			while(s.size() != 0) {
+				System.out.println(s.getMin());
+				s.pop();
+			}
+		}
+	}
+	private static String getMinSub(String s, String t) {
+		HashSet<Character> set = new HashSet<Character>();
+		HashMap<Character, Integer> table = new HashMap<Character,
+			Integer>();
+		for(char c : t.toCharArray()) {
+			set.add(c);
+		}
+		int start = 0;
+		int end = 0;
+		int min = Integer.MAX_VALUE;
+		int minS = 0;
+		for(; end < s.length(); end ++) {
+			char c = s.charAt(end);
+			if(!set.contains(c)) continue;
+			if(table.containsKey(c)) {
+				table.put(c, table.get(c) + 1);
+			} else {
+				table.put(c, 1);
+				if(table.size() == set.size()) {
+					for(;; start++) {
+						char cs = s.charAt(start);
+						if(!table.containsKey(cs)) continue;
+						if(table.get(cs) == 1) break;
+						table.put(cs, table.get(cs) - 1);
+					}
+					if(end - start + 1 < min) {
+						min = end - start + 1;
+						minS = start;
+					}
+					table.remove(s.charAt(start));
+					start ++;
+				}
+			}
+		}
+		return s.substring(minS, minS + min);
+	}
+
+	private static void testMin() {
+		String s = "ADOBECODEBANC";
+		String t = "ABC";
+		System.out.println(getMinSub(s, t));
+	}
+	
+	private static int bestStack(int[] data) {
+		int[] min = new int[data.length + 1];
+		min[0] = Integer.MAX_VALUE;
+		int max = Integer.MIN_VALUE;
+		for(int i = 0; i < data.length; i ++) {
+			max = data[i] - min[i] > max ? data[i] - min[i] : max;
+			min[i + 1] = Math.min(data[i], min[i]);
+		}
+		return max;
+	}
+
+	private static void swap(char[] cs, int i, int j) {
+		char c = cs[i];
+		cs[i] = cs[j];
+		cs[j] = c;
+	}
+
+	private static void permutation(char[] s, int i) {
+		if(s.length == i + 1) {
+			System.out.println(new String(s));
+			return;
+		}
+		for(int j = i; j < s.length; j ++) {
+			swap(s, i, j);
+			permutation(s, i + 1);
+			swap(s, i, j);
+		}
+	}		
+	
+	private static int uniquePaths(int i, int j, int m, int n) {
+		if(i == m && j == n) return 1;
+		if(i > m || j > n) return 0;
+		return uniquePaths(i + 1, j, m, n) + uniquePaths(i, j + 1,
+			m, n);
+	}
+
+	private static int uniquePaths2(int m, int n) {
+		int[][] matrix = new int[m][n];
+		for(int i = 0; i < n; i ++)
+			matrix[m - 1][i] = 1;
+		for(int i = 0; i < m; i ++)
+			matrix[i][n - 1] = 1;
+		for(int i = m - 2; i >= 0; i --)
+			for(int j = n - 2; j >= 0; j --)
+				matrix[i][j] = matrix[i + 1][j] + 
+					matrix[i][j + 1];
+		return matrix[0][0];
+	}
+
+	
+	private static void testUnique() {
+		System.out.println(uniquePaths2(3, 7));
+	}
+	private static void postVisitNoRecursion(Node n, Consumer<Node> consumer) {
+		HashSet<Node> black = new HashSet<Node>();
+		Stack<Node> s = new Stack<Node>();
+		s.push(n);
+		while(s.size() != 0) {
+			Node p = s.peek();
+			boolean finished = true;
+			if(p.right != null && !black.contains(p.right)) {
+				finished = false;
+				s.push(p.right);
+			}
+			if(p.left != null && !black.contains(p.left)) {
+				finished = false;
+				s.push(p.left);
+			}
+			if(finished) {
+				s.pop();
+				black.add(p);
+				consumer.accept(p);
+			}
+		}
+	}
+
+	private static Node createTree() {
+		Node[] ns = new Node[5];
+		for(int i = 0; i < ns.length; i ++)
+			ns[i] = new Node(i);
+		ns[0].left = ns[1];
+		ns[0].right = ns[2];
+		ns[1].left = ns[3];
+		ns[1].right = ns[4];
+		return ns[0];
+	}
+
+	private static void testPost() {
+		Node n = createTree();
+		postVisitNoRecursion(n, i -> System.out.println(i.value));
+	}
 
 	public static void main(String[] args) {
-		testCopy();
+		testPost();
 	}
 }

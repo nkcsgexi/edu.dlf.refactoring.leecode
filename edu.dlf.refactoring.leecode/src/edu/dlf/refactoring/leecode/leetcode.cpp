@@ -130,6 +130,8 @@ int findBST(Node* p, int& min, int& max, Node*& maxBST, int& maxSize) {
 		return -1;
 }
 
+
+
 int main(int c, const char* args[]) {
 	testConvert();
 	return 0;
