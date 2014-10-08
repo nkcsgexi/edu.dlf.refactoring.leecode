@@ -106,6 +106,29 @@ int findLargestBST(Node* p, int min, int max, Node*& maxBST, int& maxSize,
 	}
 }
 
+int findBST(Node* p, int& min, int& max, Node*& maxBST, int& maxSize) {
+	if(!p) return 0;
+	bool isBST = true;
+	int l = findBST(p->left, min, max, maxBST, maxSize);
+	int curMin = l == 0 ? p -> value : min;
+	if(l == -1 || (l != 0 && p->value <= max))
+		isBST = false;
+	int r = findBST(p->right, min, max, maxBST, maxSize);
+	int curMax = r == 0 ? p -> value : max;
+	if(r == -1 || (r != 0 && p->value >= min))
+		isBST = false;
+	if(isBST) {
+		min = curMin;
+		max = curMax;
+		if(l + r + 1 > maxSize) {
+			maxSize = r + l + 1;
+			maxBST = p;
+		}
+		return l + r + 1;
+	}
+	else 
+		return -1;
+}
 
 int main(int c, const char* args[]) {
 	testConvert();
