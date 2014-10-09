@@ -7,6 +7,7 @@ using namespace std;
 struct Node {
 	Node* left;
 	Node* right;
+	Node* nextRight;
 	int value;
 	Node(int value) {
 		this->value = value;
@@ -33,6 +34,16 @@ Node* createTree() {
 	ns[1]->left = ns[3];
 	ns[1]->right = ns[4];
 	return ns[0];
+}
+
+void populateNextRight(Node* p) {
+	if(!p) return;
+	if(p->left) 
+		p->left->nextRight = p->right;
+	if(p->right)
+		p->right->nextRight = p->nextRight ? p->nextRight->left : NULL;
+	populateNextRight(p->left);
+	populateNextRight(p->right);
 }
 
 void convertToDLinkedList(Node* p, Node*& pre, Node*& head) {
