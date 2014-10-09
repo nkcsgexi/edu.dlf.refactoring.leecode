@@ -831,7 +831,54 @@ class LeetCode {
 			System.out.println(i);
 	}
 
+	private static int match(char[] s, int ss, char[] t) {
+		int len = t.length;
+		int matches = 0;
+		for(int i = ss; i < s.length; i += len) {
+			for(int j = 0; j < len; j ++)
+				if(s[j + i] != t[j])
+					return matches;
+			matches ++;
+		}
+		return matches;
+	}
+
+	private static String replace(char[] s, char[] t, char[] d) {
+		StringBuilder sb = new StringBuilder();
+		int end = s.length;
+		for(int start = 0; start < end; start ++) {
+			int m = match(s, start, t);
+			if(m == 0) {
+				sb.append(s[start]);
+				continue;
+			}
+			sb.append(new String(d));
+			start += t.length * m - 1;
+		}
+		return sb.toString();
+	}
+
+	private static void testReplace() {
+		String s = "abcdeffdfegabcabc";
+		String t = "abc";
+		String d = "X";
+		System.out.println(replace(s.toCharArray(), t.toCharArray(),
+			d.toCharArray()));
+	}
+
+	private static int rand7() {return 1;}
+	private static int rejectSampling() {
+		int num = 0;
+		do{
+			int i = rand7();
+			int j = rand7();
+			num = (i - 1) * 7 + j;
+		}while(num > 40);
+		return (num - 1) % 10 + 1;
+	}
+
+
 	public static void main(String[] args) {
-		testSubstring();
+		testReplace();
 	}
 }
