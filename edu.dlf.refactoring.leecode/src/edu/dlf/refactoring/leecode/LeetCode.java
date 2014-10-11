@@ -232,6 +232,23 @@ class LeetCode {
 		public LinkedNode next;
 		public int value;
 		public LinkedNode(int value) {this.value = value;}
+		public void print() {
+			for(LinkedNode n = this; n != null; n = n.next) {
+				System.out.print(n.value);
+			}
+			System.out.println();
+		}
+		public static LinkedNode createList() {
+			LinkedNode head = new LinkedNode(0);
+			LinkedNode pre = head;
+			for(int i = 1; i < 10; i ++) {
+				LinkedNode nn = new LinkedNode(i);
+				pre.next = nn;
+				pre = nn;
+			}
+			return head;
+		}
+
 	}
 	
 	private static LinkedNode insertToCircle(LinkedNode n, int v) {
@@ -1019,10 +1036,79 @@ class LeetCode {
 		Node root = createTree();
 		inorderVisit(root, n -> System.out.println(n.value));
 	}
+	private static boolean hasLoop(LinkedNode n) {
+		LinkedNode fast = n;
+		LinkedNode slow = n;
+		while(fast != null && fast.next != null) {
+			fast = fast.next.next;
+			slow = slow.next;
+			if(fast == slow) 
+				return true;
+		}
+		return false;
+	}
 
+	private static LinkedNode[] splitList(LinkedNode n) {
+		LinkedNode fast = n;
+		LinkedNode slow = n;
+		LinkedNode before = null;
+		while(null != fast) {
+			before = slow;
+			fast = fast.next == null ? fast.next.next : null;
+			slow = slow.next;
+		}
+		before.next = null;
+		return new LinkedNode[]{n, slow};
+	}
 
+	private static int oneBitCount(int num) {
+		int count = 0;
+		while(num != 0) {
+			if((num & 1) != 0)
+				count ++;
+			num >>= 1;
+		}
+		return count;
+	}
 
+	private static LinkedNode reverse(LinkedNode node) {
+		LinkedNode pre = null;
+		LinkedNode cur = node;
+		while(cur != null) {
+			LinkedNode next = cur.next;
+			cur.next = pre;
+			pre = cur;
+			cur = next;
+		}
+		return pre;
+	}
+
+	private static LinkedNode reverse2(LinkedNode node) {
+		if(node == null) return null;
+		LinkedNode rest = reverse2(node.next);
+		node.next = null;
+		LinkedNode n = rest;
+		for(; n != null && n.next != null; n = n.next);
+		if(n == null) return node;
+		n.next = node;
+		return rest;
+	}
+
+	private static void testList() {
+		LinkedNode root = LinkedNode.createList();
+		root.print();
+		reverse(root).print();
+	}
+
+	private static int getDepth(Node node) {
+		if(null == node) return 0;
+		int max = Math.max(node.left, node.right);
+		max ++;
+		return max;
+	}
+
+			
 	public static void main(String[] args) {
-		testInorder();
+		testList();
 	}
 }
