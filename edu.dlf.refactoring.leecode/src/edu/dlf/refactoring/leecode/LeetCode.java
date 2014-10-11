@@ -995,11 +995,34 @@ class LeetCode {
 		if(root.right != null) root.right = root.nextRight == null ?
 			null : root.nextRight.left;
 		populateNextRight(root.right);
-		populateNextRight(root.left);
+		populateNextRight(root.left);	
+	}
+
+	private static void inorderVisit(Node root, Consumer<Node> consumer) {
+		HashSet<Node> set = new HashSet<Node>();
+		Stack<Node> s = new Stack<Node>();
+		s.push(root);
+		while(s.size() != 0) {
+			Node n = s.peek();
+			if(null == n.left || set.contains(n.left)) {
+				consumer.accept(n);
+				set.add(s.pop());
+				if(null != n.right)
+					s.push(n.right);
+				continue;
+			}
+			if(null != n.left) 
+				s.push(n.left);
+		}
+	}
+	private static void testInorder() {
+		Node root = createTree();
+		inorderVisit(root, n -> System.out.println(n.value));
 	}
 
 
+
 	public static void main(String[] args) {
-		testZig();
+		testInorder();
 	}
 }

@@ -227,6 +227,17 @@ void testLayers() {
 	printAllLayers(root);
 }
 
+bool isBST2(Node* root, int& val) {
+	if(!root) return true;
+	if(isBST2(root->left, val)) {
+		if(root->value > val) {
+			val = root->value;
+			return isBST2(root->right, val);
+		}
+	}
+	return false;
+}
+					
 
 int main(int c, const char* args[]) {
 	testLayers();
