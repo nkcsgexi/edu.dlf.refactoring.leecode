@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Stack;
+import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.Collections;
 import java.util.Comparator;
@@ -877,8 +878,90 @@ class LeetCode {
 		return (num - 1) % 10 + 1;
 	}
 
+	private static boolean searchMatrix(int[][] m, int t) {
+		int row = m.length;
+		int column = m[0].length;
+		for(int i = 0, j = column - 1; i < row && j >= 0;) {
+			int v = m[i][j];
+			if(v == t) return true;
+			if(v > t) i --;
+			if(v < t) j ++;
+		}
+		return false;
+	}
+
+	private static String convertExcelNumber(int num) {
+		int base = 26;
+		HashMap<Integer, Character> map = new HashMap<Integer, Character>();
+		char c = 'a';
+		for(int i = 0; i < 26; i ++)
+			map.put(i, c ++);
+		StringBuilder sb = new StringBuilder();
+		sb.append(map.get(num % base));
+		num /= base;
+		while(num != 0) {
+			sb.insert(0, map.get((num - 1) % base));
+			num = (num - 1) / base;
+		}
+		return sb.toString();
+	}
+
+	private static void testExcel() {
+		for(int i = 1; i < 100; i++)
+			System.out.println(i + " " + convertExcelNumber(i));
+	}
+
+	private static void serializeTree(Node root, List<String> tokens) {
+		if(null == root) return;
+		tokens.add(Integer.toString(root.value));
+		serializeTree(root.left, tokens);
+		tokens.add("#");
+		serializeTree(root.right, tokens);
+	}
+
+	private static Node deserializeTree(Iterator<String> tokens) {
+		if(!tokens.hasNext()) return null;
+		String t = tokens.next();
+		if(t.equals("#")) return null;
+		Node n = new Node(Integer.parseInt(t));
+		n.left = deserializeTree(tokens);
+		n.right = deserializeTree(tokens);
+		return n;
+	}
+		
+	private static void testSerialize() {
+		Node tree = createTree();
+		preorder(tree);
+		List<String> tokens = new ArrayList<String>();
+		serializeTree(tree, tokens);
+		Node t2 = deserializeTree(tokens.iterator());
+		preorder(t2);
+	}
+
+	private static void visitByLayer(Node root, Consumer<Node> consumer) {
+		Queue<Node> currentLayer = new LinkedList<Node>();
+		Queue<Node> nextLayer = new LinkedList<Node>();
+		currentLayer.add(root);
+		do{
+			while(currentLayer.size() != 0) {
+				Node c = currentLayer.remove();
+				consumer.accept(c);
+				if(c.left != null) nextLayer.add(c.left);
+				if(c.right != null) nextLayer.add(c.right);
+			}
+			Queue<Node> t = nextLayer;
+			nextLayer = currentLayer;
+			currentLayer = t;
+		}while(currentLayer.size() != 0);
+	}
+	private static void testLayer() {
+		Node root = createTree();
+		visitByLayer(root, r -> System.out.println(r.value));
+	}
+
+
 
 	public static void main(String[] args) {
-		testReplace();
+		testLayer();
 	}
 }

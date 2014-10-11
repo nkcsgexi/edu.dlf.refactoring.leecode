@@ -1,4 +1,5 @@
 #include<string>	
+#include<fstream>
 #include<iostream>
 #include<climits>
 
@@ -141,9 +142,93 @@ int findBST(Node* p, int& min, int& max, Node*& maxBST, int& maxSize) {
 		return -1;
 }
 
+int findLargestBST2(Node* p, int min, int max, Node*& maxBST, int& maxSize, 
+		Node*& child) {
+	if(!p) return 0;
+	int v = p -> value;
+	if(v > min && v < max) {
+		int left = findLargestBST2(p->left, min, v, maxBST, max, child);
+		Node* l = left > 0 ? child : NULL;
+		int right = findLargestBST2(p->right, v, max, maxBST, max, child);
+		Node* r = right > 0 ? child : NULL;
+		Node* np = new Node(v);
+		np->left = l;
+		np->right = r;
+		child = np;
+		if(left + right + 1 > max) {
+			max = left + right + 1;
+			maxBST = np;
+		}
+		return left + right + 1;
+	} else {
+		findLargestBST2(p, INT_MIN, INT_MAX, maxBST, max, child);
+		return 0;
+	}
+}
+	
+bool isBST(Node* p, int& min, int& max) {
+	if(!p) {
+		min = INT_MAX;
+		max = INT_MIN;
+		return true;
+	}
+	if(!isBST(p->left, min, max))
+		return false;
+	int leftMin = min;
+	int leftMax = max;
+	if(!isBST(p->right, min, max))
+		return false;
+	int rightMin = min;
+	int rightMax = max;
+	if(p->value > leftMax && p->value < leftMin) {
+		min = leftMin;
+		max = rightMax;
+		return true;
+	}
+	return false;
+}
+
+void readBST(Node*& p, int min, int max, int value, ifstream& stream) {
+	if(value > min && value < max) {
+		int v = value;
+		p = new Node(v);
+		if(stream >> value) {
+			readBST(p->left, min, v, value, stream);
+			readBST(p->right, v, max, value, stream);
+		}
+	}
+}
+void readBST(ifstream stream) {
+	Node* root = NULL;
+	int v;
+	stream >> v;
+	readBST(root, INT_MIN, INT_MAX, v, stream);
+}
+
+bool printLayer(Node* p, int l) {
+	if(NULL == p) return false;
+	if(1 == l) {
+		cout << p->value << " ";
+		return true;
+	}
+	bool left = printLayer(p->left, l - 1);
+	bool right = printLayer(p->right, l - 1);
+	return left | right;
+}
+
+void printAllLayers(Node* root) {
+	int i = 1;
+	while(printLayer(root, i++))
+		cout << endl;
+}
+
+void testLayers() {
+	Node* root = createTree();
+	printAllLayers(root);
+}
 
 
 int main(int c, const char* args[]) {
-	testConvert();
+	testLayers();
 	return 0;
 }
