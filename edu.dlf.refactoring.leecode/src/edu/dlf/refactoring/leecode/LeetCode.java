@@ -276,6 +276,7 @@ class LeetCode {
 	private static class Node {
 		public Node left;
 		public Node right;
+		public Node nextRight;
 		public int value;
 		public Node parent;
 		public Node(int value) {this.value = value;}
@@ -959,9 +960,46 @@ class LeetCode {
 		visitByLayer(root, r -> System.out.println(r.value));
 	}
 
+	private static void zigzag(Node root) {
+		Stack<Node> current = new Stack<Node>();
+		Stack<Node> next = new Stack<Node>();
+		current.push(root);
+		boolean leftFirst = true;
+		while(current.size() != 0) {
+			while(current.size() != 0) {
+				Node n = current.pop();
+				System.out.print(n.value + " ");
+				if(leftFirst) {
+					if(n.left != null) next.push(n.left);
+					if(n.right != null) next.push(n.right);
+				} else {
+					if(n.right != null) next.push(n.right);
+					if(n.left != null) next.push(n.left);
+				}
+			}
+			System.out.println();
+			leftFirst = !leftFirst;
+			Stack<Node> t = current;
+			current = next;
+			next = t;
+		}
+	}
+
+	private static void testZig() {
+		Node root = createTree();
+		zigzag(root);
+	}
+	private static void populateNextRight(Node root) {
+		if(null == root) return;
+		if(root.left != null) root.left = root.right;
+		if(root.right != null) root.right = root.nextRight == null ?
+			null : root.nextRight.left;
+		populateNextRight(root.right);
+		populateNextRight(root.left);
+	}
 
 
 	public static void main(String[] args) {
-		testLayer();
+		testZig();
 	}
 }
