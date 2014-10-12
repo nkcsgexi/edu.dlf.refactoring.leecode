@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Arrays;
 import java.util.Queue;
 import java.util.LinkedList;
 import java.util.Hashtable;
@@ -1236,8 +1237,65 @@ class LeetCode {
 		String s= "abcdefgh";
 		System.out.println(rotate(s.toCharArray(), 3));
 	}
+	private static int searchRotate(int[] data, int t) {
+		int s = 0;
+		int e = data.length;
+		while(s <= e) {
+			int mid = (s + e) / 2;
+			if(data[mid] == t) return mid;
+			if(data[mid] >= data[s]) {
+				if(t < data[mid] && t >= data[s])
+					e = mid - 1;
+				else 
+					s = mid + 1;
+			} else{
+				if(t > data[mid] && t <= data[e]) 
+					s = mid + 1;
+				else
+					e = mid - 1;
+			}
+		}
+		return -1;
+	}
+	
+	private static Iterable<int[]> findTuple(int[] data, int s, int e, int t) {
+		List<int[]> results = new ArrayList<int[]>();
+		while(s < e) {
+			int sum = data[s] + data[e];
+			if(sum == t) {
+				results.add(new int[]{data[s], data[e]});
+				s ++;
+				e --;
+				continue;
+			}
+			if(sum < t) s ++;
+			else e --;
+		}
+		return results;
+	}
 
+	private static Iterable<int[]> findTriple(int[] data, int t) {
+		Arrays.sort(data);
+		List<int[]> results = new ArrayList<int[]>();
+		for(int i = 0; i < data.length; i ++) {
+			int first = data[i];
+			int remain = t - first;
+			for(int[] pair : findTuple(data, i + 1, data.length - 1,
+					remain))
+				results.add(new int[]{first, pair[0], pair[1]});
+		}
+		return results;
+	}
+
+	private static void testTriple() {
+		int[] d = {-1, 0, 1, 2, -1, -4};
+		for(int[] t : findTriple(d, 0)) {
+			for(int a : t) 
+				System.out.print(a + " ");
+			System.out.println();
+		}
+	}
 	public static void main(String[] args) {
-		testRotate();
+		testTriple();
 	}
 }
