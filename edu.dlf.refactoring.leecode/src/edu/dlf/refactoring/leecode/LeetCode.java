@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.PriorityQueue;
+import java.util.Map.Entry;
 class LeetCode {
 
 	private static class GNode {
@@ -1102,13 +1104,140 @@ class LeetCode {
 
 	private static int getDepth(Node node) {
 		if(null == node) return 0;
-		int max = Math.max(node.left, node.right);
+		int max = Math.max(getDepth(node.left), getDepth(node.right));
 		max ++;
 		return max;
 	}
 
-			
+	private static class CharCount implements Comparable<CharCount>{
+		public char c;
+		public int count;
+		public CharCount(char c, int count) {
+			this.c = c;
+			this.count = count;
+		}
+		@Override
+		public int compareTo(CharCount that) {
+			return Integer.compare(that.count, this.count);
+		}
+	}
+
+	private static char[] rearrange(char[] data, int dis) {
+		PriorityQueue<CharCount> queue = new PriorityQueue<CharCount>();
+		HashMap<Character, Integer> map = new HashMap<Character, Integer>();
+		for(char c : data) {
+			if(map.containsKey(c)) map.put(c, map.get(c) + 1);
+			else map.put(c, 1);
+		}
+		for(Entry<Character, Integer> e : map.entrySet()) 
+			queue.add(new CharCount(e.getKey(), e.getValue()));
+		int len = data.length;
+		char[] results = new char[len];
+		boolean[] used = new boolean[len];
+	       	for(int i = 0; i < len; i ++) used[i] = false;	
+		while(queue.size() != 0) {
+			CharCount cc = queue.remove();
+			char c = cc.c;
+			int count = cc.count;
+			int start = 0;
+			for(int i = 0; i < count; i++) {
+				while(start < len && used[start]) start ++;
+				if(start >= len) return null;
+				used[start] = true;
+				results[start] = c;
+				start += dis;
+			}
+		}
+		return results;
+	}
+	private static void testRearrange() {
+		String s = new String(rearrange("abb".toCharArray(), 2));
+		System.out.println(s);
+	}
+	private static void printMatrix(int[][] m) {
+		int row = m.length;
+		int column = m[0].length;
+		for(int offset = 0; ; offset ++) {
+			int sr = offset;
+			int sc = offset;
+			int er = row - 1 - offset;
+			int ec = column - 1 - offset;
+			if(sr > er || sc > ec) return;
+			for(int c = sc; c <= ec; c++) 
+				System.out.print(m[sr][c]);
+			for(int r = sr + 1; r <= ec; r ++)
+				System.out.print(m[r][ec]);
+			for(int c = ec - 1; c >= sc; c --) 
+				System.out.print(m[er][c]);
+			for(int r = er - 1; r > sr; r --)
+				System.out.print(m[r][sc]);
+			System.out.println();
+		}
+	}
+	private static void testPrint() {
+		int[][] m = new int[3][3];
+		m[0] = new int[]{1, 2, 3};
+		m[1] = new int[]{4, 5, 6};
+		m[2] = new int[]{7, 8, 9};
+		printMatrix(m);
+	}
+
+	private static void findPrime(int N) {
+		for(int i = 3; i < N; i++) {
+			boolean isPrime = true;
+			int fac = (int)Math.sqrt(i);
+			for(int j = 2; j <= fac; j ++) {
+				if(i % j == 0) {
+					isPrime = false;
+					break;
+				}
+			}
+			if(isPrime)
+				System.out.println(i);
+		}
+	}		
+		
+	private static void multiplication(int[] data) {
+		int len = data.length;
+		int[] before = new int[len];
+		int[] after = new int[len];
+		before[0] = 1;
+		after[len - 1] = 1;
+		for(int i = 0; i < len - 1; i ++)
+			before[i + 1] = before[i] * data[i];
+		for(int i = len - 2; i >= 0; i --)
+			after[i] = after[i + 1] * data[i + 1];
+		for(int i = 0; i < len; i ++)
+			System.out.print(before[i] * after[i] + " ");
+	}
+	
+	private static void testMulti() {
+		multiplication(new int[]{4, 3, 2, 1, 2});
+	}	
+
+	private static void revert(char[] s, int start, int end) {
+		for(int i = start; i <= (start + end) / 2; i ++) {
+			int j = end + start - i;
+			char c = s[i];
+			s[i] = s[j];
+			s[j] = c;
+		}
+	}
+
+	private static String rotate(char[] s, int k) {
+		int len = s.length;
+		revert(s, 0, len - k - 1);
+		revert(s, len - k, len - 1);
+		revert(s, 0, len - 1);
+		return new String(s);
+	}
+
+	private static void testRotate() {
+		String s= "abcdefgh";
+		System.out.println(rotate(s.toCharArray(), 3));
+	}
+
 	public static void main(String[] args) {
-		testList();
+		testRotate();
 	}
 }
