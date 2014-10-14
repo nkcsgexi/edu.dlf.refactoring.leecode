@@ -5,7 +5,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.List;
 import java.util.ArrayList;
-
+import java.util.Stack;
+import java.util.function.Consumer;
 public class Numbers {
 	
 
@@ -204,10 +205,138 @@ public class Numbers {
 		len /= 2;
 		return s.substring(start, len);
 	}
+	private static int[] subarray(int[] a, int s, int e) {
+		return new int[0];
+	}
+
+	private static int getKthSmallest(int[] a, int[] b, int k) {
+		int M = a.length;
+		int N = b.length;
+		int i = (int) (((double) M / N) * (k - 1));
+		int j = k - 1 - i;
+		int ai = i < M ? a[i] : Integer.MAX_VALUE;
+		int bj = j < N ? b[j] : Integer.MAX_VALUE;
+		int ai1 = i > 0 ? a[i - 1] : Integer.MIN_VALUE;
+		int bj1 = j > 0 ? b[j - 1] : Integer.MIN_VALUE;
+		if(ai > bj1 && ai < bj)
+			return ai;
+		if(bj > ai1 && bj < ai)
+			return bj;
+		if(ai > bj) 
+			return getKthSmallest(subarray(a, 0, i - 1), 
+					subarray(b, j, N - 1), k - j - 1);
+		else
+			return getKthSmallest(subarray(a, i, N - 1),
+					subarray(b, 0, j - 1), k - i - 1);
+	}
+
+	static private class LinkedNode{
+		LinkedNode next;
+		int value;
+		public LinkedNode(int value) {this.value = value;}
+	}
+
+	private static void insertCircular(LinkedNode head, int v) {
+		LinkedNode pre = null;
+		LinkedNode current = head;
+		do {
+			pre = current;
+			current = current.next;
+			if(pre.value < v && current.value > v) break;
+			if(pre.value > current.value && (v > pre.value ||
+				v < current.value)) break;
+		}while(current != head);
+		LinkedNode node = new LinkedNode(v);
+		node.next = current;
+		pre.next = node;
+	}
 
 
+	private static void addMap(HashMap<Character, Integer> map, char c) {
+		if(map.containsKey(c)) map.put(c, map.get(c) + 1);
+		else map.put(c, 1);
+	}
+	private static boolean removeMap(HashMap<Character, Integer> map, char c) {
+		map.put(c, map.get(c) - 1);
+		if(map.get(c) == 0) {
+			map.remove(c);
+			return true;
+		}
+		return false;
+	}
 
+	private static String minsub(String s, String t) {
+		HashSet<Character> tset = new HashSet<Character>();
+		for(char c : t.toCharArray()) tset.add(c);
+		HashMap<Character, Integer> map = new HashMap<Character, Integer>();
+		int start = 0;
+		int end = 0;
+		int min = Integer.MAX_VALUE;
+		int minStart = 0;
+		for(; end < t.length(); end ++) {
+			char c = s.charAt(end);
+			addMap(map, c);
+			if(map.size() == tset.size()) {
+				while(!removeMap(map, s.charAt(start)))start ++;
+				int len = end - start;
+				if(len < min) {
+					min = len;
+					minStart = start - 1;
+				}
+			}
+		}
+		return s.substring(minStart, min);
+	}	
 
+	private static void preorder(Node root, Consumer<Node> consumer) {
+		Stack<Node> s = new Stack<Node>();
+		s.push(root);
+		while(s.size() != 0) {
+			Node n = s.pop();
+			consumer.accept(n);
+			if(n.left != null) s.push(n.left);
+			if(n.right != null) s.push(n.right);
+		}
+	}
+	private static void postOrder(Node root, Consumer<Node> consumer) {
+		Stack<Node> s = new Stack<Node>();
+		HashSet<Node> black = new HashSet<Node>();
+		s.push(root);
+		while(s.size() != 0) {
+			Node n = s.peek();
+			boolean leftOk = n.left == null || black.contains(n.left);
+			if(!leftOk)
+				s.push(n.left);
+			boolean rightOk = n.right == null || black.contains(n.right);
+			if(!rightOk)
+				s.push(n.right);
+			if(leftOk && rightOk) {
+				black.add(n);
+				consumer.accept(s.pop());
+			}
+		}
+	}
+
+	private static void inorder(Node root, Consumer<Node> consumer) {
+		HashSet<Node> black = new HashSet<Node>();
+		Stack<Node> s = new Stack<Node>();
+		s.push(root);
+		while(s.size() != 0) {
+			Node n = s.peek();
+			boolean leftOk = n.left == null || black.contains(n.left);
+			if(leftOk) {
+				consumer.accept(n);
+				s.pop();
+				black.add(n);
+				if(n.right != null) 
+					s.push(n.right);
+			}
+			else {
+				s.push(n.left);
+			}
+		}
+	}	
+			
 
 	public static void main(String[] args) {
 	}
