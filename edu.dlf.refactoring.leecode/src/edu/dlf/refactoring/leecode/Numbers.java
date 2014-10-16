@@ -336,7 +336,21 @@ public class Numbers {
 			}
 		}
 	}	
-			
+	
+	private static class TwoStacksQueue {
+		private final Stack<Integer> s1 = new Stack<Integer>();
+		private final Stack<Integer> s2 = new Stack<Integer>();
+		
+		public void add(int i) {
+			while(s1.size() != 0) s2.push(s1.pop());
+			s1.push(i);
+			while(s2.size() != 0) s1.push(s2.pop());
+		}
+		
+		public int remove() {
+			return s1.pop();
+		}	
+	}
 
 	public static void main(String[] args) {
 	}
