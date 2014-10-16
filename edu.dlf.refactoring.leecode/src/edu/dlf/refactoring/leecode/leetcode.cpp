@@ -1,4 +1,4 @@
-#include<string>	
+#include<string>
 #include<fstream>
 #include<iostream>
 #include<climits>
@@ -237,7 +237,119 @@ bool isBST2(Node* root, int& val) {
 	}
 	return false;
 }
-					
+
+void writeBT(Node* p, ostream& out) {
+	if(!p) {
+		out << "#";
+		return;
+	}
+	out << p->value;
+	writeBT(p->left, out);
+	writeBT(p->right, out);
+}
+
+void readBT(Node*& p, ifstream& in) {
+	string token;
+	in >> token;
+	if(token.compare("#") == 0) {
+		p = NULL;
+	} else {
+		p = new Node(stoi(token));
+		readBT(p->left, in);
+		readBT(p->right, in);
+	}
+}
+	
+
+void writeBST(Node* p, ostream& out) {
+	if(!p) return;
+	out << p->value;
+	writeBST(p->left, out);
+	writeBST(p->right, out);
+}
+void readBST(Node*& p, int min, int max, int& v, istream& in) {
+	if(v > min && v < max) {
+		p = new Node(v);
+		int pv = v;
+		if(in >> v) {
+			readBST(p->left, min, pv, v, in);
+			readBST(p->right, pv, max, v, in);
+		}
+	}
+}
+
+bool isBST2(Node* p, int& min, int& max) {
+	if(!p) {
+		min = INT_MIN;
+		max = INT_MAX;
+		return true;
+	}
+	int lmin, rmax;
+	if(isBST2(p->left, lmin, max) && p->value > max
+		&& isBST2(p->right, min, rmax)
+		&& p->value < min) {
+			min = lmin;
+			max = rmax;
+			return true;
+	}
+	return false;
+}
+
+int find_largest_bst_subtree(Node* p, int& min, int& max, Node*& result, int& size) {
+	if(!p) return 0;
+	int lmin, lmax, rmin, rmax;
+	int l = find_largest_bst_subtree(p->left, lmin, lmax, result, size);
+	int r = find_largest_bst_subtree(p->right, rmin, rmax, result, size);
+	if(l != -1 && r != -1 && (l == 0 || p->value > lmax) && 
+				(r == 0 ||p->value < rmin)) {
+	       	min = l != 0 ? lmin : p->value;
+		max = r != 0 ? rmax : p->value;
+		int total = l + r + 1;
+		if(total > size) {
+			size = total;
+			result = p;
+		}
+		return total;
+	}
+	return -1;
+}
+int find_largest_bst(Node* p, int min, int max, Node*& child, Node*& maxRoot, 
+		int& maxSize) {
+	if(!p) {
+		child = NULL;
+		return 0;
+	}
+	if(p->value > min && p->value < max) {
+		Node* root = new Node(p->value);
+		int l = find_largest_bst(p->left, min, p->value, root->left, 
+			maxRoot, maxSize);
+		int r = find_largest_bst(p->right, p->value, max, root->right,
+			maxRoot, maxSize);
+		int total = l + r + 1;
+		if(total > maxSize) {
+			maxSize = total;
+			maxRoot = root;
+		}
+		child = root;
+		return total;
+	}
+	find_largest_bst(p, INT_MIN, INT_MAX, child, maxRoot, maxSize);
+	child = NULL;
+	return 0;
+}
+
+LinkedNode* reverst_linked_list(LinkedNode* root) {
+	if(!root) return NULL;
+	LinkedNode* pre = NULL;
+	LinkedNode* current = root;
+	do{
+		LinkedNode* next = current -> next;
+		current -> next = pre;
+		pre = current;
+		current = next;
+	}while(!current);
+	return pre;
+}
 
 int main(int c, const char* args[]) {
 	testLayers();
