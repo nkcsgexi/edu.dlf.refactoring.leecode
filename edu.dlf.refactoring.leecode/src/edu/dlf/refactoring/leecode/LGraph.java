@@ -129,8 +129,7 @@ public class LGraph{
 		}
 		return max;
 	}
-			
-		
+				
 
 			
 

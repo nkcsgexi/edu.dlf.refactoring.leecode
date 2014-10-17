@@ -2,7 +2,8 @@
 #include<fstream>
 #include<iostream>
 #include<climits>
-
+#include<vector>
+#include<set>
 using namespace std;
 
 struct Node {
@@ -15,6 +16,12 @@ struct Node {
 		this->left = NULL;
 		this->right = NULL;
 	}
+};
+
+struct GNode {
+	vector<GNode*> neighbors;
+	int value;
+	GNode(int value) {this->value = value;}
 };
 
 struct LinkedNode {
@@ -349,6 +356,125 @@ LinkedNode* reverst_linked_list(LinkedNode* root) {
 		current = next;
 	}while(!current);
 	return pre;
+}
+
+void preorder(Node* root) {
+	vector<Node*> stack;
+	stack.push_back(root);
+	while(stack.size() > 0) {
+		Node* n = stack.back();
+		stack.pop_back();
+		if(n->right) stack.push_back(n->right);
+		if(n->left) stack.push_back(n->left);
+	}
+}
+
+void postOrder(Node* root) {
+	vector<Node*> stack;
+	stack.push_back(root);
+	set<Node*> black;
+	while(stack.size() != 0) {
+		Node* n = stack.back();
+		bool isOK = true;
+		if(n->right && black.find(n->right) == black.end()) {
+			stack.push_back(n->right);
+			isOK = false;
+		}
+		if(n->left && black.find(n->left) == black.end()) {
+			stack.push_back(n->left);
+			isOK = false;
+		}
+		if(isOK) {
+			stack.pop_back();
+			black.insert(n);
+		}
+	}
+}
+
+void inorder(Node* node) {
+	vector<Node*> s;
+	set<Node*> black;
+	s.push_back(node);
+	while(s.size() != 0) {
+		Node* n = s.back();
+		bool l = true;
+		bool visited = false;
+		if(n->left && black.find(n->left) == black.end()) {
+			s.push_back(n->left);
+			l = false;
+		}
+		if(l) {
+			s.pop_back();
+			black.insert(n);
+			visited = true;
+		}
+		if(visited && n->right && black.find(n->right) == black.end()) {
+			s.push_back(n->right);
+		}
+	}
+}
+void df_search(GNode* root) {
+	set<GNode*> black, grey;
+	vector<GNode*> s;
+	s.push_back(root);
+	while(s.size() != 0) {
+		GNode* n = s.back();
+		bool allVisited = true;
+		for(auto it = n->neighbors.begin(); it != n->neighbors.end();
+				it++) {
+			GNode* nei = *it;
+			if(black.find(nei) == black.end() &&
+				grey.find(nei) == grey.end()) {
+					allVisited = false;
+					s.push_back(nei);
+					grey.insert(nei);
+			}
+		}
+		if(allVisited) {
+			s.pop_back();
+			black.insert(n);
+		}
+	}
+}
+
+void bf_search(GNode* root) {
+	vector<GNode*> q;
+	set<GNode*> black;
+	set<GNode*> grey;
+	q.push_back(root);
+	while(q.size() != 0) {
+		GNode* n = q.front();
+		q.erase(q.begin());
+		black.insert(n);
+		for(auto it = n->neighbors.begin(); it != n->neighbors.end();
+				it ++) {
+			GNode* nei = *it;
+			if(black.find(nei) == black.end() && grey.find(nei)
+					== grey.end())
+				grey.insert(nei);
+		}
+	}
+}
+
+bool isPalindrome(int num) {
+	int base = 1;
+	while(num >= 10 * base) base *= 10;
+	while(num != 0) {
+		int l = num % 10;
+		int h = num / base;
+		if(l != h) return false;
+		num = (num % base) / 10;
+		base /= 100;
+	}
+	return true;
+}
+
+Node* LCA(Node* root, Node* a, Node* b) {
+	if(!root) return NULL;
+	if(root == a || root == b) return root;
+	Node* l = LCA(root->left, a, b);
+	Node* r = LCA(root->right, a, b);
+	return !l ? r : (!r ? l : root);
 }
 
 int main(int c, const char* args[]) {
