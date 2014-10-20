@@ -113,9 +113,7 @@ void layer_visit(Node* root) {
 		cur = t;
 	}
 }
-
-			
-
+		
 
 int main(int c, char** args) {
 	return 1;
